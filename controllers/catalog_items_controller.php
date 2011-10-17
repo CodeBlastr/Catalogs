@@ -28,7 +28,7 @@ class CatalogItemsController extends CatalogsAppController {
 	 * Grabs the variables from the model to send to the index view.
 	 */
 	function index() {	
-		$this->settings['conditions'] = isset($this->params['named']['stock']) ? array('CatalogItem.stock_item' => $this->params['named']['stock']): null;
+		$this->settings['conditions'] = isset($this->request->params['named']['stock']) ? array('CatalogItem.stock_item' => $this->request->params['named']['stock']): null;
 		$this->settings['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		$this->settings['conditions']['OR']['CatalogItem.end_date >'] = date('Y-m-d h:i:s');
 		$this->settings['conditions']['OR']['CatalogItem.end_date'] = null;
@@ -147,15 +147,15 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generatetreelist();
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
-		if(isset($this->params['named']['catalog'])) : 
-			$categoryElement['parentId'] = $this->params['named']['catalog'];
+		if(isset($this->request->params['named']['catalog'])) : 
+			$categoryElement['parentId'] = $this->request->params['named']['catalog'];
 		endif;
 		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
 		$this->set(compact('catalogItemBrandId', 'catalogItemBrands', 'catalogs', 'categories', 'categoryElement', 'userRoles', 'catalogItemParentIds'));
 		
 		$categories = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
-		if(isset($this->params['named']['catalog'])) : 
-			$categories['parentId'] = $this->params['named']['catalog'];
+		if(isset($this->request->params['named']['catalog'])) : 
+			$categories['parentId'] = $this->request->params['named']['catalog'];
 		endif;
 		
 		$this->set('page_title_for_layout', __('Catalog Items', true));
@@ -369,7 +369,7 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 		
 		$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-				'conditions'=>array('CategoryOption.category_id' => $this->params['named']['category_id']),
+				'conditions'=>array('CategoryOption.category_id' => $this->request->params['named']['category_id']),
 				'order'=>'CategoryOption.type'
 		)));
 		

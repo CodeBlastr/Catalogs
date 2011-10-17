@@ -4,7 +4,7 @@ echo $this->Form->create('CatalogItem', array(
     'plugin' => 'catalogs',
     'controller' => 'catalog_items',
     'action' => 'get_stock',
-	'category_id' => $this->params['named']['category_id'] 
+	'category_id' => $this->request->params['named']['category_id'] 
   )
   ));
 	?>
