@@ -1,8 +1,8 @@
 <div class="catalogs index">
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('id');?></th>
-	<th><?php echo $paginator->sort('name');?></th>
+	<th><?php echo $this->Paginator->sort('id');?></th>
+	<th><?php echo $this->Paginator->sort('name');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
