@@ -1,5 +1,5 @@
 <?php 
-echo $form->create('CatalogItem', array(
+echo $this->Form->create('CatalogItem', array(
   'url' => array(
     'plugin' => 'catalogs',
     'controller' => 'catalog_items',
@@ -20,7 +20,7 @@ echo $form->create('CatalogItem', array(
 					$sel[$child['CategoryOption']['id']] = $child['CategoryOption']['name'];
 				}
 				if (!empty($sel))
-					echo $form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
+					echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
 						array('options'=>$sel, 'multiple'=>'checkbox', 'label'=> false, 'div'=>false,
 								'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
 				echo '</fieldset>';
@@ -28,7 +28,7 @@ echo $form->create('CatalogItem', array(
 			}
 		} 
 		
-	 echo $form->end('Submit');	
+	 echo $this->Form->end('Submit');	
 	?>
 <?php if(isset($catalogitems)) { ?>	
 <h2><?php __('CatalogItems');?></h2>

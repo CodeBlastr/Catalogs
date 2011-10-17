@@ -60,7 +60,7 @@ if (!empty($dealItem)) {
       <?php /*if(!$no_stock): ?>
       <?php if($stockAmount != 0): ?>
       <?php if($itemInCart): printf("You have %d %s in your cart" , $itemInCart , $dealItem["CatalogItem"]["name"]); endif; ?>
-      <?php echo $form->create('OrderItem' , array('url' => array('plugin' => 'orders', 'controller'=>'order_items' , 'action' => 'add')));?> <?php echo $form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1))?> <?php echo $form->input('OrderItem.status' , array('type'=>'hidden' , 'value'=>'incart'))?> <?php echo $form->input('OrderItem.catalog_item_id' , array('type'=>'hidden' , 'value'=>$dealItem["CatalogItem"]["id"]))?> <?php echo $form->end(__('Add to Cart' , true)); */ ?>
+      <?php echo $this->Form->create('OrderItem' , array('url' => array('plugin' => 'orders', 'controller'=>'order_items' , 'action' => 'add')));?> <?php echo $this->Form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1))?> <?php echo $this->Form->input('OrderItem.status' , array('type'=>'hidden' , 'value'=>'incart'))?> <?php echo $this->Form->input('OrderItem.catalog_item_id' , array('type'=>'hidden' , 'value'=>$dealItem["CatalogItem"]["id"]))?> <?php echo $this->Form->end(__('Add to Cart' , true)); */ ?>
       <?php /* else: ?>
       <p>The item is out of stock. Please come back later</p>
       <?php endif; ?>
@@ -73,20 +73,20 @@ if (!empty($dealItem)) {
     </div>
     <div class="action dealItemAddCart">
     <?php /*
-	echo $form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
-	echo $form->input('OrderItem.quantity' , array('type' => 'hidden', 'label' => 'Add (Quantity)', 'value' => 1)); 
-	echo $form->hidden('OrderItem.status' , array('value'=>'incart'));
-	echo $form->hidden('OrderItem.catalog_item_id' , array('value' => $dealItem['CatalogItem']['id']));
-	echo $form->hidden('OrderItem.name' , array('value' => $dealItem['CatalogItem']['name']));
-	echo $form->hidden('OrderItem.length' , array('value' => $dealItem['CatalogItem']['length']));
-	echo $form->hidden('OrderItem.width' , array('value' => $dealItem['CatalogItem']['width']));
-	echo $form->hidden('OrderItem.height' , array('value' => $dealItem['CatalogItem']['height']));
-	echo $form->hidden('OrderItem.weight' , array('value' => $dealItem['CatalogItem']['weight']));
-	echo $form->hidden('OrderItem.assignee_id' , array('value' => $this->Session->read('Auth.User.id')));
+	echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
+	echo $this->Form->input('OrderItem.quantity' , array('type' => 'hidden', 'label' => 'Add (Quantity)', 'value' => 1)); 
+	echo $this->Form->hidden('OrderItem.status' , array('value'=>'incart'));
+	echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $dealItem['CatalogItem']['id']));
+	echo $this->Form->hidden('OrderItem.name' , array('value' => $dealItem['CatalogItem']['name']));
+	echo $this->Form->hidden('OrderItem.length' , array('value' => $dealItem['CatalogItem']['length']));
+	echo $this->Form->hidden('OrderItem.width' , array('value' => $dealItem['CatalogItem']['width']));
+	echo $this->Form->hidden('OrderItem.height' , array('value' => $dealItem['CatalogItem']['height']));
+	echo $this->Form->hidden('OrderItem.weight' , array('value' => $dealItem['CatalogItem']['weight']));
+	echo $this->Form->hidden('OrderItem.assignee_id' , array('value' => $this->Session->read('Auth.User.id')));
 
-	echo $form->hidden('OrderItem.model' , array('value' => $dealItem['CatalogItem']['model']));
-	echo $form->hidden('OrderItem.foreign_key' , array('value' => $dealItem['CatalogItem']['foreign_key']));
-	echo $form->end(__('Add to Cart' , true));
+	echo $this->Form->hidden('OrderItem.model' , array('value' => $dealItem['CatalogItem']['model']));
+	echo $this->Form->hidden('OrderItem.foreign_key' , array('value' => $dealItem['CatalogItem']['foreign_key']));
+	echo $this->Form->end(__('Add to Cart' , true));
 	*/ ?>
     <?php 
 	echo $this->Html->link('Yes! I Want One', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'view', $dealItem['CatalogItem']['id']), array('id' => 'dealItemViewButton'));

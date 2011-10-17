@@ -12,6 +12,6 @@
 					'legend' => $opt['CategoryOption']['name'],
 					'type' => $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
 		}
-		echo $form->input('CatalogItem.stock_item', array('label' => 'Default Stock'));
+		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Default Stock'));
 	}
 ?>

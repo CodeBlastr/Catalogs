@@ -23,11 +23,11 @@
       <?php if(!$no_stock) : ?>
       <div class="action catalogItemAddCart">
         <?php 
-		echo $form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
-		echo $form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1));
-		echo $form->hidden('OrderItem.parent_id' , array('value' => $catalogItem['CatalogItem']['id']));
-		echo $form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItem['CatalogItem']['id']));
-		echo $form->hidden('OrderItem.price' , array('value' => $catalogItem['CatalogItem']['price']));	
+		echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
+		echo $this->Form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1));
+		echo $this->Form->hidden('OrderItem.parent_id' , array('value' => $catalogItem['CatalogItem']['id']));
+		echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItem['CatalogItem']['id']));
+		echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItem['CatalogItem']['price']));	
 	 	?>
         <div id="stock"> </div>
         <?php 
@@ -61,7 +61,7 @@
 				}
 				
 				if (!empty($sel))
-					echo $form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
+					echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
 						array('options'=>$sel, 'multiple'=>'checkbox', 'div'=>false, 
 								'selected' => $selected, 'class' => 'CatalogAttribute', 'legend' => false,
 								//'default' => $default,
@@ -72,8 +72,8 @@
         <?php
 			}
 		}
-		echo $form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));
-		echo $form->end();
+		echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));
+		echo $this->Form->end();
 		?>
       </div>
       <?php else:?>

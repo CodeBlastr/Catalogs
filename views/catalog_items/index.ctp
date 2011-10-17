@@ -2,7 +2,7 @@
 echo $this->element('products'); 
 
 // set the contextual menu items
-$menu->setValue(array(
+$this->Menu->setValue(array(
 	array(
 		'heading' => 'Catalog Items',
 		'items' => array(

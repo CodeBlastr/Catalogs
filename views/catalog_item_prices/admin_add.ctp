@@ -1,5 +1,5 @@
 <div class="catalogItemPrices form">
-<?php echo $form->create('CatalogItemPrice', array('url' => $this->Html->url($referer)));?>
+<?php echo $this->Form->create('CatalogItemPrice', array('url' => $this->Html->url($referer)));?>
 	<fieldset>
  		<legend><?php __('Add Price');?></legend>
 <?php
@@ -7,10 +7,10 @@
 ?>
 
 <?php		echo 'Product Item: ' . $this->data['CatalogItem']['name'];
-			echo $form->input('Catalog.id.0',
+			echo $this->Form->input('Catalog.id.0',
 				 array('value'=>$this->data['CatalogItem']['catalog_id']));
 		
-			echo $form->input('CatalogItem.price', array('readonly'=>true, 'label'=>'Default Price'));
+			echo $this->Form->input('CatalogItem.price', array('readonly'=>true, 'label'=>'Default Price'));
 		
 	?>
 <table>
@@ -27,12 +27,12 @@
 		<td><?php echo $ug;?></td>
 		<?php foreach($priceTypes as $ptID => $pt) {
 			echo '<td>';
-			echo $form->hidden("CatalogItemPrice.{$index}.id");
-			echo $form->input("CatalogItemPrice.{$index}.price",
+			echo $this->Form->hidden("CatalogItemPrice.{$index}.id");
+			echo $this->Form->input("CatalogItemPrice.{$index}.price",
 				array('default'=>0, 'div'=>false, 'label'=>false));
-			echo $form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->data['CatalogItem']['id'])); 
-			echo $form->hidden("CatalogItemPrice.{$index}.user_role_id", array('default'=>$ugID));
-			echo $form->hidden("CatalogItemPrice.{$index}.price_type_id", array('default'=>$ptID));
+			echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->data['CatalogItem']['id'])); 
+			echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('default'=>$ugID));
+			echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('default'=>$ptID));
 			echo '</td>';
 			$index++;
 		}?>
@@ -40,7 +40,7 @@
 	<?php }?>
 </table>
 	</fieldset>
-<?php echo $form->end('Submit');?>
+<?php echo $this->Form->end('Submit');?>
 </div>
 <div class="actions">
 	<ul>

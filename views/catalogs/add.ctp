@@ -1,22 +1,22 @@
 <div class="catalogs form">
-<?php echo $form->create('Catalog');?>
+<?php echo $this->Form->create('Catalog');?>
 	<fieldset>
  		<legend><?php __('Add Catalog');?></legend>
 	<?php
-		echo $form->input('name');
-		#echo $form->input('alias_id');
-		echo $form->input('summary');
-		echo $form->input('introduction');
-		echo $form->input('description');
-		echo $form->input('additional');
-		#echo $form->input('start_date');
-		#echo $form->input('end_date');
-		echo $form->input('published');
-		echo $form->hidden('creator_id', array('value' => $this->Session->read('Auth.User.id')));
-		echo $form->hidden('modifier_id', array('value' => $this->Session->read('Auth.User.id')));
+		echo $this->Form->input('name');
+		#echo $this->Form->input('alias_id');
+		echo $this->Form->input('summary');
+		echo $this->Form->input('introduction');
+		echo $this->Form->input('description');
+		echo $this->Form->input('additional');
+		#echo $this->Form->input('start_date');
+		#echo $this->Form->input('end_date');
+		echo $this->Form->input('published');
+		echo $this->Form->hidden('creator_id', array('value' => $this->Session->read('Auth.User.id')));
+		echo $this->Form->hidden('modifier_id', array('value' => $this->Session->read('Auth.User.id')));
 	?>
 	</fieldset>
-<?php echo $form->end('Submit');?>
+<?php echo $this->Form->end('Submit');?>
 </div>
 <div class="actions">
 	<ul>

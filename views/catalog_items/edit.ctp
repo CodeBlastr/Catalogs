@@ -20,22 +20,22 @@
  ?>
 <div class="catalogItemAdd form">
 	<?php 
-	echo $form->create('CatalogItem', array('type' => 'file'));
+	echo $this->Form->create('CatalogItem', array('type' => 'file'));
 	?>
     <h2><?php __('Edit '.$this->data['CatalogItem']['name']); ?></h2>
     <fieldset>
     	<?php
-		echo $form->input('CatalogItem.id');			
-		echo $form->input('CatalogItem.published', array('default' => 1, 'type' => 'hidden'));
-		echo $form->input('CatalogItem.name', array('label' => 'Item display name ('.$this->Html->link('edit images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->data['CatalogItem']['id'])).')'));
-		echo $form->input('CatalogItem.sku');
-		echo $form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
+		echo $this->Form->input('CatalogItem.id');			
+		echo $this->Form->input('CatalogItem.published', array('default' => 1, 'type' => 'hidden'));
+		echo $this->Form->input('CatalogItem.name', array('label' => 'Item display name ('.$this->Html->link('edit images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->data['CatalogItem']['id'])).')'));
+		echo $this->Form->input('CatalogItem.sku');
+		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
 					
-		echo $form->input('CatalogItem.catalog_item_brand_id', array('label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
-		echo $form->input('CatalogItem.price', array('label' => 'What is the retail price? ('.$this->Html->link('advanced pricing', array('plugin' => 'catalogs', 'controller' => 'catalog_item_prices', 'action' => 'edit', $this->data['CatalogItem']['id'])/*, array('id' => 'priceID')*/).')'));
-		echo $form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
-		echo $form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
-		echo $form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy, or full description for this item?', 'after' => 'This is what people will read in order to decide if they want it.'));
+		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
+		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price? ('.$this->Html->link('advanced pricing', array('plugin' => 'catalogs', 'controller' => 'catalog_item_prices', 'action' => 'edit', $this->data['CatalogItem']['id'])/*, array('id' => 'priceID')*/).')'));
+		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
+		echo $this->Form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
+		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy, or full description for this item?', 'after' => 'This is what people will read in order to decide if they want it.'));
 		?>
     </fieldset>
 	<fieldset>
@@ -45,39 +45,39 @@
 		$radioOptions = array();
 		if (!empty($fedexSettings)) : foreach($fedexSettings as $k => $val) :
 			$radioOptions[$k] = $val ;
-			echo $form->input('CatalogItem.weight', array('label' => 'Weight (lbs)'));
-			echo $form->input('CatalogItem.height', array('label' => 'Height (8-70 inches)'));
-			echo $form->input('CatalogItem.width', array('label' => 'Width (50-119 inches)'));
-			echo $form->input('CatalogItem.length', array('label' => 'Length (50-119 inches)'));
+			echo $this->Form->input('CatalogItem.weight', array('label' => 'Weight (lbs)'));
+			echo $this->Form->input('CatalogItem.height', array('label' => 'Height (8-70 inches)'));
+			echo $this->Form->input('CatalogItem.width', array('label' => 'Width (50-119 inches)'));
+			echo $this->Form->input('CatalogItem.length', array('label' => 'Length (50-119 inches)'));
 		endforeach; endif;
 		$radioOptions += array('FIXEDSHIPPING' => 'FIX SHIPPING', 'FREESHIPPING' => 'FREE SHIPPING') ;
-		echo $form->radio('CatalogItem.shipping_type', $radioOptions, array('class' => 'shipping_type' , 'default' => ''));
+		echo $this->Form->radio('CatalogItem.shipping_type', $radioOptions, array('class' => 'shipping_type' , 'default' => ''));
 	 	?>
 	 	<div id='ShippingPrice'>
-	 		<?php echo $form->input('CatalogItem.shipping_charge');?>
+	 		<?php echo $this->Form->input('CatalogItem.shipping_charge');?>
 		</div>
     </fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php __('Do you want to limit geographic availability of this item?');?></legend>
     	<?php
-		echo $form->input('Location.available', array('rows'=>1, 'cols' => 30,'label' => 'Zip Codes Available (comma separated)'));
-		echo $form->input('Location.restricted', array('rows'=>1, 'cols' => 30,'label' => 'Zip Codes Restricted (comma separated)'));
-		echo $form->hidden('Location.model', array('value' => Inflector::camelize(Inflector::singularize($this->name))));
+		echo $this->Form->input('Location.available', array('rows'=>1, 'cols' => 30,'label' => 'Zip Codes Available (comma separated)'));
+		echo $this->Form->input('Location.restricted', array('rows'=>1, 'cols' => 30,'label' => 'Zip Codes Restricted (comma separated)'));
+		echo $this->Form->hidden('Location.model', array('value' => Inflector::camelize(Inflector::singularize($this->name))));
 		?>
     </fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php __('Does this item have a schedule?');?></legend>
     	<?php	
-		echo $form->input('CatalogItem.start_date', array('empty' => true));
-		echo $form->input('CatalogItem.end_date', array('empty' => true));
+		echo $this->Form->input('CatalogItem.start_date', array('empty' => true));
+		echo $this->Form->input('CatalogItem.end_date', array('empty' => true));
 				
 		if (isset($this->data['CatalogItemPrice'])) :
 			foreach($this->data['CatalogItemPrice'] as $index => $val) :
-				echo $form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
-				echo $form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
-				echo $form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
-				echo $form->hidden("CatalogItemPrice.{$index}.user_role_id", array('value'=>$val['user_role_id']));
-				echo $form->hidden("CatalogItemPrice.{$index}.price_type_id", array('value'=>$val['price_type_id']));
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('value'=>$val['user_role_id']));
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('value'=>$val['price_type_id']));
 			endforeach;
 		endif;
 		$i = 0;
@@ -86,7 +86,7 @@
 			echo '<div id="divCategory'.$i.'">';
 			echo $i . ' '. $categories[$value];
 			echo $this->Html->link('Remove' , "javascript:rem('Category{$i}')", array('')); 
-			echo $form->hidden('Category.'.$i, array('value' => $value));
+			echo $this->Form->hidden('Category.'.$i, array('value' => $value));
 			echo '</div>';
 		}?>
 		<h3>Options</h3>
@@ -101,7 +101,7 @@
 					$sel[$child['CategoryOption']['id']] = $child['CategoryOption']['name'];
 				}
 				if (!empty($sel))
-					echo $form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
+					echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
 						array('options'=>$sel, 'multiple'=>'checkbox', 'label'=> false, 'div'=>false,
 								'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
 				echo '</fieldset>';
@@ -120,7 +120,7 @@
 	<fieldset>
  		<legend class="toggleClick"><?php __('Is this a recurring billing item?');?></legend>
 			<?php
-				echo $form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
+				echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
 																			trialOccurrences (No Of Billing Cycles For Trial),
 																			totalOccurrences (Total Billing Cycles),
 																			interval_length (How Many Months Do You Want In A Billing Cycle),
@@ -130,7 +130,7 @@
 	</fieldset>
 
 	<?php
-    echo $form->end('Submit');
+    echo $this->Form->end('Submit');
 	?>
 
 <script type="text/javascript">

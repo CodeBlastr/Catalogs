@@ -1,1 +1,1 @@
-<?php echo $form->select("CatalogItem.catalog_item_brand_id", $brands);?>
+<?php echo $this->Form->select("CatalogItem.catalog_item_brand_id", $brands);?>

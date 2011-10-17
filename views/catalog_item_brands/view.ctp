@@ -7,7 +7,7 @@
 <?php echo $this->element('products');  ?>
 
 <?php 
-$menu->setValue(array(
+$this->Menu->setValue(array(
 	array(
 		'heading' => 'Manufacturers',
 		'items' => array(
