@@ -1,0 +1,144 @@
+<fieldset>
+<?php echo $form->create('CatalogItem', array('type' => 'file', 'action' => 'edit_save', 'id'=>'CatalogItemAddForm'));?>
+ 		<legend><?php __('Add Product');?></legend>
+        <fieldset>
+	<?php 
+		echo $form->hidden('id');
+		echo $form->input('CatalogItem.sku', array('default'=>'0'));
+		echo $form->hidden('user_role_id', array('default'=>'0'));
+		
+		// might need to update this default thing later to an actual default group
+		echo $form->input('catalog_item_brand_id', array('label' => 'Manufacturer', 
+				'options' => $catalogItemBrands));
+		echo $form->input('CatalogItem.name', array('label' => 'Product Name'));
+		echo $form->input('CatalogItem.price', array('label' => 'Default Product Price'));
+		echo $form->input('CatalogItem.stock_item', array('label' => 'Inventory (empty = unlimited).'));
+	?>
+    	</fieldset>
+        <fieldset>
+        	<legend> Additional Details </legend>
+            <ul>
+<?php 
+		if (!empty($this->data['CatalogItem']['id']))
+		
+			echo '<li>'.$this->Html->link('Add Product Images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->data['CatalogItem']['id'])).'</li>';
+			echo '<li>'.$this->Html->link('Advanced Price Matrix', '#',array('id' => 'priceID')).'</li>';
+			echo '<li>'.$this->Html->link('Advanced Attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->data['CatalogItem']['id'])).'</li>';
+/*
+ * original code for hidden element when price matrix was on separate screen
+ * 		if (isset($this->data['CatalogItemPrice'])) {
+			foreach($this->data['CatalogItemPrice'] as $index => $val) {
+				echo $form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
+				echo $form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
+				echo $form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
+				echo $form->hidden("CatalogItemPrice.{$index}.user_role_id", array('value'=>$val['user_role_id']));
+				echo $form->hidden("CatalogItemPrice.{$index}.price_type_id", array('value'=>$val['price_type_id']));
+			}
+		}
+*/			?>
+			</ul>
+		</fieldset>
+<div id="advance-id" style="display:none">
+	<br></br>
+	<table>
+		<tr>
+			<th>User Roles</th>
+				<?php
+					foreach($priceTypes as $ptID => $pt) {
+						echo '<th>' . $pt . '</th>';
+					}?>
+		</tr>
+		<?php $index = 0;?>
+		<?php foreach($userRoles as $ugID => $ug) {?>
+		<tr>
+			<td><?php echo $ug;?></td>
+			<?php foreach($priceTypes as $ptID => $pt) {
+				echo '<td>';
+				echo $form->hidden("CatalogItemPrice.{$index}.id");
+				echo $form->input("CatalogItemPrice.{$index}.price",
+					array('default'=>0, 'div'=>false, 'label'=>false, 'cols'=>'8', 'rows'=>1));
+				echo $form->input('CatalogItem.stock_item', array('label' => 'Default Inventory Count'));	
+				echo $form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->data['CatalogItem']['id'])); 
+				echo $form->hidden("CatalogItemPrice.{$index}.user_role_id", array('default'=>$ugID));
+				echo $form->hidden("CatalogItemPrice.{$index}.price_type_id", array('default'=>$ptID));
+				echo '</td>';
+				$index++;
+			}?>
+		</tr>
+		<?php }?>
+	</table>	
+</div>			
+<?php 
+		
+		echo $form->input('CatalogItem.summary', array('type' => 'richtext'));
+		echo $form->input('CatalogItem.description', array('type' => 'richtext'));
+		echo $form->hidden('published', array('default' => 1, 'checked' => 'checked'));
+		echo $form->hidden('catalog_id', array( 'value' => $this->data['Catalog']['id'][0]));
+		/*echo '<b>Categories selected: </b>';
+		$i = 0;
+		foreach($this->data['Category'] as $value) {
+			++$i;
+			echo '<div id="divCategory'.$i.'">';
+			echo $i . ' '. $categories[$value];
+			echo $this->Html->link('Remove' , "javascript:rem('Category{$i}')", array('')); 
+			echo $form->hidden('Category.'.$i, array('value' => $value));
+			echo '<br />';
+			echo '</div>';
+		}?>
+		<h3>Options</h3>
+		<?php 
+		if(isset($options)) {
+			foreach($options as $key => $opt) {
+				echo '<div style ="float:left; width: 200px; clear:none;">';
+				echo '<fieldset>';
+				echo '<legend>' . $opt['CategoryOption']['name'] . '</legend>';
+				$sel = array();
+				foreach($opt['children'] as $child) {
+					$sel[$child['CategoryOption']['id']] = $child['CategoryOption']['name'];
+				}
+				if (!empty($sel))
+					echo $form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
+						array('options'=>$sel, 'multiple'=>'checkbox', 'label'=> false, 'div'=>false,
+								'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
+				echo '</fieldset>';
+				echo '</div';
+			}
+		}*/
+		?>
+		<fieldset>
+		<legend class="toggleClick">Location</legend>
+		<?php
+		echo $form->input('Location.available', array('label' => 'Zip Codes Available (comma separated)'));
+		echo $form->input('Location.restricted', array('label' => 'Zip Codes Restricted (comma separated)'));?>
+		</fieldset>
+    
+<?php echo $form->end('Submit');?>
+</fieldset>
+
+<script><!--
+
+$('#addCat').click(function(e){
+	e.preventDefault();
+	action = '<?php echo $this->Html->url(array('plugin'=>'categories',
+			 'controller'=>'categories', 'action'=>'choose_category', $this->data['CatalogItem']['catalog_id']))?>';
+	$("#CatalogItemAddForm").attr("action" , action);
+	$("#CatalogItemAddForm").submit(); 
+});
+
+$('#priceID').click(function(e){
+	e.preventDefault();
+	$('#advance-id').toggle();
+
+/*
+ * original code for hidden element when price matrix was on separate screen
+ */
+//	action = '<?php echo $this->Html->url(array('plugin'=>'catalogs',	'controller'=>'catalog_item_prices', 'action'=>'add'))?>';
+//	$("#CatalogItemAddForm").attr("action" , action);
+//	$("#CatalogItemAddForm").submit(); 
+});
+
+function rem($id) {
+	$('#div'+$id).remove();
+}
+-->
+</script>
