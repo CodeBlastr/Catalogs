@@ -431,7 +431,7 @@ class CatalogItemsController extends CatalogsAppController {
 				'RAND()',
 				),
 			));
-		if (!empty($catalogItems) && isset($this->params['requested'])) {
+		if (!empty($catalogItems) && isset($this->request->params['requested'])) {
         	return $catalogItems;
         } else {
 			return false;
