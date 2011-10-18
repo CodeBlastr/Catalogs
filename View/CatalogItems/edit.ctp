@@ -22,17 +22,17 @@
 	<?php 
 	echo $this->Form->create('CatalogItem', array('type' => 'file'));
 	?>
-    <h2><?php __('Edit '.$this->data['CatalogItem']['name']); ?></h2>
+    <h2><?php __('Edit '.$this->request->data['CatalogItem']['name']); ?></h2>
     <fieldset>
     	<?php
 		echo $this->Form->input('CatalogItem.id');			
 		echo $this->Form->input('CatalogItem.published', array('default' => 1, 'type' => 'hidden'));
-		echo $this->Form->input('CatalogItem.name', array('label' => 'Item display name ('.$this->Html->link('edit images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->data['CatalogItem']['id'])).')'));
+		echo $this->Form->input('CatalogItem.name', array('label' => 'Item display name ('.$this->Html->link('edit images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->request->data['CatalogItem']['id'])).')'));
 		echo $this->Form->input('CatalogItem.sku');
 		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
 					
 		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
-		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price? ('.$this->Html->link('advanced pricing', array('plugin' => 'catalogs', 'controller' => 'catalog_item_prices', 'action' => 'edit', $this->data['CatalogItem']['id'])/*, array('id' => 'priceID')*/).')'));
+		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price? ('.$this->Html->link('advanced pricing', array('plugin' => 'catalogs', 'controller' => 'catalog_item_prices', 'action' => 'edit', $this->request->data['CatalogItem']['id'])/*, array('id' => 'priceID')*/).')'));
 		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
 		echo $this->Form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
 		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy, or full description for this item?', 'after' => 'This is what people will read in order to decide if they want it.'));
@@ -71,8 +71,8 @@
 		echo $this->Form->input('CatalogItem.start_date', array('empty' => true));
 		echo $this->Form->input('CatalogItem.end_date', array('empty' => true));
 				
-		if (isset($this->data['CatalogItemPrice'])) :
-			foreach($this->data['CatalogItemPrice'] as $index => $val) :
+		if (isset($this->request->data['CatalogItemPrice'])) :
+			foreach($this->request->data['CatalogItemPrice'] as $index => $val) :
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
@@ -81,7 +81,7 @@
 			endforeach;
 		endif;
 		$i = 0;
-		if (!empty($this->data['Category'])) { foreach($this->data['Category'] as $value) {
+		if (!empty($this->request->data['Category'])) { foreach($this->request->data['Category'] as $value) {
 			++$i;
 			echo '<div id="divCategory'.$i.'">';
 			echo $i . ' '. $categories[$value];
@@ -114,7 +114,7 @@
 	<fieldset>
  		<legend class="toggleClick"><?php __('Does this item need to be categorized?');?></legend>
 			<?php
-				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categories, and '.$this->Html->link('advanced attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->data['CatalogItem']['id'])).')'));	 
+				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categories, and '.$this->Html->link('advanced attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->request->data['CatalogItem']['id'])).')'));	 
 			?>
 	</fieldset>
 	<fieldset>

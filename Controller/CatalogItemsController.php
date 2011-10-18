@@ -70,18 +70,18 @@ class CatalogItemsController extends CatalogsAppController {
 			));
 		$catalogItem = $this->CatalogItem->cleanItemPrice($catalogItem, $this->userRoleId);
 		
-		$this->data = $this->CatalogItem->find('first', 
+		$this->request->data = $this->CatalogItem->find('first', 
 				array('conditions'=>array('CatalogItem.id'=>$id), 'recursive'=>2,
 					'contain'=>array('Catalog.id', 'Category.id', 'CatalogItemBrand', 
 							'CategoryOption', 'CatalogItemPrice')));
 				// remodifying data to bring support for controls
-		$this->data['Catalog']['id'] = array('0' => $this->data['Catalog']['id']);
-		$this->data['Category'] = Set::extract('/Category/id', $this->data);
+		$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
+		$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
 		$catOptions = array();
 		
 		
 		$catOptions = $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-		'conditions'=>array('CategoryOption.category_id' => $this->data['Category']),
+		'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category']),
 		'order'=>'CategoryOption.type'
 		));
 		
@@ -126,15 +126,15 @@ class CatalogItemsController extends CatalogsAppController {
 	 */
 	function add($catalogItemBrandId = null) {
 		
-		if (!empty($this->data)) {
-			if(isset($this->data['Catalog']) && is_array($this->data['Catalog']['id']))
-				 $this->data['Catalog']['id'] = $this->data['Catalog']['id'][0];
-			$this->data['CatalogItem']['catalog_id'] = $this->data['Catalog']['id'];
+		if (!empty($this->request->data)) {
+			if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id']))
+				 $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
+			$this->request->data['CatalogItem']['catalog_id'] = $this->request->data['Catalog']['id'];
 			
-			$this->data['CatalogItem']['arb_settings'] = !empty($this->data['CatalogItem']['arb_settings']) 
-									? serialize(parse_ini_string($this->data['CatalogItem']['arb_settings'])) : '' ; 
+			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) 
+									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ; 
 			
-			if ($this->CatalogItem->add( $this->data, $this->Auth->user('id'))) {
+			if ($this->CatalogItem->add( $this->request->data, $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('CatalogItem saved.', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id, 'admin' => 0));
 			} else {
@@ -169,10 +169,10 @@ class CatalogItemsController extends CatalogsAppController {
 	 */
 	function edit($id = null) {
 		
-		if (!empty($this->data)) :
-			$this->data['CatalogItem']['arb_settings'] = !empty($this->data['CatalogItem']['arb_settings']) 
-									? serialize(parse_ini_string($this->data['CatalogItem']['arb_settings'])) : '' ; 		
-			if ($this->CatalogItem->add($this->data)) : 
+		if (!empty($this->request->data)) :
+			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) 
+									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ; 		
+			if ($this->CatalogItem->add($this->request->data)) : 
 				$this->Session->setFlash(__('Item saved', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id), 'success');
 			else : 
@@ -183,7 +183,7 @@ class CatalogItemsController extends CatalogsAppController {
 		
 		// the following block is to support edit
 		if (!empty($id)) :
-			$this->data = $this->CatalogItem->find('first', array(
+			$this->request->data = $this->CatalogItem->find('first', array(
 				'conditions' => array(
 					'CatalogItem.id' => $id),
 					'recursive'=>2,
@@ -196,31 +196,31 @@ class CatalogItemsController extends CatalogsAppController {
 						'Location',
 						)
 					));
-			if (!empty($this->data)) :
+			if (!empty($this->request->data)) :
 				// remodifying data to bring support for controls
-				$this->data['Catalog']['id'] = array('0' => $this->data['Catalog']['id']);
+				$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
 				# removed in order to work with the new checkboxes (instead of the old expanding category widget)
 				# rk 7/27/2011  # delete completely if nothing else is broken
-				# $this->data['Category'] = Set::extract('/Category/id', $this->data);
+				# $this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
 				$catOptions = array();
 				
 				//if arb_settings defined for CI then it will unserialize the values
-				if(isset($this->data['CatalogItem']['arb_settings'])) {
-					$arb_settings_array = unserialize($this->data['CatalogItem']['arb_settings']);
+				if(isset($this->request->data['CatalogItem']['arb_settings'])) {
+					$arb_settings_array = unserialize($this->request->data['CatalogItem']['arb_settings']);
 					$arb_settings_string = '';
 					foreach ($arb_settings_array as $key => $value ){
 						$arb_settings_string .= "$key = $value\n";
  					}
-					$this->data['CatalogItem']['arb_settings'] = $arb_settings_string ; 
+					$this->request->data['CatalogItem']['arb_settings'] = $arb_settings_string ; 
 				}
 				
-				foreach($this->data['CategoryOption'] as $catOpt) {
+				foreach($this->request->data['CategoryOption'] as $catOpt) {
 					if($catOpt['type'] == 'Option Type')
 						$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
 					else 
 						$catOptions[$catOpt['parent_id']] = $catOpt['id'];
 				}
-				$this->data['CategoryOption'] = $catOptions; 
+				$this->request->data['CategoryOption'] = $catOptions; 
 	
 				$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
 				$priceTypes = ($this->CatalogItem->CatalogItemPrice->PriceType->find('list', 
@@ -230,13 +230,13 @@ class CatalogItemsController extends CatalogsAppController {
 			
 				$this->set('catalogs', $this->CatalogItem->Catalog->find('list'));
 				$this->set('catalogBrands', 
-						$this->CatalogItem->CatalogItemBrand->get_brands($this->data['Catalog']['id'][0]));
+						$this->CatalogItem->CatalogItemBrand->get_brands($this->request->data['Catalog']['id'][0]));
 				$this->set('categories', $this->CatalogItem->Category->generatetreelist());
-				#NOTE : Previously this said category_id => $this->data['Category'] --- but that is an array
+				#NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
 				# and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
 				# this will be a problem for items in multiple categories.
 				$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-					'conditions'=>array('CategoryOption.category_id' => $this->data['Category'][0]['id']),
+					'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category'][0]['id']),
 					'order'=>'CategoryOption.type'
 				)));
 			else : 
@@ -254,10 +254,10 @@ class CatalogItemsController extends CatalogsAppController {
 	 * update function is used for create child catalog items with category options selected  
 	 */
 	function update($parentId = null) {
-		if (!empty($this->data)) {
+		if (!empty($this->request->data)) {
 			$data = $this->CatalogItem->find('first', array(
 				'conditions' => array(
-					'CatalogItem.id' => $this->data['CatalogItem']['parent_id']
+					'CatalogItem.id' => $this->request->data['CatalogItem']['parent_id']
 					), 
 				'recursive' => 2,
 				'contain' => array(
@@ -273,21 +273,21 @@ class CatalogItemsController extends CatalogsAppController {
 				$data['Category'][$k] = $data['Category'][$k]['id'];
 			} 		
 			# setting values to parent values
-			foreach($this->data['CatalogItem'] as $fieldName => $fieldValue) {
+			foreach($this->request->data['CatalogItem'] as $fieldName => $fieldValue) {
 				if(!empty($fieldValue)) {
 					$data['CatalogItem'][$fieldName] = $fieldValue ;
 				}
 			}
 			$data['CatalogItem']['id'] = '' ;
-			$data['GalleryImage'] = $this->data['GalleryImage'] ;
-			$data['CategoryOption'] = $this->data['CategoryOption'];
+			$data['GalleryImage'] = $this->request->data['GalleryImage'] ;
+			$data['CategoryOption'] = $this->request->data['CategoryOption'];
 			
 			//create new CI
 			if ($this->CatalogItem->add($data, $this->Auth->user('id'))) {
-				$this->redirect(array('action' => 'edit', $this->data['CatalogItem']['parent_id']));
+				$this->redirect(array('action' => 'edit', $this->request->data['CatalogItem']['parent_id']));
 			} else {
 				$this->Session->setFlash(__('New attribute save failed.', true));
-				$this->redirect(array('action' => 'update', $this->data['CatalogItem']['parent_id']));
+				$this->redirect(array('action' => 'update', $this->request->data['CatalogItem']['parent_id']));
 			}
 		}
 		
@@ -313,17 +313,17 @@ class CatalogItemsController extends CatalogsAppController {
 	function get_catalog_item($id = null) {
 		$this->layout = false;
 		if ($id) {
-				$this->data = $this->CatalogItem->find('first', 
+				$this->request->data = $this->CatalogItem->find('first', 
 						array('conditions'=>array('CatalogItem.id'=>$id), 'recursive'=>2,
 							'contain'=>array('Catalog.id', 'Category.id', 'CatalogItemBrand', 
 									'CategoryOption', 'CatalogItemPrice')));
 				// remodifying data to bring support for controls
-				$this->data['Catalog']['id'] = array('0' => $this->data['Catalog']['id']);
-				$this->data['Category'] = Set::extract('/Category/id', $this->data);
+				$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
+				$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
 				$catOptions = array();
 				
 				$catOptions = $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-				'conditions'=>array('CategoryOption.category_id' => $this->data['Category']),
+				'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category']),
 				'order'=>'CategoryOption.type'
 				));
 				
@@ -340,10 +340,10 @@ class CatalogItemsController extends CatalogsAppController {
 	 */
 	
 	function get_stock() {
-		if(!empty($this->data)) {
+		if(!empty($this->request->data)) {
 			$count_options = 0 ;
 			$category_ids = array();
-			foreach($this->data['CategoryOption'] as $k => $val) {
+			foreach($this->request->data['CategoryOption'] as $k => $val) {
 				if(is_array($val)) {
 					$count_options += count($val);
 					$category_ids = array_merge($category_ids, $val);
@@ -460,7 +460,7 @@ class CatalogItemsController extends CatalogsAppController {
 	 */
 	
 	function buy(){
-		$ret = $this->CatalogItem->OrderItem->addToCart($this->data, $this->Auth->user("id"));
+		$ret = $this->CatalogItem->OrderItem->addToCart($this->request->data, $this->Auth->user("id"));
 		if ($ret['state']) {
 			$this->redirect(array('plugin'=>'orders','controller'=>'order_transactions' , 'action'=>'checkout'));
 		}
@@ -477,11 +477,11 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->autoRender = false;
 		
 		// remove null entries
-		$category_options = array_filter($this->data['CategoryOption']);
+		$category_options = array_filter($this->request->data['CategoryOption']);
 		
 		// clicked category option
 		//get catalog_items children bases on parent_id
-		$catalogItemId = !empty($this->data['OrderItem']['parent_id']) ? $this->data['OrderItem']['parent_id'] : $this->data['OrderItem']['catalog_item_id'];
+		$catalogItemId = !empty($this->request->data['OrderItem']['parent_id']) ? $this->request->data['OrderItem']['parent_id'] : $this->request->data['OrderItem']['catalog_item_id'];
 		$ci = $this->CatalogItem->find('list', array(
 				'fields' => array('price', 'stock_item', 'id'),
 				'conditions'=>array('CatalogItem.parent_id' => $catalogItemId ),

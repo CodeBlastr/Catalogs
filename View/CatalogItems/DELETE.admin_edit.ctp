@@ -9,10 +9,10 @@
 		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('label' => 'Brand'));
 		echo $this->Form->input('CatalogItem.name', array('label' => 'Product Name'));
 		echo $this->Form->input('CatalogItem.price', array('label' => 'Default Product Price'));
-		if (!empty($this->data['CatalogItem']['id']))
+		if (!empty($this->request->data['CatalogItem']['id']))
 			echo $this->Html->link('Advanced Price Matrix', '#',array('id' => 'priceID'));
-		if (isset($this->data['CatalogItemPrice'])) {
-			foreach($this->data['CatalogItemPrice'] as $index => $val) {
+		if (isset($this->request->data['CatalogItemPrice'])) {
+			foreach($this->request->data['CatalogItemPrice'] as $index => $val) {
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
@@ -30,10 +30,10 @@
 		
 		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'ckeSettings' => array('buttons' => array('Bold','Italic','Underline','FontSize','TextColor','BGColor','-','NumberedList','BulletedList','Blockquote','JustifyLeft','JustifyCenter','JustifyRight','-','Link','Unlink','-', 'Image'))));
 		echo $this->Form->hidden('published', array('default' => 1, 'checked' => 'checked'));
-		echo $this->Form->hidden('catalog_id', array( 'value' => $this->data['Catalog']['id'][0]));
+		echo $this->Form->hidden('catalog_id', array( 'value' => $this->request->data['Catalog']['id'][0]));
 		echo '<b>Categories selected: </b>';
 		$i = 0;
-		foreach($this->data['Category'] as $value) {
+		foreach($this->request->data['Category'] as $value) {
 			++$i;
 			echo '<div id="divCategory'.$i.'">';
 			echo $i . ' '. $categories[$value];
@@ -80,7 +80,7 @@
 $('#addCat').click(function(e){
 	e.preventDefault();
 	action = '<?php echo $this->Html->url(array('plugin'=>'categories',
-			 'controller'=>'categories', 'action'=>'choose_category', $this->data['CatalogItem']['catalog_id'],'admin'=>true))?>';
+			 'controller'=>'categories', 'action'=>'choose_category', $this->request->data['CatalogItem']['catalog_id'],'admin'=>true))?>';
 	$("#CatalogItemAddForm").attr("action" , action);
 	$("#CatalogItemAddForm").submit(); 
 });

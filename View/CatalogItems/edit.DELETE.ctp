@@ -19,15 +19,15 @@
         	<legend> Additional Details </legend>
             <ul>
 <?php 
-		if (!empty($this->data['CatalogItem']['id']))
+		if (!empty($this->request->data['CatalogItem']['id']))
 		
-			echo '<li>'.$this->Html->link('Add Product Images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->data['CatalogItem']['id'])).'</li>';
+			echo '<li>'.$this->Html->link('Add Product Images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->request->data['CatalogItem']['id'])).'</li>';
 			echo '<li>'.$this->Html->link('Advanced Price Matrix', '#',array('id' => 'priceID')).'</li>';
-			echo '<li>'.$this->Html->link('Advanced Attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->data['CatalogItem']['id'])).'</li>';
+			echo '<li>'.$this->Html->link('Advanced Attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->request->data['CatalogItem']['id'])).'</li>';
 /*
  * original code for hidden element when price matrix was on separate screen
- * 		if (isset($this->data['CatalogItemPrice'])) {
-			foreach($this->data['CatalogItemPrice'] as $index => $val) {
+ * 		if (isset($this->request->data['CatalogItemPrice'])) {
+			foreach($this->request->data['CatalogItemPrice'] as $index => $val) {
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
@@ -58,7 +58,7 @@
 				echo $this->Form->input("CatalogItemPrice.{$index}.price",
 					array('default'=>0, 'div'=>false, 'label'=>false, 'cols'=>'8', 'rows'=>1));
 				echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Default Inventory Count'));	
-				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->data['CatalogItem']['id'])); 
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->request->data['CatalogItem']['id'])); 
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('default'=>$ugID));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('default'=>$ptID));
 				echo '</td>';
@@ -73,10 +73,10 @@
 		echo $this->Form->input('CatalogItem.summary', array('type' => 'richtext'));
 		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext'));
 		echo $this->Form->hidden('published', array('default' => 1, 'checked' => 'checked'));
-		echo $this->Form->hidden('catalog_id', array( 'value' => $this->data['Catalog']['id'][0]));
+		echo $this->Form->hidden('catalog_id', array( 'value' => $this->request->data['Catalog']['id'][0]));
 		/*echo '<b>Categories selected: </b>';
 		$i = 0;
-		foreach($this->data['Category'] as $value) {
+		foreach($this->request->data['Category'] as $value) {
 			++$i;
 			echo '<div id="divCategory'.$i.'">';
 			echo $i . ' '. $categories[$value];
@@ -120,7 +120,7 @@
 $('#addCat').click(function(e){
 	e.preventDefault();
 	action = '<?php echo $this->Html->url(array('plugin'=>'categories',
-			 'controller'=>'categories', 'action'=>'choose_category', $this->data['CatalogItem']['catalog_id']))?>';
+			 'controller'=>'categories', 'action'=>'choose_category', $this->request->data['CatalogItem']['catalog_id']))?>';
 	$("#CatalogItemAddForm").attr("action" , action);
 	$("#CatalogItemAddForm").submit(); 
 });

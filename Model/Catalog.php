@@ -67,7 +67,7 @@ class Catalog extends CatalogsAppModel {
 			$this->create();
 			$result = $this->save($data);
 			if ($result !== false) {
-				$this->data = array_merge($data, $result);
+				$this->request->data = array_merge($data, $result);
 				return true;
 			} else {
 				throw new Exception(__d('categories', 'Could not save the category, please check your inputs.', true));

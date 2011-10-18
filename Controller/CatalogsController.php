@@ -67,9 +67,9 @@ class CatalogsController extends CatalogsAppController {
 	}
 
 	function add() {
-		if (!empty($this->data)) {
+		if (!empty($this->request->data)) {
 			$this->Catalog->create();
-			if ($this->Catalog->save($this->data)) {
+			if ($this->Catalog->save($this->request->data)) {
 				$this->flash(__('Catalog saved.', true), array('action'=>'index'));
 			} else {
 			}
@@ -77,17 +77,17 @@ class CatalogsController extends CatalogsAppController {
 	}
 
 	function edit($id = null) {
-		if (!$id && empty($this->data)) {
+		if (!$id && empty($this->request->data)) {
 			$this->flash(__('Invalid Catalog', true), array('action'=>'index'));
 		}
-		if (!empty($this->data)) {
-			if ($this->Catalog->save($this->data)) {
+		if (!empty($this->request->data)) {
+			if ($this->Catalog->save($this->request->data)) {
 				$this->flash(__('The Catalog has been saved.', true), array('action'=>'index'));
 			} else {
 			}
 		}
-		if (empty($this->data)) {
-			$this->data = $this->Catalog->read(null, $id);
+		if (empty($this->request->data)) {
+			$this->request->data = $this->Catalog->read(null, $id);
 		}
 	}
 

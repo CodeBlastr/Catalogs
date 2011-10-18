@@ -74,8 +74,8 @@
 		echo $this->Form->input('CatalogItem.start_date', array('empty' => true));
 		echo $this->Form->input('CatalogItem.end_date', array('empty' => true));
 				
-		if (isset($this->data['CatalogItemPrice'])) :
-			foreach($this->data['CatalogItemPrice'] as $index => $val) :
+		if (isset($this->request->data['CatalogItemPrice'])) :
+			foreach($this->request->data['CatalogItemPrice'] as $index => $val) :
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
@@ -84,7 +84,7 @@
 			endforeach;
 		endif;
 		$i = 0;
-		if (!empty($this->data['Category'])) { foreach($this->data['Category'] as $value) {
+		if (!empty($this->request->data['Category'])) { foreach($this->request->data['Category'] as $value) {
 			++$i;
 			echo '<div id="divCategory'.$i.'">';
 			echo $i . ' '. $categories[$value];

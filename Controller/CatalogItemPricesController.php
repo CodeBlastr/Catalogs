@@ -39,10 +39,10 @@ class CatalogItemPricesController extends CatalogsAppController {
 	}
 
 	function edit($catalogItemId = null) {
-		if (!empty($this->data['CatalogItemPrice'])) : 
-			if ($this->CatalogItemPrice->saveAll($this->data['CatalogItemPrice'])) :
+		if (!empty($this->request->data['CatalogItemPrice'])) : 
+			if ($this->CatalogItemPrice->saveAll($this->request->data['CatalogItemPrice'])) :
 				$this->Session->setFlash(__('Successful price update.', true));
-				$this->redirect(array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'edit', $this->data['CatalogItemPrice'][0]['catalog_item_id']));
+				$this->redirect(array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'edit', $this->request->data['CatalogItemPrice'][0]['catalog_item_id']));
 			else : 
 				$this->Session->setFlash(__('Advanced pricing save failed.', true));
 				$this->redirect($this->referer());
@@ -83,7 +83,7 @@ class CatalogItemPricesController extends CatalogsAppController {
 	}
 
 	function admin_add($catalogItemId = null) {
-		if (!empty($this->data)) {
+		if (!empty($this->request->data)) {
 			$this->set('referer', $this->referer());
 			$userRoles = $this->CatalogItemPrice->UserRole->find('list');
 			$priceTypes = ($this->CatalogItemPrice->PriceType->find('list', array('conditions' => array('PriceType.type' => 'PRICETYPE'),)));
@@ -92,17 +92,17 @@ class CatalogItemPricesController extends CatalogsAppController {
 	}
 
 	function admin_edit($id = null) {
-		if (!$id && empty($this->data)) {
+		if (!$id && empty($this->request->data)) {
 			$this->flash(__('Invalid Price', true), array('action'=>'index'));
 		}
-		if (!empty($this->data)) {
-			if ($this->CatalogItemPrice->save($this->data)) {
+		if (!empty($this->request->data)) {
+			if ($this->CatalogItemPrice->save($this->request->data)) {
 				$this->flash(__('The Price has been saved.', true), array('action'=>'index'));
 			} else {
 			}
 		}
-		if (empty($this->data)) {
-			$this->data = $this->CatalogItemPrice->read(null, $id);
+		if (empty($this->request->data)) {
+			$this->request->data = $this->CatalogItemPrice->read(null, $id);
 		}
 		$userRoles = $this->CatalogItemPrice->UserRole->find('list');
 		$catalogItems = $this->CatalogItemPrice->CatalogItem->find('list');

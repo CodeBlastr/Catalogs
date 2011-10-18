@@ -6,9 +6,9 @@
 	echo $this->element('hidden_item', array('plugin' => 'catalogs') );
 ?>
 
-<?php		echo 'Product Item: ' . $this->data['CatalogItem']['name'];
+<?php		echo 'Product Item: ' . $this->request->data['CatalogItem']['name'];
 			echo $this->Form->input('Catalog.id.0',
-				 array('value'=>$this->data['CatalogItem']['catalog_id']));
+				 array('value'=>$this->request->data['CatalogItem']['catalog_id']));
 		
 			echo $this->Form->input('CatalogItem.price', array('readonly'=>true, 'label'=>'Default Price'));
 		
@@ -30,7 +30,7 @@
 			echo $this->Form->hidden("CatalogItemPrice.{$index}.id");
 			echo $this->Form->input("CatalogItemPrice.{$index}.price",
 				array('default'=>0, 'div'=>false, 'label'=>false));
-			echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->data['CatalogItem']['id'])); 
+			echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$this->request->data['CatalogItem']['id'])); 
 			echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('default'=>$ugID));
 			echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('default'=>$ptID));
 			echo '</td>';

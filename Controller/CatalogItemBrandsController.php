@@ -41,8 +41,8 @@ class CatalogItemBrandsController extends CatalogsAppController {
 
 
 	function add() {
-		if (!empty($this->data)) {			
-			if ($this->CatalogItemBrand->add($this->data)) {
+		if (!empty($this->request->data)) {			
+			if ($this->CatalogItemBrand->add($this->request->data)) {
 				$this->Session->setFlash(__('The CatalogItemBrand has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -53,16 +53,16 @@ class CatalogItemBrandsController extends CatalogsAppController {
 	}
 
 	function edit($id = null) {
-		if (!empty($this->data)) {			
-			if ($this->CatalogItemBrand->save($this->data)) {
+		if (!empty($this->request->data)) {			
+			if ($this->CatalogItemBrand->save($this->request->data)) {
 				$this->Session->setFlash(__('The CatalogItemBrand has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
 				$this->Session->setFlash(__('The CatalogItemBrand could not be saved. Please, try again.', true));
 			}
 		}
-		if (empty($this->data)) {
-			$this->data = $this->CatalogItemBrand->read(null, $id);
+		if (empty($this->request->data)) {
+			$this->request->data = $this->CatalogItemBrand->read(null, $id);
 			$this->set('catalogs', $this->CatalogItemBrand->Catalog->find('list'));
 		}
 	}
