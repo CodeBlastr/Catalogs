@@ -1,7 +1,7 @@
 <div class="catalogItemPrices form">
 <?php echo $this->Form->create('CatalogItemPrice');?>
 	<fieldset>
- 		<legend><?php __('Add Price');?></legend>
+ 		<legend><?php echo __('Add Price');?></legend>
 <?php
 	echo $this->element('hidden_item', array('plugin' => 'catalogs') );
 ?>

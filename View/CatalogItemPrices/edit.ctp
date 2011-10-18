@@ -1,7 +1,7 @@
 <div class="catalogItemPrices form">
 <?php echo $this->Form->create('CatalogItemPrice');?>
 	<fieldset>
- 		<legend><?php __('Advanced Pricing for '.$catalogItem['CatalogItem']['name'].' : Default Price '.$catalogItem['CatalogItem']['price']);?></legend>
+ 		<legend><?php echo __('Advanced Pricing for '.$catalogItem['CatalogItem']['name'].' : Default Price '.$catalogItem['CatalogItem']['price']);?></legend>
 <table>
 	<tr>
 		<th>User Roles</th>

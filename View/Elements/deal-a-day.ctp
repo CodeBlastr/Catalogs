@@ -53,7 +53,7 @@ if (!empty($dealItem)) {
   
   <div class="actions">
     <div class="dealItemPrice">
-      <?php __('$ '); echo (!empty($dealItem['CatalogItemPrice'][0]['price']) ? $dealItem['CatalogItemPrice'][0]['price'] : $dealItem['CatalogItem']['price']); ?>
+      <?php echo __('$ '); echo (!empty($dealItem['CatalogItemPrice'][0]['price']) ? $dealItem['CatalogItemPrice'][0]['price'] : $dealItem['CatalogItem']['price']); ?>
     </div>
     
     <div class="action dealItemCartText">
@@ -68,7 +68,7 @@ if (!empty($dealItem)) {
       <?php if($itemInCart):?>
       <?php echo $this->Html->link(__($this->Html->tag('span', 'view cart', array('class' => 'button')), true), array('plugin' => 'orders', 'controller'=>'order_items' , 'action'=>'cart'), array('id' => 'viewCart', 'class' => 'button', 'escape' => false));?> <?php printf("You have %d of %s in your cart" , $itemInCart , $dealItem["CatalogItem"]["name"])?>
       <?php else: ?>
-      <?php __("This item is not in your cart."); ?>
+      <?php echo __("This item is not in your cart."); ?>
       <?php endif; */ ?>
     </div>
     <div class="action dealItemAddCart">

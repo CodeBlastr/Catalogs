@@ -1,7 +1,7 @@
 <div class="catalogItemPrices form">
 <?php echo $this->Form->create('CatalogItemPrice');?>
 	<fieldset>
- 		<legend><?php __('Edit Price');?></legend>
+ 		<legend><?php echo __('Edit Price');?></legend>
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('user_role_id');

@@ -1,5 +1,5 @@
 <div class="catalogItemPrices index">
-<h2><?php __('CatalogItemPrices');?></h2>
+<h2><?php echo __('CatalogItemPrices');?></h2>
 <p>
 <?php
 echo $this->Paginator->counter(array(
@@ -12,7 +12,7 @@ echo $this->Paginator->counter(array(
 	<th><?php echo $this->Paginator->sort('user_role_id');?></th>
 	<th><?php echo $this->Paginator->sort('catalog_item_id');?></th>
 	<th><?php echo $this->Paginator->sort('price');?></th>
-	<th class="actions"><?php __('Actions');?></th>
+	<th class="actions"><?php echo __('Actions');?></th>
 </tr>
 <?php
 $i = 0;

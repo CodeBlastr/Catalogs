@@ -32,7 +32,7 @@ foreach ($catalogItems as $catalogItem):
         </div>
         
 	    <div class="indexCell catalogItemPrice" id="catalogItemPrice<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
-    		<?php __('$'); ?><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?>
+    		<?php echo __('$'); ?><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?>
         </div>
         
 	    <div class="indexCell catalogItemAction" id="catalogItemAction<?php echo $catalogItem["CatalogItem"]["id"]; ?>">

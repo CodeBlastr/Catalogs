@@ -1,7 +1,7 @@
 <div class="catalogs form">
 <?php echo $this->Form->create('Catalog');?>
 	<fieldset>
- 		<legend><?php __('Edit Catalog');?></legend>
+ 		<legend><?php echo __('Edit Catalog');?></legend>
 	<?php
 		echo $this->Form->input('id');
 		// echo $this->Form->input('parent_id');

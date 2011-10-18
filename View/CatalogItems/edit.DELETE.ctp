@@ -1,6 +1,6 @@
 <fieldset>
 <?php echo $this->Form->create('CatalogItem', array('type' => 'file', 'action' => 'edit_save', 'id'=>'CatalogItemAddForm'));?>
- 		<legend><?php __('Add Product');?></legend>
+ 		<legend><?php echo __('Add Product');?></legend>
         <fieldset>
 	<?php 
 		echo $this->Form->hidden('id');

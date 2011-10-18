@@ -17,7 +17,7 @@
   <div class="catalogItemDescription"> <?php echo $catalogItem['CatalogItem']['description']; ?> </div>
   <div class="actions">
     <div class="catalogItemPrice">
-      <?php __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?></span>
+      <?php echo __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?></span>
     </div>
     <div class="action catalogItemCartText">
       <?php if(!$no_stock) : ?>

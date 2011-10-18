@@ -1,5 +1,5 @@
 <div class="catalogBrands form">
-<h2><?php __('Add a New Brand');?></h2>
+<h2><?php echo __('Add a New Brand');?></h2>
 <?php echo $this->Form->create('CatalogItemBrand', array('enctype'=>'multipart/form-data'));?>
 	<fieldset>
 	<?php

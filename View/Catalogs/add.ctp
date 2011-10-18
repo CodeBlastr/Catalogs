@@ -1,7 +1,7 @@
 <div class="catalogs form">
 <?php echo $this->Form->create('Catalog');?>
 	<fieldset>
- 		<legend><?php __('Add Catalog');?></legend>
+ 		<legend><?php echo __('Add Catalog');?></legend>
 	<?php
 		echo $this->Form->input('name');
 		#echo $this->Form->input('alias_id');

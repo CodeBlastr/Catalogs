@@ -31,7 +31,7 @@ echo $this->Form->create('CatalogItem', array(
 	 echo $this->Form->end('Submit');	
 	?>
 <?php if(isset($catalogitems)) { ?>	
-<h2><?php __('CatalogItems');?></h2>
+<h2><?php echo __('CatalogItems');?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th>Id</th>

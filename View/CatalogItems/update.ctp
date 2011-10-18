@@ -37,7 +37,7 @@
     echo $this->Form->input('price', array('after' => '(Leave blank to use parent price)'));
 ?>
 		<fieldset>
-		 	<legend class="toggleClick"><?php __('Add ARB settings for option?');?></legend>
+		 	<legend class="toggleClick"><?php echo __('Add ARB settings for option?');?></legend>
 				<?php
 					echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30,'label' => 'Arb Settings'));	 
 				?>

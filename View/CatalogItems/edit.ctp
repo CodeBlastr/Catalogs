@@ -22,7 +22,7 @@
 	<?php 
 	echo $this->Form->create('CatalogItem', array('type' => 'file'));
 	?>
-    <h2><?php __('Edit '.$this->request->data['CatalogItem']['name']); ?></h2>
+    <h2><?php echo __('Edit '.$this->request->data['CatalogItem']['name']); ?></h2>
     <fieldset>
     	<?php
 		echo $this->Form->input('CatalogItem.id');			
@@ -39,7 +39,7 @@
 		?>
     </fieldset>
 	<fieldset>
- 		<legend class="toggleClick"><?php __('Do you offer shipping for this item?');?></legend>
+ 		<legend class="toggleClick"><?php echo __('Do you offer shipping for this item?');?></legend>
     	<?php 
 		$fedexSettings = defined('__ORDERS_FEDEX') ? unserialize(__ORDERS_FEDEX) : null;
 		$radioOptions = array();
@@ -58,7 +58,7 @@
 		</div>
     </fieldset>
 	<fieldset>
- 		<legend class="toggleClick"><?php __('Do you want to limit geographic availability of this item?');?></legend>
+ 		<legend class="toggleClick"><?php echo __('Do you want to limit geographic availability of this item?');?></legend>
     	<?php
 		echo $this->Form->input('Location.available', array('rows'=>1, 'cols' => 30,'label' => 'Zip Codes Available (comma separated)'));
 		echo $this->Form->input('Location.restricted', array('rows'=>1, 'cols' => 30,'label' => 'Zip Codes Restricted (comma separated)'));
@@ -66,7 +66,7 @@
 		?>
     </fieldset>
 	<fieldset>
- 		<legend class="toggleClick"><?php __('Does this item have a schedule?');?></legend>
+ 		<legend class="toggleClick"><?php echo __('Does this item have a schedule?');?></legend>
     	<?php	
 		echo $this->Form->input('CatalogItem.start_date', array('empty' => true));
 		echo $this->Form->input('CatalogItem.end_date', array('empty' => true));
@@ -112,13 +112,13 @@
 	</fieldset>
 
 	<fieldset>
- 		<legend class="toggleClick"><?php __('Does this item need to be categorized?');?></legend>
+ 		<legend class="toggleClick"><?php echo __('Does this item need to be categorized?');?></legend>
 			<?php
 				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categories, and '.$this->Html->link('advanced attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->request->data['CatalogItem']['id'])).')'));	 
 			?>
 	</fieldset>
 	<fieldset>
- 		<legend class="toggleClick"><?php __('Is this a recurring billing item?');?></legend>
+ 		<legend class="toggleClick"><?php echo __('Is this a recurring billing item?');?></legend>
 			<?php
 				echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
 																			trialOccurrences (No Of Billing Cycles For Trial),

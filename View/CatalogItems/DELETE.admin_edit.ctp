@@ -1,5 +1,5 @@
 <?php echo $this->Form->create('CatalogItem', array('type' => 'file', 'action' => 'add'));?>
- 		<legend><?php __('Add Product');?></legend>
+ 		<legend><?php echo __('Add Product');?></legend>
 	<?php
 		echo $this->Form->hidden('id');
 		echo $this->Form->input('CatalogItem.sku', array('default'=>'0'));
