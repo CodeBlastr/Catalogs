@@ -18,11 +18,6 @@
  * @since         Zuha(tm) v 0.0.1
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
-App::import(array(
-	'type' => 'File', 
-	'name' => 'Catalogs.CatalogsConfig', 
-	'file' =>  '..' . DS . 'plugins'  . DS  . 'catalogs'  . DS  . 'config'. DS .'core.php'
-));
 class CatalogsAppController extends AppController {
 
 	
@@ -47,15 +42,6 @@ class CatalogsAppController extends AppController {
 			$this->set('user_is_admin' , true);
 		}else{
 			$this->set('user_is_admin' , false);
-		}
-	
-		$Config = CatalogsConfig::getInstance();
-		#sets display values
-		if (!empty($Config->settings[$this->request->params['controller'].Inflector::camelize($this->request->params['action']).'View'])) {
-			$this->set('settings', $Config->settings[$this->request->params['controller'].Inflector::camelize($this->request->params['action']).'View']);
-		}
-		if (!empty($Config->settings[$this->request->params['controller'].Inflector::camelize($this->request->params['action']).'Controller'])) {
-			$this->settings = $Config->settings[$this->request->params['controller'].Inflector::camelize($this->request->params['action']).'Controller'];
 		}
 	}
 	
