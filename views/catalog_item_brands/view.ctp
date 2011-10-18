@@ -7,12 +7,12 @@
 <?php echo $this->element('products');  ?>
 
 <?php 
-$this->Menu->setValue(array(
+echo $this->Element('context_menu', array('menus' => array(
 	array(
 		'heading' => 'Manufacturers',
 		'items' => array(
 			$this->Html->link(__('List Brands', true), array('controller' => 'catalog_item_brands', 'action' => 'index')),
 			)
 		),
-	));
+	)));
 ?>
