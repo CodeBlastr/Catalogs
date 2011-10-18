@@ -142,10 +142,10 @@ class CatalogItemsController extends CatalogsAppController {
 			}
 		}
 		
-		$catalogItemParentIds = $this->CatalogItem->generatetreelist();
+		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
-		$categories = $this->CatalogItem->Category->generatetreelist();
+		$categories = $this->CatalogItem->Category->generateTreeList();
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
 		if(isset($this->request->params['named']['catalog'])) : 
 			$categoryElement['parentId'] = $this->request->params['named']['catalog'];
@@ -231,7 +231,7 @@ class CatalogItemsController extends CatalogsAppController {
 				$this->set('catalogs', $this->CatalogItem->Catalog->find('list'));
 				$this->set('catalogBrands', 
 						$this->CatalogItem->CatalogItemBrand->get_brands($this->request->data['Catalog']['id'][0]));
-				$this->set('categories', $this->CatalogItem->Category->generatetreelist());
+				$this->set('categories', $this->CatalogItem->Category->generateTreeList());
 				#NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
 				# and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
 				# this will be a problem for items in multiple categories.

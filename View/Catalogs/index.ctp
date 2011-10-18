@@ -31,10 +31,16 @@ foreach ($catalogs as $catalog):
 </div>
 <?php echo $this->Element('paging'); ?>
 
-<div class="actions">
-	<ul>
-		<li><?php echo $this->Html->link(__('New Catalog', true), array('action' => 'add')); ?></li>
-		<li><?php echo $this->Html->link(__d('Categories', 'Assign Category Catalog', true), 
-				array('plugin'=>'categories', 'controller'=>'categories', 'action'=>'categorized','type'=>'Catalog' , 'admin'=>true)); ?> </li>
-	</ul>
-</div>
+<?php
+// set the contextual menu items
+echo $this->Element('context_menu', array('menus' => array(
+	array(
+		'heading' => 'Catalog',
+		'items' => array(
+			$this->Html->link(__('New', true), array('action' => 'add')),
+			$this->Html->link(__d('Categories', 'Assign Categories', true), 
+				array('plugin'=>'categories', 'controller'=>'categories', 'action'=>'categorized','type'=>'Catalog' , 'admin'=>true)),
+			),
+		),
+	))); 
+?>

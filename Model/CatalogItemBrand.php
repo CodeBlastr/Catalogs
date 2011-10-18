@@ -60,7 +60,7 @@ class CatalogItemBrand extends CatalogsAppModel {
  * Gets Tree data for displaying user in a more detailed way
  */	
 	function generate_tree_wdata(){
-		/*$dat = $this->generatetreelist();
+		/*$dat = $this->generateTreeList();
 			if(count($dat)!=0 ){
 				for($i = 0 ; $i < count($dat) ; $i++ ){
 				$ret[$i]["id"] = key($dat);
