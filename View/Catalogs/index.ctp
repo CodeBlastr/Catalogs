@@ -29,7 +29,7 @@ foreach ($catalogs as $catalog):
 <?php endforeach; ?>
 </table>
 </div>
-<?php echo $this->element('paging'); ?>
+<?php echo $this->Element('paging'); ?>
 
 <div class="actions">
 	<ul>

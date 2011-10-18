@@ -28,7 +28,7 @@ foreach ($catalogItems as $catalogItem):
         <?php } ?>
         
 	    <div class="indexCell catalogItemDescription" id="catalogItemDescription<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
-        	<?php echo $text->truncate(strip_tags($catalogItem['CatalogItem']['summary']), 30, array('ending' => '...', 'html' => true)); ?>
+        	<?php echo $this->Text->truncate(strip_tags($catalogItem['CatalogItem']['summary']), 30, array('ending' => '...', 'html' => true)); ?>
         </div>
         
 	    <div class="indexCell catalogItemPrice" id="catalogItemPrice<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
