@@ -1,11 +1,10 @@
-<div class="catalogs dashboard">
-	Put all the cool stuff here
-</div>
-
-<div class="actions">
-	<ul>
-		<li><?php echo $this->Html->link(__('New Catalog', true), array('action' => 'add')); ?></li>
-		<li><?php echo $this->Html->link(__d('Categories', 'Assign Category Catalog', true), 
-				array('plugin'=>'categories', 'controller'=>'categories', 'action'=>'categorized','type'=>'Catalog' , 'admin'=>true)); ?> </li>
-	</ul>
+<div class="accordion">
+  <ul>
+    <li> <a href="#"><span>Sales</span></a></li>
+  </ul>
+  <ul>
+    <li><?php echo $this->Html->link('Catalog Items', array('plugin' => 'catalogs', 'controller' => 'catalogs_items', 'action' => 'index')); ?></li>
+    <li><?php echo $this->Html->link('Categories', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'index', 'type' => 'Catalog')); ?></li>
+    <li><?php echo $this->Html->link('Orders', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index')); ?></li>
+  </ul>
 </div>
