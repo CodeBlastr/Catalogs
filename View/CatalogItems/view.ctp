@@ -8,10 +8,10 @@
   <h2>
     <?php  echo $catalogItem['CatalogItem']['name']; echo !empty($catalogItem['CatalogItemBrand']['name']) ? ' by ' . $this->Html->link($catalogItem['CatalogItemBrand']['name'], array('controller' => 'catalog_item_brands', 'action' => 'view', $catalogItem['CatalogItemBrand']['id'])) : ''; ?>
   </h2>
-  <div class="catalogItemGallery"> <?php echo $this->element($gallery['Gallery']['type'], array('plugin' => 'galleries', 'id' => $gallery['Gallery']['id'])); ?> </div>
+  <div class="catalogItemGallery"> <?php echo $this->element($gallery['Gallery']['type'], array('id' => $gallery['Gallery']['id']), array('plugin' => 'galleries')); ?> </div>
   <?php if (!empty($catalogItem['CatalogItemChildren'][0])) : ?>
   <?php foreach ($catalogItem['CatalogItemChildren'] as $child) : ?>
-  <div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->element($child['Gallery']['type'], array('plugin' => 'galleries', 'id' => $child['Gallery']['id'])); ?></div>
+  <div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->element($child['Gallery']['type'], array('id' => $child['Gallery']['id']), array('plugin' => 'galleries')); ?></div>
   <?php endforeach; ?>
   <?php endif; ?>
   <div class="catalogItemDescription"> <?php echo $catalogItem['CatalogItem']['description']; ?> </div>
