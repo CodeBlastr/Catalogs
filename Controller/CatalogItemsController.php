@@ -133,7 +133,10 @@ class CatalogItemsController extends CatalogsAppController {
 			
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) 
 									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ; 
-			
+			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
+				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
+			endif;
+
 			if ($this->CatalogItem->add( $this->request->data, $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('CatalogItem saved.', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id, 'admin' => 0));
@@ -146,6 +149,11 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
+		if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE')) :
+			$paymentOptions = defined('__ORDERS_ENABLE_PAYMENT_OPTIONS') ? unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS) : null;
+			$this->set(compact('paymentOptions'));
+		endif;
+
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
 		if(isset($this->request->params['named']['catalog'])) : 
 			$categoryElement['parentId'] = $this->request->params['named']['catalog'];
@@ -171,7 +179,11 @@ class CatalogItemsController extends CatalogsAppController {
 		
 		if (!empty($this->request->data)) :
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) 
-									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ; 		
+									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
+			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
+				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
+			endif;
+
 			if ($this->CatalogItem->add($this->request->data)) : 
 				$this->Session->setFlash(__('Item saved', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id), 'success');
@@ -213,6 +225,11 @@ class CatalogItemsController extends CatalogsAppController {
  					}
 					$this->request->data['CatalogItem']['arb_settings'] = $arb_settings_string ; 
 				}
+
+				if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE')) :
+					$paymentOptions = defined('__ORDERS_ENABLE_PAYMENT_OPTIONS') ? unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS) : null;
+					$this->set(compact('paymentOptions'));
+				endif;
 				
 				foreach($this->request->data['CategoryOption'] as $catOpt) {
 					if($catOpt['type'] == 'Option Type')

@@ -27,8 +27,9 @@
 		echo $this->Form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1));
 		echo $this->Form->hidden('OrderItem.parent_id' , array('value' => $catalogItem['CatalogItem']['id']));
 		echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItem['CatalogItem']['id']));
-		echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItem['CatalogItem']['price']));	
-	 	?>
+		echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItem['CatalogItem']['price']));
+		echo $this->Form->hidden('OrderItem.payment_type' , array('value' => $catalogItem['CatalogItem']['payment_type']));
+		?>
         <div id="stock"> </div>
         <?php 
 	 
