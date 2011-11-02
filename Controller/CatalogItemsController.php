@@ -125,7 +125,7 @@ class CatalogItemsController extends CatalogsAppController {
 	 * Users can add catalog items belonging to catalogs and brands. 
 	 */
 	function add($catalogItemBrandId = null) {
-		
+
 		if (!empty($this->request->data)) {
 			if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id']))
 				 $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
@@ -137,6 +137,11 @@ class CatalogItemsController extends CatalogsAppController {
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
 			endif;
 
+			if(!empty($this->data['CatalogItem']['is_virtual'])
+					&& $this->data['CatalogItem']['is_virtual'] == 'on') :
+				$this->data['CatalogItem']['model'] = 'Webpage';
+			endif;
+
 			if ($this->CatalogItem->add( $this->request->data, $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('CatalogItem saved.', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id, 'admin' => 0));
@@ -145,7 +150,11 @@ class CatalogItemsController extends CatalogsAppController {
 			}
 		}
 		
-		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
+		// get webpages records
+		App::import('Model', 'Webpage');
+        $this->Webpage = new Webpage();
+        $modelRecords = $this->Webpage->find('list');
+        $catalogItemParentIds = $this->CatalogItem->generateTreeList();
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
@@ -159,7 +168,7 @@ class CatalogItemsController extends CatalogsAppController {
 			$categoryElement['parentId'] = $this->request->params['named']['catalog'];
 		endif;
 		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
-		$this->set(compact('catalogItemBrandId', 'catalogItemBrands', 'catalogs', 'categories', 'categoryElement', 'userRoles', 'catalogItemParentIds'));
+		$this->set(compact('catalogItemBrandId', 'catalogItemBrands', 'catalogs', 'categories', 'categoryElement', 'userRoles', 'catalogItemParentIds', 'modelRecords'));
 		
 		$categories = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
 		if(isset($this->request->params['named']['catalog'])) : 
