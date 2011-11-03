@@ -73,7 +73,24 @@
         <?php
 			}
 		}
-		echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));
+		
+		// check for payment types if session has payment type value the show according to selected payment type 
+		if(!empty($catalogItem['CatalogItem']['payment_type'])) :
+			if($this->Session->check('OrderPaymentType')) :
+				$paymentTypes = $this->Session->read('OrderPaymentType');
+				$newPaymentTypes = explode(',', $catalogItem['CatalogItem']['payment_type']);
+				$commonPaymentType = array_intersect($paymentTypes, $newPaymentTypes);
+				if(!empty($commonPaymentType)) :
+					echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));
+				else :
+					echo "Please use the same payment type as previous items. ";
+		  			echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button', 'disabled' => 'disabled'));
+				endif;
+			else :
+				echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));	 
+			endif;
+		endif;
+		
 		echo $this->Form->end();
 		?>
       </div>

@@ -135,7 +135,7 @@
 		if(!empty($paymentOptions)) :
 	?>
 		<fieldset>
-			<legend class="toggleClick"><?php echo __('Is this a single payment type item?');?></legend>
+			<legend class="toggleClick"><?php echo __('Select Payment Types For The Item.');?></legend>
 			<?php
 				echo $this->Form->input('CatalogItem.payment_type', array('options' => $paymentOptions, 'multiple' => 'checkbox'));	 
 			?>
