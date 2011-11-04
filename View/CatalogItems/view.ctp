@@ -89,6 +89,8 @@
 			else :
 				echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));	 
 			endif;
+		else :
+			echo $this->Form->submit(__('+ Cart' , true), array ('type'=>'submit', 'id'=>'add_button'));
 		endif;
 		
 		echo $this->Form->end();
