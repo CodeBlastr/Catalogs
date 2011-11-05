@@ -31,7 +31,6 @@ class CatalogItemsController extends CatalogsAppController {
 		$params['conditions'] = isset($this->request->params['named']['stock']) ? array('CatalogItem.stock_item' => $this->request->params['named']['stock']): null;
 		$params['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		$params['conditions']['OR']['CatalogItem.end_date >'] = date('Y-m-d h:i:s');
-		$params['conditions']['OR']['CatalogItem.end_date'] = null;
 		$params['conditions']['OR']['CatalogItem.end_date'] = '0000-00-00 00:00:00';
 		$params['conditions']['CatalogItem.parent_id'] = null;
 
