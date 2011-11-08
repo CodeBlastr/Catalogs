@@ -150,9 +150,9 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 		
 		// get webpages records
-		App::import('Model', 'Webpage');
+		App::import('Model', 'Webpages.Webpage');
         $this->Webpage = new Webpage();
-        $modelRecords = $this->Webpage->find('list');
+        $modelRecords = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
         $catalogItemParentIds = $this->CatalogItem->generateTreeList();
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
