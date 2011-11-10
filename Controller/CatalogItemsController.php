@@ -30,8 +30,13 @@ class CatalogItemsController extends CatalogsAppController {
 	function index() {	
 		$params['conditions'] = isset($this->request->params['named']['stock']) ? array('CatalogItem.stock_item' => $this->request->params['named']['stock']): null;
 		$params['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
-		$params['conditions']['OR']['CatalogItem.end_date >'] = date('Y-m-d h:i:s');
-		$params['conditions']['OR']['CatalogItem.end_date'] = '0000-00-00 00:00:00';
+		
+		$params['conditions']['OR'] = array(
+			array('CatalogItem.end_date >' => date('Y-m-d h:i:s')),
+			array('CatalogItem.end_date' => null),
+			array('CatalogItem.end_date' => '0000-00-00 00:00:00')	
+		);
+
 		$params['conditions']['CatalogItem.parent_id'] = null;
 
 		$this->paginate = $params;
@@ -39,8 +44,7 @@ class CatalogItemsController extends CatalogsAppController {
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
 		$this->set(compact('catalogItems'));
-	}
-	
+	}	
 
 	function view($id = null) {
 		$catalogItem = $this->CatalogItem->find('first' , array(
