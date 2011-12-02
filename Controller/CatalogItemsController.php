@@ -115,6 +115,7 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 
 		//check if the item is already inCart
+
 		$this->set('itemInCart', $this->CatalogItem->OrderItem->find('count', array(
 			'conditions' => array(
 				'OrderItem.customer_id' => $this->Auth->user('id'),
@@ -517,8 +518,7 @@ class CatalogItemsController extends CatalogsAppController {
 			));
 		$children = array_keys($ci);
 		
-		App::Import('Model', 'CategorizedOption');
-		$CO = new CategorizedOption();
+		$CO = ClassRegistry::init('Categories.CategorizedOption');
 		
 		$conditions = array('CategorizedOption.foreign_key' => $children);
 		if ($category_options) {
