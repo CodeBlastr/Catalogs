@@ -14,7 +14,7 @@ foreach ($catalogItems as $catalogItem):
 ?>
     <div class="indexRow">
 		<div class="indexCell galleryThumb" id="galleryThumb<?php echo $catalogItem['CatalogItem']['id']; ?>">
-			<?php echo $this->element('thumb', array(), array('plugin' => 'galleries', 'model' => 'CatalogItem', 'foreignKey' => $catalogItem['CatalogItem']['id'], 'thumbSize' => 'small', 'thumbLink' => '/catalogs/catalog_items/view/'.$catalogItem['CatalogItem']['id']));  ?>
+			<?php echo $this->element('thumb', array(), array('model' => 'CatalogItem', 'foreignKey' => $catalogItem['CatalogItem']['id'], 'thumbSize' => 'small', 'thumbLink' => '/catalogs/catalog_items/view/'.$catalogItem['CatalogItem']['id']), array('plugin' => 'galleries'));  ?>
         </div>
 
     	<div class="indexCell catalogItemName" id="catalogItemName<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
