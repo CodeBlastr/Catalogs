@@ -20,8 +20,9 @@
  */
 class CatalogItemPricesController extends CatalogsAppController {
 
-	var $name = 'CatalogItemPrices';
-	var $helpers = array('Html', 'Form');
+	public $name = 'CatalogItemPrices';
+	public $helpers = array('Html', 'Form');
+	public $uses = 'Catalogs.CatalogItemPrice';
 
 	function index() {
 		$this->CatalogItemPrice->recursive = 0;

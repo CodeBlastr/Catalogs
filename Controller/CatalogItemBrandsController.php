@@ -20,7 +20,8 @@
  */
 class CatalogItemBrandsController extends CatalogsAppController {
 
-	var $name = 'CatalogItemBrands';
+	public $name = 'CatalogItemBrands';
+	public $uses = 'Catalogs.CatalogItemBrand';
 
 	function index() {
 		$this->paginate = array(

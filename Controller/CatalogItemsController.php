@@ -21,8 +21,9 @@
  */
 class CatalogItemsController extends CatalogsAppController {
   
-	var $name = 'CatalogItems';
-	var $allowedActions = array('get_attribute_values');
+	public $name = 'CatalogItems';
+	public $allowedActions = array('get_attribute_values');
+	public $uses = 'Catalogs.CatalogItem';
 	
 	/**
 	 * Grabs the variables from the model to send to the index view.

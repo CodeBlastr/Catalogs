@@ -21,8 +21,8 @@
  */
 class CatalogsController extends CatalogsAppController {
 
-	var $name = 'Catalogs';
-	var $helpers = array('Html', 'Form');
+	public $name = 'Catalogs';
+	public $uses = 'Catalogs.Catalog';
 	
 	function dashboard() {
 		$this->paginate = array(
