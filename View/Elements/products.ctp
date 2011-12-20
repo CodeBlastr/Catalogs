@@ -17,25 +17,25 @@ foreach ($catalogItems as $catalogItem):
 			<?php echo $this->Element('thumb', array('model' => 'CatalogItem', 'foreignKey' => $catalogItem['CatalogItem']['id'], 'thumbSize' => 'small', 'thumbLink' => '/catalogs/catalog_items/view/'.$catalogItem['CatalogItem']['id']), array('plugin' => 'galleries'));  ?>
         </div>
 
-    	<div class="indexCell catalogItemName" id="catalogItemName<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
+    	<div class="indexCell itemName catalogItemName" id="catalogItemName<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
 			<?php echo $this->Html->link($catalogItem['CatalogItem']['name'] , array('controller' => 'catalog_items' , 'action'=>'view' , $catalogItem["CatalogItem"]["id"])); ?>
        	</div>
 		
         <?php if (!empty($catalogItem['CatalogItemBrand'])) { ?>
-    	<div class="indexCell catalogItemBrand" id="catalogItemBrand<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
+    	<div class="indexCell itemBrand catalogItemBrand" id="catalogItemBrand<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
 			<?php echo $this->Html->link($catalogItem['CatalogItemBrand']['name'] , array('controller' => 'catalog_item_brands' , 'action'=>'view' , $catalogItem["CatalogItemBrand"]["id"])); ?>
        	</div>
         <?php } ?>
         
-	    <div class="indexCell catalogItemDescription" id="catalogItemDescription<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
+	    <div class="indexCell itemDescription catalogItemDescription" id="catalogItemDescription<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
         	<?php echo strip_tags($catalogItem['CatalogItem']['summary']); ?>
         </div>
         
-	    <div class="indexCell catalogItemPrice" id="catalogItemPrice<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
+	    <div class="indexCell itemPrice catalogItemPrice" id="catalogItemPrice<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
     		<?php echo __('$'); ?><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?>
         </div>
         
-	    <div class="indexCell catalogItemAction" id="catalogItemAction<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
+	    <div class="indexCell itemAction catalogItemAction" id="catalogItemAction<?php echo $catalogItem["CatalogItem"]["id"]; ?>">
 			<?php echo $this->Html->link(__($this->Html->tag('span', 'view'), true), array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'view', $catalogItem['CatalogItem']['id']), array('escape' => false, 'class' => 'button')); ?>
 			<?php echo $this->Html->link(__($this->Html->tag('span', 'edit'), true), array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'edit', $catalogItem['CatalogItem']['id']), array('escape' => false, 'class' => 'button', 'checkPermissions' => true)); ?>
 			<?php echo $this->Html->link(__($this->Html->tag('span', 'delete'), true), array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'delete', $catalogItem['CatalogItem']['id']), array('escape' => false, 'class' => 'button', 'checkPermissions' => true), sprintf(__('Are you sure you want to delete %s?', true), $catalogItem['CatalogItem']['name'])); ?>
