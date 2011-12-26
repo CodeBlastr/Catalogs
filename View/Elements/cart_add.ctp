@@ -16,11 +16,11 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 	<div class="action itemCartText catalogItemCartText">
 <?php
 	# don't show add to cart button for items with options on the index page
-    if($this->params->action == 'index') { ?>
+    if($this->params->action == 'index' && ($catalogItem['CatalogItem']['children_count'] === null || $catalogItem['CatalogItem']['children_count'] > 0)) { ?>
 		<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId), array('class' => 'button')); ?> </div>
 <?php
 	# show items that have stock else don't
-	} else if(!$no_stock) { ?>
+	} else if($catalogItem['CatalogItem']['stock_item'] > 0) { ?>
     	<div class="action itemAddCart catalogItemAddCart">
 <?php 
 		if(isset($options) && !empty($options) && $this->params->action == 'index') { ?>
@@ -28,7 +28,7 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 <?php
 		} else {
 			echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
-			echo $this->Form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1));
+			echo $this->Form->input('OrderItem.quantity' , array('label' => ' Quantity ', 'value' => 1));
 			echo $this->Form->hidden('OrderItem.parent_id' , array('value' => $catalogItemId));
 			echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItemId));
 			echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItemPrice));
