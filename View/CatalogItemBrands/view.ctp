@@ -7,7 +7,7 @@
 <?php echo $this->element('products');  ?>
 
 <?php 
-echo $this->Element('context_menu', array('menus' => array(
+$this->set('context_menu', array('menus' => array(
 	array(
 		'heading' => 'Manufacturers',
 		'items' => array(
