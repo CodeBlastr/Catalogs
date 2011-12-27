@@ -25,11 +25,14 @@ class CatalogItemsController extends CatalogsAppController {
 	public $allowedActions = array('get_attribute_values');
 	public $uses = 'Catalogs.CatalogItem';
 	
-	/**
-	 * Grabs the variables from the model to send to the index view.
-	 */
-	function index() {	
-		$params['conditions'] = isset($this->request->params['named']['stock']) ? array('CatalogItem.stock_item' => $this->request->params['named']['stock']): null;
+/**
+ * Grabs the variables from the model to send to the index view.
+ */
+	function index() {
+		
+		$params['conditions'] = isset($this->request->params['named']['stock']) ? 
+			array('CatalogItem.stock_item' => $this->request->params['named']['stock']): 
+			null;
 		$params['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		
 		$params['conditions']['OR'] = array(
@@ -46,6 +49,8 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogItems = $this->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
 		$this->set(compact('catalogItems'));
 	}	
+
+
 
 	function view($id = null) {
 		$catalogItem = $this->CatalogItem->find('first' , array(
@@ -149,7 +154,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 			if ($this->CatalogItem->add( $this->request->data, $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('CatalogItem saved.', true));
-				$this->redirect(array('action' => 'edit', $this->CatalogItem->id, 'admin' => 0));
+				$this->redirect(array('action' => 'edit', $this->CatalogItem->id));
 			} else {
 				$this->Session->setFlash(__('Catalog Item could not be saved.', true));
 			}

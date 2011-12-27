@@ -72,7 +72,13 @@ class CatalogItem extends CatalogsAppModel {
 	var $belongsTo = array(
 		'Catalog'=>array(
 			'className' => 'Catalogs.Catalog',
-			'foreignKey' => 'catalog_id'
+			'foreignKey' => 'catalog_id',
+		),
+		'CatalogItemParent'=>array(
+			'className' => 'Catalogs.CatalogItem',
+			'foreignKey' => 'parent_id',
+			'counterCache' => 'children_count',
+			'counterScope' => array('CatalogItem.parent_id IS NOT NULL'),
 		),
 		'CatalogItemBrand' => array(
 			'className' => 'Catalogs.CatalogItemBrand',
