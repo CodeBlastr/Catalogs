@@ -1,4 +1,4 @@
-<?php 
+ <?php 
 # @todo Add the behavior dynamically, and show these links if the behavior is loaded for this view.
 # echo $this->Favorites->toggleFavorite('favorite', $catalogItem['CatalogItem']['id']); 
 # echo $this->Favorites->toggleFavorite('watch', $catalogItem['CatalogItem']['id']); . 
@@ -17,10 +17,7 @@
   <div class="itemPrice catalogItemPrice"> <?php echo __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?></span> </div>
   
   <?php echo $this->Element('cart_add', array('catalogItem' => $catalogItem), array('plugin' => 'catalogs')); ?>   
-    
 </div>
-
-
 
 <?php 
 // set the contextual menu items
