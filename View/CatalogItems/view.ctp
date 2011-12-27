@@ -5,22 +5,23 @@
 ?>
 
 <div class="catalogItem view">
-  <h2>
-    <?php  echo $catalogItem['CatalogItem']['name']; echo !empty($catalogItem['CatalogItemBrand']['name']) ? ' by ' . $this->Html->link($catalogItem['CatalogItemBrand']['name'], array('controller' => 'catalog_item_brands', 'action' => 'view', $catalogItem['CatalogItemBrand']['id'])) : ''; ?>
-  </h2>
+  <h2><?php  echo $catalogItem['CatalogItem']['name']; echo !empty($catalogItem['CatalogItemBrand']['name']) ? ' by ' . $this->Html->link($catalogItem['CatalogItemBrand']['name'], array('controller' => 'catalog_item_brands', 'action' => 'view', $catalogItem['CatalogItemBrand']['id'])) : ''; ?></h2>
   <div class="itemGallery catalogItemGallery"> <?php echo $this->element($gallery['Gallery']['type'], array('id' => $gallery['Gallery']['id']), array('plugin' => 'galleries')); ?> </div>
-  <?php if (!empty($catalogItem['CatalogItemChildren'][0])) : ?>
-  <?php foreach ($catalogItem['CatalogItemChildren'] as $child) : ?>
-  <div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->element($child['Gallery']['type'], array('id' => $child['Gallery']['id']), array('plugin' => 'galleries')); ?></div>
-  <?php endforeach; ?>
-  <?php endif; ?>
+  
+  <!-- Start child images -->
+  <?php if (!empty($catalogItem['CatalogItemChildren'][0])) : foreach ($catalogItem['CatalogItemChildren'] as $child) : ?><div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->Element($child['Gallery']['type'], array('id' => $child['Gallery']['id']), array('plugin' => 'galleries')); ?></div><?php endforeach; endif; ?>
+  <!-- End child images -->
+  
   <div class="itemDescription catalogItemDescription"> <?php echo $catalogItem['CatalogItem']['description']; ?> </div>
+  
+  <div class="itemPrice catalogItemPrice"> <?php echo __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?></span> </div>
+  
   <div class="actions">
-    <div class="itemPrice catalogItemPrice">
-      <?php echo __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($catalogItem['CatalogItemPrice'][0]['price']) ? $catalogItem['CatalogItemPrice'][0]['price'] : $catalogItem['CatalogItem']['price']); ?></span>
-    </div>
-    <div class="action itemCartText catalogItemCartText">
+  	<div class="action itemCartText catalogItemCartText">
+    
       <?php if(!$no_stock) : ?>
+      
+      
       <div class="action itemAddCart catalogItemAddCart">
         <?php 
 		echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
@@ -32,14 +33,13 @@
 		?>
         <div id="stock"> </div>
         <?php 
-	 
 		if(isset($options) && !empty($options)) {
-			//get group for minimum atributes
+			# get group for minimum atributes
 			foreach($options as $key => $opt) {
 				$count[$key] = count($opt['children']);
 			}
-			//minimun attribute value
-			// geting group key for minimum atributes
+			# minimun attribute value
+			# geting group key for minimum atributes
 			$min_key = array_search(min($count), $count); 
 			
 			foreach($options as $key => $opt) {
@@ -97,8 +97,8 @@
 		?>
       </div>
       <?php else:?>
-   	  <p>The item is out of stock. Please come back later</p>
-  	  <?php endif;?>
+      <p>The item is out of stock. Please come back later</p>
+      <?php endif;?>
     </div>
   </div>
 </div>
@@ -198,3 +198,14 @@ function response(data) {
 	
 }
 </script>
+<?php 
+// set the contextual menu items
+$this->set('context_menu', array('menus' => array(
+	array(
+		'heading' => 'Catalog Item',
+		'items' => array(
+			$this->Html->link(__d('categories', 'Edit Catalog Item', true), array('action' => 'edit', $catalogItem['CatalogItem']['id'])),
+			)
+		),
+	)));
+?>
