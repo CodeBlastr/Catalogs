@@ -28,8 +28,9 @@ $this->set('context_menu', array('menus' => array(
 	array(
 		'heading' => 'Catalog Item',
 		'items' => array(
-			$this->Html->link(__d('categories', 'Edit Catalog Item', true), array('action' => 'edit', $catalogItem['CatalogItem']['id'])),
-			)
+			$this->Html->link(__d('catalogs', 'Edit'), array('action' => 'edit', $catalogItem['CatalogItem']['id'])),
+			$this->Html->link(__d('catalogs', 'Delete'), array('action' => 'delete', $catalogItem['CatalogItem']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $catalogItem['CatalogItem']['id'])),
+			),
 		),
 	)));
 ?>

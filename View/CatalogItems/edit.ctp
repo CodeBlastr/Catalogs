@@ -141,10 +141,32 @@
 	<?php
 		endif;
 	?>
+	<fieldset>
+ 		<legend class="toggleClick"><?php echo __('Do you want to create this item as virtual?');?></legend>
+    	<?php
+			echo $this->Form->hidden('CatalogItem.model', array('value' => 'Webpage'));
+			echo $this->Form->input('CatalogItem.foreign_key');
+			echo $this->Form->input('CatalogItem.is_virtual');
+		?>
+    </fieldset>
 
 	<?php
     echo $this->Form->end('Submit');
 	?>
+    
+<?php
+// set the contextual menu items
+$this->set('context_menu', array('menus' => array(
+	array(
+		'heading' => 'Catalog Items',
+		'items' => array(
+			$this->Html->link(__d('catalogs', 'List'), array('controller' => 'catalog_items', 'action' => 'index')),
+			$this->Html->link(__d('catalogs', 'Add'), array('controller' => 'catalog_items', 'action' => 'add')),
+			$this->Html->link(__d('catalogs', 'Delete'), array('action' => 'delete', $catalogItem['CatalogItem']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $catalogItem['CatalogItem']['id'])),
+			)
+		),
+	))); 
+?>
 
 <script type="text/javascript">
 

@@ -163,7 +163,7 @@ class CatalogItemsController extends CatalogsAppController {
 		// get webpages records
 		App::import('Model', 'Webpages.Webpage');
         $this->Webpage = new Webpage();
-        $modelRecords = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
         $catalogItemParentIds = $this->CatalogItem->generateTreeList();
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
@@ -178,7 +178,7 @@ class CatalogItemsController extends CatalogsAppController {
 			$categoryElement['parentId'] = $this->request->params['named']['catalog'];
 		endif;
 		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
-		$this->set(compact('catalogItemBrandId', 'catalogItemBrands', 'catalogs', 'categories', 'categoryElement', 'userRoles', 'catalogItemParentIds', 'modelRecords'));
+		$this->set(compact('catalogItemBrandId', 'catalogItemBrands', 'catalogs', 'categories', 'categoryElement', 'userRoles', 'catalogItemParentIds', 'foreignKeys'));
 		
 		$categories = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
 		if(isset($this->request->params['named']['catalog'])) : 
@@ -258,6 +258,12 @@ class CatalogItemsController extends CatalogsAppController {
 				}
 				$this->request->data['CategoryOption'] = $catOptions; 
 	
+				// get webpages records
+				App::import('Model', 'Webpages.Webpage');
+		        $this->Webpage = new Webpage();
+		        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+				$this->set(compact('foreignKeys'));
+				
 				$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
 				$priceTypes = ($this->CatalogItem->CatalogItemPrice->PriceType->find('list', 
 						array('conditions' => array('PriceType.type' => 'PRICETYPE'),)));

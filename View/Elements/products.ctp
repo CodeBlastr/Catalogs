@@ -13,7 +13,7 @@ foreach ($catalogItems as $catalogItem):
 	}
 ?>
     <div class="indexRow">
-      <div class="indexCell galleryThumb" id="galleryThumb<?php echo $catalogItem['CatalogItem']['id']; ?>"> <?php echo $this->Element('thumb', array('model' => 'CatalogItem', 'foreignKey' => $catalogItem['CatalogItem']['id'], 'thumbSize' => 'small', 'thumbLink' => '/catalogs/catalog_items/view/'.$catalogItem['CatalogItem']['id']), array('plugin' => 'galleries'));  ?> </div>
+      <div class="indexCell galleryThumb" id="galleryThumb<?php echo $catalogItem['CatalogItem']['id']; ?>"> <?php echo $this->Element('thumb', array('model' => 'CatalogItem', 'foreignKey' => $catalogItem['CatalogItem']['id'], 'thumbSize' => 'medium', 'thumbLink' => '/catalogs/catalog_items/view/'.$catalogItem['CatalogItem']['id']), array('plugin' => 'galleries'));  ?> </div>
       <div class="indexCell itemName catalogItemName" id="catalogItemName<?php echo $catalogItem["CatalogItem"]["id"]; ?>"> <?php echo $this->Html->link($catalogItem['CatalogItem']['name'] , array('controller' => 'catalog_items' , 'action'=>'view' , $catalogItem["CatalogItem"]["id"])); ?> </div>
       <?php if (!empty($catalogItem['CatalogItemBrand'])) { ?>
       <div class="indexCell itemBrand catalogItemBrand" id="catalogItemBrand<?php echo $catalogItem["CatalogItem"]["id"]; ?>"> <?php echo $this->Html->link($catalogItem['CatalogItemBrand']['name'] , array('controller' => 'catalog_item_brands' , 'action'=>'view' , $catalogItem["CatalogItemBrand"]["id"])); ?> </div>
@@ -24,4 +24,4 @@ foreach ($catalogItems as $catalogItem):
     </div>
     <?php endforeach; ?>
   </div>
-  <?php echo $this->element('paging');?> </div>
+  <?php echo $this->Element('paging');?> </div>
