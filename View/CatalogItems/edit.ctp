@@ -162,7 +162,7 @@ $this->set('context_menu', array('menus' => array(
 		'items' => array(
 			$this->Html->link(__d('catalogs', 'List'), array('controller' => 'catalog_items', 'action' => 'index')),
 			$this->Html->link(__d('catalogs', 'Add'), array('controller' => 'catalog_items', 'action' => 'add')),
-			$this->Html->link(__d('catalogs', 'Delete'), array('action' => 'delete', $catalogItem['CatalogItem']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $catalogItem['CatalogItem']['id'])),
+			$this->Html->link(__d('catalogs', 'Delete'), array('action' => 'delete', $this->Form->value('CatalogItem.id')), null, sprintf(__('Are you sure you want to delete # %s?', true), $this->Form->value('CatalogItem.id'))),
 			)
 		),
 	))); 

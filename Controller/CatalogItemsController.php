@@ -30,25 +30,48 @@ class CatalogItemsController extends CatalogsAppController {
  */
 	function index() {
 		
-		$params['conditions'] = isset($this->request->params['named']['stock']) ? 
+		$this->params['conditions'] = isset($this->request->params['named']['stock']) ? 
 			array('CatalogItem.stock_item' => $this->request->params['named']['stock']): 
 			null;
-		$params['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
+		$this->params['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		
-		$params['conditions']['OR'] = array(
+		$this->params['conditions']['OR'] = array(
 			array('CatalogItem.end_date >' => date('Y-m-d h:i:s')),
 			array('CatalogItem.end_date' => null),
 			array('CatalogItem.end_date' => '0000-00-00 00:00:00')	
 		);
+		
+		$this->_namedParameterJoins();
 
-		$params['conditions']['CatalogItem.parent_id'] = null;
+		$this->params['conditions']['CatalogItem.parent_id'] = null;
 
-		$this->paginate = $params;
+		$this->paginate = $this->params;
 		$catalogItems = $this->paginate();
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
 		$this->set(compact('catalogItems'));
 	}	
+	
+	
+	
+	private function _namedParameterJoins() {
+		# category id named
+		if (!empty($this->request->params['named']['category'])) {
+			$categoryId = $this->request->params['named']['category'];
+			return $this->params['joins'] = array(array(
+				'table' => 'categorizeds',
+				'alias' => 'Categorized',
+				'type' => 'INNER',
+				'conditions' => array(
+					"Categorized.foreign_key = CatalogItem.id",
+					"Categorized.model = 'CatalogItem'",
+					"Categorized.category_id = '{$categoryId}'",
+				),
+			));
+		} else {
+			return null;
+		}
+	}
 
 
 
@@ -235,8 +258,8 @@ class CatalogItemsController extends CatalogsAppController {
 				# $this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
 				$catOptions = array();
 				
-				//if arb_settings defined for CI then it will unserialize the values
-				if(isset($this->request->data['CatalogItem']['arb_settings'])) {
+				# if arb_settings defined for CI then it will unserialize the values
+				if(!empty($this->request->data['CatalogItem']['arb_settings'])) {
 					$arb_settings_array = unserialize($this->request->data['CatalogItem']['arb_settings']);
 					$arb_settings_string = '';
 					foreach ($arb_settings_array as $key => $value ){
