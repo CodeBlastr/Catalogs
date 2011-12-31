@@ -16,7 +16,7 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 	<div class="action itemCartText catalogItemCartText">
 <?php
 	# don't show add to cart button for items with options on the index page
-    if($this->params->action == 'index' && ($catalogItem['CatalogItem']['children_count'] === null || $catalogItem['CatalogItem']['children_count'] > 0)) { ?>
+    if($this->params->action == 'index' && ($catalogItem['CatalogItem']['children'] === null || $catalogItem['CatalogItem']['children'] > 0)) { ?>
 		<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId), array('class' => 'button')); ?> </div>
 <?php
 	# show items that have stock else don't
