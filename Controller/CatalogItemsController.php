@@ -87,9 +87,6 @@ class CatalogItemsController extends CatalogsAppController {
 				'Catalog' => array(
 					'fields'=>array('name' , 'id')
 					),
-				'Gallery' => array(
-					'GalleryImage'
-					),
 				'CatalogItemPrice' => array(
 					'conditions' => array(
 						'CatalogItemPrice.user_role_id' => $this->userRoleId,
@@ -113,9 +110,11 @@ class CatalogItemsController extends CatalogsAppController {
 		
 		
 		$catOptions = $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-		'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category']),
-		'order'=>'CategoryOption.type'
-		));
+			'conditions' => array(
+				'CategoryOption.category_id' => $this->request->data['Category'],
+				),
+			'order'=>'CategoryOption.type',
+			));
 		
 		$this->set('options', $catOptions);
 
