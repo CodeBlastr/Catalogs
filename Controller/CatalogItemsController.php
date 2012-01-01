@@ -92,9 +92,7 @@ class CatalogItemsController extends CatalogsAppController {
 						'CatalogItemPrice.user_role_id' => $this->userRoleId,
 						),
 					),
-				'CatalogItemChildren' => array(
-					'Gallery',
-					),
+				'CatalogItemChildren',
 				),
 			));
 		$catalogItem = $this->CatalogItem->cleanItemPrice($catalogItem, $this->userRoleId);
@@ -127,20 +125,7 @@ class CatalogItemsController extends CatalogsAppController {
 		));
 
 		//Set catalog item view vars
-		$this->set('attributeData', $attributeData); 
-		
-		$this->set('catalogItem', $catalogItem); 
-		$this->set('catalogItem', $catalogItem);
-		$this->set('gallery', $catalogItem);
-		$this->set('value', $this->CatalogItem->Gallery->_galleryVars($catalogItem)); 
-		
-	
-		//set the stock option 
-		if($catalogItem["CatalogItem"]["stock_item"] > 0 || $catalogItem["CatalogItem"]["stock_item"] == null){
-			$this->set('no_stock' , false);
-		} else {
-			$this->set('no_stock' , true);	
-		}
+		$this->set(compact('attributeData', 'catalogItem'));
 
 		//check if the item is already inCart
 
