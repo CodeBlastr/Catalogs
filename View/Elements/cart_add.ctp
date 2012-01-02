@@ -16,11 +16,12 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 	<div class="action itemCartText catalogItemCartText">
 <?php
 	# don't show add to cart button for items with options on the index page
-    if($this->params->action == 'index' && ($catalogItem['CatalogItem']['children_count'] === null || $catalogItem['CatalogItem']['children_count'] > 0)) { ?>
+    if($this->params->action == 'index' && ($catalogItem['CatalogItem']['children'] === null || $catalogItem['CatalogItem']['children'] > 0)) { ?>
 		<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId), array('class' => 'button')); ?> </div>
 <?php
 	# show items that have stock else don't
-	} else if($catalogItem['CatalogItem']['stock_item'] > 0) { ?>
+	# NOTE : This children check is temporary.  The assumption is that if it has children the stock is probably not zero, but instead we need to make an afterSave function or some other callback, which updates the parent stock_item so that it is equal to the sum of all the children stock_items.
+	} else if($catalogItem['CatalogItem']['stock_item'] > 0 || !empty($catalogItem['CatalogItemChildren'][0])) { ?>
     	<div class="action itemAddCart catalogItemAddCart">
 <?php 
 		if(isset($options) && !empty($options) && $this->params->action == 'index') { ?>

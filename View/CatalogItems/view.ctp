@@ -6,10 +6,10 @@
 
 <div class="catalogItem view">
   <h2><?php  echo $catalogItem['CatalogItem']['name']; echo !empty($catalogItem['CatalogItemBrand']['name']) ? ' by ' . $this->Html->link($catalogItem['CatalogItemBrand']['name'], array('controller' => 'catalog_item_brands', 'action' => 'view', $catalogItem['CatalogItemBrand']['id'])) : ''; ?></h2>
-  <div class="itemGallery catalogItemGallery"> <?php echo $this->element($gallery['Gallery']['type'], array('id' => $gallery['Gallery']['id']), array('plugin' => 'galleries')); ?> </div>
+  <div class="itemGallery catalogItemGallery"> <?php echo $this->Element('gallery', array('model' => 'CatalogItem', 'foreignKey' => $catalogItem['CatalogItem']['id']), array('plugin' => 'galleries')); ?> </div>
   
   <!-- Start child images -->
-  <?php if (!empty($catalogItem['CatalogItemChildren'][0])) : foreach ($catalogItem['CatalogItemChildren'] as $child) : ?><div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->Element($child['Gallery']['type'], array('id' => $child['Gallery']['id']), array('plugin' => 'galleries')); ?></div><?php endforeach; endif; ?>
+  <?php if (!empty($catalogItem['CatalogItemChildren'][0])) : foreach ($catalogItem['CatalogItemChildren'] as $child) : ?><div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->Element('gallery', array('model' => 'CatalogItem', 'foreignKey' => $child['id']), array('plugin' => 'galleries')); ?></div><?php endforeach; endif; ?>
   <!-- End child images -->
   
   <div class="itemDescription catalogItemDescription"> <?php echo $catalogItem['CatalogItem']['description']; ?> </div>

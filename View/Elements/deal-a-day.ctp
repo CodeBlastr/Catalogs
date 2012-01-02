@@ -44,7 +44,7 @@ if (!empty($dealItem)) {
   <h2>
     <?php  echo $dealItem['CatalogItem']['name']; __(' by '); echo $this->Html->link($dealItem['CatalogItemBrand']['name'], array('controller' => 'catalog_item_brands', 'action' => 'view', $dealItem['CatalogItemBrand']['id'])); ?>
   </h2>
-  <div class="dealItemGallery"> <?php echo $this->element($gallery['Gallery']['type'], array('plugin' => 'galleries', 'id' => $gallery['Gallery']['id'])); ?> </div>
+  <div class="dealItemGallery"> <?php echo $this->element('gallery', array('model' => 'CatalogItem', 'foreignKey' => $dealItem['CatalogItem']['id']), array('plugin' => 'galleries')); ?> </div>
   
   <div id="timer"><h1>Time Left</h1><div id="tzcd"><script>start();</script></div></div>
   <div class="dealItemSummary"> <?php echo $dealItem['CatalogItem']['summary']; ?> </div>

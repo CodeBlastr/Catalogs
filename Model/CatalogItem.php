@@ -178,7 +178,6 @@ class CatalogItem extends CatalogsAppModel {
 		return $results;
 	}
 	
-	
 	/*function find($type, $params) {
 		
 		$data = parent::find($type, $params);

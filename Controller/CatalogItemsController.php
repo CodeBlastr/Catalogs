@@ -87,17 +87,12 @@ class CatalogItemsController extends CatalogsAppController {
 				'Catalog' => array(
 					'fields'=>array('name' , 'id')
 					),
-				'Gallery' => array(
-					'GalleryImage'
-					),
 				'CatalogItemPrice' => array(
 					'conditions' => array(
 						'CatalogItemPrice.user_role_id' => $this->userRoleId,
 						),
 					),
-				'CatalogItemChildren' => array(
-					'Gallery',
-					),
+				'CatalogItemChildren',
 				),
 			));
 		$catalogItem = $this->CatalogItem->cleanItemPrice($catalogItem, $this->userRoleId);
@@ -113,9 +108,11 @@ class CatalogItemsController extends CatalogsAppController {
 		
 		
 		$catOptions = $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-		'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category']),
-		'order'=>'CategoryOption.type'
-		));
+			'conditions' => array(
+				'CategoryOption.category_id' => $this->request->data['Category'],
+				),
+			'order'=>'CategoryOption.type',
+			));
 		
 		$this->set('options', $catOptions);
 
@@ -128,20 +125,7 @@ class CatalogItemsController extends CatalogsAppController {
 		));
 
 		//Set catalog item view vars
-		$this->set('attributeData', $attributeData); 
-		
-		$this->set('catalogItem', $catalogItem); 
-		$this->set('catalogItem', $catalogItem);
-		$this->set('gallery', $catalogItem);
-		$this->set('value', $this->CatalogItem->Gallery->_galleryVars($catalogItem)); 
-		
-	
-		//set the stock option 
-		if($catalogItem["CatalogItem"]["stock_item"] > 0 || $catalogItem["CatalogItem"]["stock_item"] == null){
-			$this->set('no_stock' , false);
-		} else {
-			$this->set('no_stock' , true);	
-		}
+		$this->set(compact('attributeData', 'catalogItem'));
 
 		//check if the item is already inCart
 
