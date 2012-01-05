@@ -20,8 +20,9 @@
  */
 class CatalogItem extends CatalogsAppModel {
 
-	var $name = 'CatalogItem';
-	var $validate = array(
+	public $name = 'CatalogItem';
+	public $order = 'price';
+	public $validate = array(
 		'name' => array('notempty'),
 	);
 
@@ -31,7 +32,7 @@ class CatalogItem extends CatalogsAppModel {
 	
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	
-	var $hasMany = array(
+	public $hasMany = array(
 		'OrderItem' => array(
 			'className' => 'Orders.OrderItem',
 			'foreignKey' => 'catalog_item_id',
@@ -50,7 +51,7 @@ class CatalogItem extends CatalogsAppModel {
 		),
 	);
 	
-	var $hasOne = array(
+	public $hasOne = array(
 		'Gallery' => array(
 			'className' => 'Galleries.Gallery',
 			'foreignKey' => 'foreign_key',
@@ -69,7 +70,7 @@ class CatalogItem extends CatalogsAppModel {
 	
 	//catalog items association. 
 	
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'Catalog'=>array(
 			'className' => 'Catalogs.Catalog',
 			'foreignKey' => 'catalog_id',
@@ -110,7 +111,7 @@ class CatalogItem extends CatalogsAppModel {
 		),
 	);
 	
-    var $hasAndBelongsToMany = array(
+    public $hasAndBelongsToMany = array(
         'Category' => array(
             'className' => 'Categories.Category',
        		'joinTable' => 'categorizeds',
@@ -129,13 +130,13 @@ class CatalogItem extends CatalogsAppModel {
     );  
 	
 	
-	function __construct($id = null, $table = null, $ds = null) {
+	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 	}
 	
 	
-	function beforeFind($queryData) {
+	public function beforeFind($queryData) {
 		$this->filterPrice = true;
 		if (defined('__CATALOGS_ENABLE_LOCATIONS')) {
 			// restricted locations to be removed
@@ -162,7 +163,7 @@ class CatalogItem extends CatalogsAppModel {
 	}
 	
 	
-	function afterFind($results, $primary) {
+	public function afterFind($results, $primary) {
 		# only play with prices if the find is not list type (which doesn't need prices)
 		if (!empty($this->filterPrice)) : 
 			# this is for the find "all" type where the data format is $results[0]['CatalogItem']['id'];
@@ -207,7 +208,7 @@ class CatalogItem extends CatalogsAppModel {
 	 * @todo		The manual items that come after saveAll should be verified and roll back the item if its not updated correctly. 
 	 * @todo		This function should use the throw exception syntax, and the controller should catch.
 	 */
-	function add($data, $userId = null) {
+	public function add($data, $userId = null) {
 		$ret = false;
 		# generate a random sku if it doesn't exist already
 		$data['CatalogItem']['sku'] = (!empty($data['CatalogItem']['sku']) ? $data['CatalogItem']['sku'] : rand(10000, 99000));
@@ -273,7 +274,7 @@ class CatalogItem extends CatalogsAppModel {
 	 * 
 	 * @param {array} 		Typical structured data array 
 	 */
-	function cleanItemsPrices($catalogItems) {
+	public function cleanItemsPrices($catalogItems) {
 		$i = 0;
 		# get the price for the logged in user
 		foreach ($catalogItems as $catalogItem) {
@@ -309,7 +310,7 @@ class CatalogItem extends CatalogsAppModel {
 	 * @param {array} 		Typical structured data array 
 	 * @todo				This price with enum() thing is not very reliable, as the names are hard coded.  Haven't thought of a good way around it quite yet, but no one is using multiple or sales prices so removing giving it an easy default for now.  But if we use more prices in the matrix than we need to, its going to cause the wrong prices to be spit out.
 	 */
-	function cleanItemPrice($catalogItem) {
+	public function cleanItemPrice($catalogItem) {
 		if (!empty($catalogItem['CatalogItemPrice'][0])) :
 			foreach ($catalogItem['CatalogItemPrice'] as $price) :
 				# set the price in the original catalogItems to user role price
