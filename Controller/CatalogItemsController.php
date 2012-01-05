@@ -44,6 +44,7 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->_namedParameterJoins();
 
 		$this->params['conditions']['CatalogItem.parent_id'] = null;
+		$this->params['order'] = 'CatalogItem.price';
 
 		$this->paginate = $this->params;
 		$catalogItems = $this->paginate();
