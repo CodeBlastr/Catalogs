@@ -307,24 +307,24 @@ class CatalogItem extends CatalogsAppModel {
 	 * If the advanced price matrix exists, then we set the price using that, other wise leave the default price intact.
 	 * 
 	 * @param {array} 		Typical structured data array 
-	 * @todo				This price with enum() thing is not very reliable, as the names are hard coded.  Haven't thought of a good way around it quite yet, but no one is using multiple or sales prices so removing giving it an easy default for now.  But if we use more prices in the matrix than we need to, its going to cause the wrong prices to be spit out.
+	 * @todo				This price with Zuha::enum() thing is not very reliable, as the names are hard coded.  Haven't thought of a good way around it quite yet, but no one is using multiple or sales prices so removing giving it an easy default for now.  But if we use more prices in the matrix than we need to, its going to cause the wrong prices to be spit out.
 	 */
 	function cleanItemPrice($catalogItem) {
 		if (!empty($catalogItem['CatalogItemPrice'][0])) :
 			foreach ($catalogItem['CatalogItemPrice'] as $price) :
 				# set the price in the original catalogItems to user role price
-				if ($price['price_type_id'] == enum('PRICETYPE', 'Sale')) :
-					$catalogItem['CatalogItem']['sale_price'] = formatPrice($price['price']);
-				elseif ($price['price_type_id'] == enum('PRICETYPE', 'Default')) :
-					$catalogItem['CatalogItem']['price'] = formatPrice($price['price']);
+				if ($price['price_type_id'] == Zuha::enum('PRICETYPE', 'Sale')) :
+					$catalogItem['CatalogItem']['sale_price'] = ZuhaInflector::pricify($price['price']);
+				elseif ($price['price_type_id'] == Zuha::enum('PRICETYPE', 'Default')) :
+					$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);
 				else :
-					$catalogItem['CatalogItem']['price'] = formatPrice($price['price']);
+					$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);
 				endif;
 			endforeach;
 		endif; 
 		
 		if (!empty($catalogItem['CatalogItem']['price'])) :
-			$catalogItem['CatalogItem']['price'] = formatPrice($catalogItem['CatalogItem']['price']);
+			$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($catalogItem['CatalogItem']['price']);
 		endif;
 		
 		unset($catalogItem['CatalogItemPrice']); // its not needed now
