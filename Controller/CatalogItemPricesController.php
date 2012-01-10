@@ -40,22 +40,22 @@ class CatalogItemPricesController extends CatalogsAppController {
 	}
 
 	function edit($catalogItemId = null) {
-		if (!empty($this->request->data['CatalogItemPrice'])) : 
+		if (!empty($this->request->data['CatalogItemPrice'])) :
 			if ($this->CatalogItemPrice->saveAll($this->request->data['CatalogItemPrice'])) :
 				$this->Session->setFlash(__('Successful price update.', true));
 				$this->redirect(array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'edit', $this->request->data['CatalogItemPrice'][0]['catalog_item_id']));
-			else : 
+			else :
 				$this->Session->setFlash(__('Advanced pricing save failed.', true));
 				$this->redirect($this->referer());
 			endif;
 		endif;
-		
-		if (!empty($catalogItemId)) : 
+
+		if (!empty($catalogItemId)) :
 			$catalogItem = $this->CatalogItemPrice->CatalogItem->find('first', array('conditions' => array('CatalogItem.id' => $catalogItemId)));
 			$userRoles = $this->CatalogItemPrice->UserRole->find('list');
 			$priceTypes = $this->CatalogItemPrice->PriceType->find('list', array('conditions' => array('PriceType.type' => 'PRICETYPE'),));
 			$this->set(compact('catalogItem', 'userRoles', 'priceTypes'));
-		else : 
+		else :
 			$this->Session->setFlash(__('Invalid Item', true));
 			$this->redirect($this->referer());
 		endif;

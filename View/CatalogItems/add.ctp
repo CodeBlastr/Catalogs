@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Catalog Items Admin Add View
  *
@@ -19,17 +19,17 @@
  */
  ?>
 <div class="catalogItemAdd form">
-	<?php 
+	<?php
 	echo $this->Form->create('CatalogItem', array('type' => 'file'));
 	?>
     <h2><?php echo __('Add a Catalog Item'); ?></h2>
     <fieldset>
-    	<?php			
+    	<?php
 		echo $this->Form->input('CatalogItem.published', array('default' => 1, 'type' => 'hidden'));
 		echo $this->Form->input('CatalogItem.name', array('label' => 'Item display name'));
 		echo $this->Form->input('CatalogItem.sku');
 		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
-					
+
 		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('empty' => '-- Select --', 'label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
 		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price?'));
 		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
@@ -43,7 +43,7 @@
     </fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Do you offer shipping for this item?');?></legend>
-    	<?php 
+    	<?php
 		$fedexSettings = defined('__ORDERS_FEDEX') ? unserialize(__ORDERS_FEDEX) : null;
 		$radioOptions = array();
 		if (!empty($fedexSettings)) : foreach($fedexSettings as $k => $val) :
@@ -70,15 +70,15 @@
     </fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Does this item have a schedule?');?></legend>
-    	<?php	
+    	<?php
 		echo $this->Form->input('CatalogItem.start_date', array('empty' => true));
 		echo $this->Form->input('CatalogItem.end_date', array('empty' => true));
-				
+
 		if (isset($this->request->data['CatalogItemPrice'])) :
 			foreach($this->request->data['CatalogItemPrice'] as $index => $val) :
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
-				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id'])); 
+				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('value'=>$val['user_role_id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('value'=>$val['price_type_id']));
 			endforeach;
@@ -88,12 +88,12 @@
 			++$i;
 			echo '<div id="divCategory'.$i.'">';
 			echo $i . ' '. $categories[$value];
-			echo $this->Html->link('Remove' , "javascript:rem('Category{$i}')", array('')); 
+			echo $this->Html->link('Remove' , "javascript:rem('Category{$i}')", array(''));
 			echo $this->Form->hidden('Category.'.$i, array('value' => $value));
 			echo '</div>';
 		}?>
 		<h3>Options</h3>
-		<?php 
+		<?php
 		if(isset($options)) {
 			foreach($options as $key => $opt) {
 				echo '<div style ="float:left; width: 200px; clear:none;">';
@@ -104,7 +104,7 @@
 					$sel[$child['CategoryOption']['id']] = $child['CategoryOption']['name'];
 				}
 				if (!empty($sel))
-					echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
+					echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'],
 						array('options'=>$sel, 'multiple'=>'checkbox', 'label'=> false, 'div'=>false,
 								'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
 				echo '</fieldset>';
@@ -117,7 +117,7 @@
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Does this item need to be categorized?');?></legend>
 			<?php
-				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)'));	 
+				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)'));
 			?>
 	</fieldset>
 	<fieldset>
@@ -128,7 +128,7 @@
 																			totalOccurrences (Total Billing Cycles),
 																			interval_length (How Many Months Do You Want In A Billing Cycle),
 																			trialAmount (Amount If Any For Trial Period) )'
-				));	 
+				));
 			?>
 	</fieldset>
 	<?php
@@ -137,7 +137,7 @@
 		<fieldset>
 			<legend class="toggleClick"><?php echo __('Select Payment Types For The Item.');?></legend>
 			<?php
-				echo $this->Form->input('CatalogItem.payment_type', array('options' => $paymentOptions, 'multiple' => 'checkbox'));	 
+				echo $this->Form->input('CatalogItem.payment_type', array('options' => $paymentOptions, 'multiple' => 'checkbox'));
 			?>
 		</fieldset>
 	<?php
@@ -156,8 +156,8 @@
 	<?php
     echo $this->Form->end('Submit');
 	?>
-    
-<?php 
+
+<?php
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
 	array(
@@ -167,7 +167,7 @@ $this->set('context_menu', array('menus' => array(
 			$this->Html->link(__('Add', true), array('controller' => 'catalog_items', 'action' => 'add')),
 			)
 		),
-	))); 
+	)));
 ?>
 
 <script type="text/javascript">
@@ -182,7 +182,7 @@ $('#priceID').click(function(e){
 	action = '<?php echo $this->Html->url(array('plugin'=>'catalogs',
 					'controller'=>'catalog_item_prices', 'action'=>'add', 'admin'=>true))?>';
 	$("#CatalogItemAddForm").attr("action" , action);
-	$("#CatalogItemAddForm").submit(); 
+	$("#CatalogItemAddForm").submit();
 });
 function rem($id) {
 	$('#div'+$id).remove();
@@ -193,7 +193,7 @@ $(document).ready( function(){
 		$('#ShippingPrice').show();
 	} else {
 		$('#ShippingPrice').hide();
-	}	
+	}
 });
 
 var shipTypeValue = null;
