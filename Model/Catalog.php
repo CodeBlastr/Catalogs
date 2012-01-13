@@ -1,4 +1,5 @@
 <?php
+App::uses('CatalogsAppModel', 'Catalogs.Model');
 /**
  * Catalog Model
  *
