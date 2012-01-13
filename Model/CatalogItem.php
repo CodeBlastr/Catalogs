@@ -1,4 +1,5 @@
 <?php
+App::uses('CatalogsAppModel', 'Catalogs.Model');
 /**
  * Catalog Item Model
  *
@@ -28,6 +29,8 @@ class CatalogItem extends CatalogsAppModel {
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
 	);
+	
+	public $order = 'price';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
@@ -90,20 +93,6 @@ class CatalogItem extends CatalogsAppModel {
 		'Owner' => array(
 			'className' => 'Users.User',
 			'foreignKey' => 'owner_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
-		'Creator' => array(
-			'className' => 'Users.User',
-			'foreignKey' => 'creator_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
-		'Modifier' => array(
-			'className' => 'Users.User',
-			'foreignKey' => 'modifier_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
