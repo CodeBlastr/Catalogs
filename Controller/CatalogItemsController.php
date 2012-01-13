@@ -1,4 +1,5 @@
 <?php
+App::uses('CatalogsAppController', 'Catalogs.Controller');
 /**
  * Catalog Items Controller
  *
