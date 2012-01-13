@@ -28,7 +28,7 @@ class CatalogItemsController extends CatalogsAppController {
 /**
  * Grabs the variables from the model to send to the index view.
  */
-	function index() {
+	public function index() {
 
 		$this->params['conditions'] = isset($this->request->params['named']['stock']) ?
 			array('CatalogItem.stock_item' => $this->request->params['named']['stock']):
@@ -75,7 +75,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 
 
-	function view($id = null) {
+	public function view($id = null) {
 		$catalogItem = $this->CatalogItem->find('first' , array(
 			'conditions' => array(
 				'CatalogItem.id' => $id
@@ -138,10 +138,10 @@ class CatalogItemsController extends CatalogsAppController {
 	}
 
 
-	/**
-	 * Users can add catalog items belonging to catalogs and brands.
-	 */
-	function add($catalogItemBrandId = null) {
+/**
+ * Users can add catalog items belonging to catalogs and brands.
+ */
+	public function add($catalogItemBrandId = null) {
 
 		if (!empty($this->request->data)) {
 			if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id']))
@@ -197,16 +197,15 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->set('title_for_layout', __('Add Item Form', true));
 	}
 
-	/**
-	 * Edit Existing Catalog Items
-	 *
-	 * @todo	Having a lot of trouble with multiple catalogs and how to edit catalog items. Plenty of usability work to do there.  (note: the importance of having multiple stores is for easily expanding a business in the future, with multiple price testing, and look and feel locations).
-	 */
-	function edit($id = null) {
+/**
+ * Edit Existing Catalog Items
+ *
+ * @todo	Having a lot of trouble with multiple catalogs and how to edit catalog items. Plenty of usability work to do there.  (note: the importance of having multiple stores is for easily expanding a business in the future, with multiple price testing, and look and feel locations).
+ */
+	public function edit($id = null) {
 
 		if (!empty($this->request->data)) :
-			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings'])
-									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
+			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
 			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
 			endif;
@@ -286,8 +285,8 @@ class CatalogItemsController extends CatalogsAppController {
 				# and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
 				# this will be a problem for items in multiple categories.
 				$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-					'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category'][0]['id']),
-					'order'=>'CategoryOption.type'
+					'conditions' => array('CategoryOption.category_id' => $this->request->data['Category'][0]['id']),
+					'order' => 'CategoryOption.type'
 				)));
 			else :
 				$this->Session->setFlash(__('Invalid Item', true));
@@ -300,10 +299,10 @@ class CatalogItemsController extends CatalogsAppController {
 	}
 
 
-	/*
-	 * update function is used for create child catalog items with category options selected
-	 */
-	function update($parentId = null) {
+/**
+ * update function is used for create child catalog items with category options selected
+ */
+	public function update($parentId = null) {
 		if (!empty($this->request->data)) {
 			$data = $this->CatalogItem->find('first', array(
 				'conditions' => array(
@@ -357,39 +356,46 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->set(compact('parentId'));
 	}
 
-	/*
-	 *
-	 */
-	function get_catalog_item($id = null) {
-		$this->layout = false;
-		if ($id) {
-				$this->request->data = $this->CatalogItem->find('first',
-						array('conditions'=>array('CatalogItem.id'=>$id), 'recursive'=>2,
-							'contain'=>array('Catalog.id', 'Category.id', 'CatalogItemBrand',
-									'CategoryOption', 'CatalogItemPrice')));
-				// remodifying data to bring support for controls
-				$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
-				$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
-				$catOptions = array();
 
+/**
+ *
+ */
+	public function get_catalog_item($id = null) {
+		$this->layout = false;
+		if (!empty($id)) {
+			$this->request->data = $this->CatalogItem->find('first', array(
+				'conditions' => array(
+					'CatalogItem.id' => $id
+					), 
+				'recursive' => 2,
+				'contain' => array(
+					'Catalog.id',
+					'Category.id',
+					'CatalogItemBrand',
+					'CategoryOption',
+					'CatalogItemPrice'
+					)
+				));
+			// remodifying data to bring support for controls
+			$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
+			$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
+			$catOptions = array();
 				$catOptions = $this->CatalogItem->Category->CategoryOption->find('threaded', array(
 				'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category']),
-				'order'=>'CategoryOption.type'
-				));
-
+				'order' => 'CategoryOption.type'
+			));
 				$this->set('options', $catOptions);
-			}
+		}
 	}
 
 
-	/**
-	 * get_stock function is used to get the stock of catalog items
-	 * based on the different options
-	 *
-	 *
-	 */
-
-	function get_stock() {
+/**
+ * get_stock function is used to get the stock of catalog items
+ * based on the different options
+ *
+ *
+ */
+	public function get_stock() {
 		if(!empty($this->request->data)) {
 			$count_options = 0 ;
 			$category_ids = array();
@@ -425,7 +431,8 @@ class CatalogItemsController extends CatalogsAppController {
 
 	}
 
-	function delete($id = null) {
+
+	public function delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid Item', true));
 			$this->redirect(array('action' => 'index'));
@@ -441,27 +448,26 @@ class CatalogItemsController extends CatalogsAppController {
  * @TODO this is a place holder because of timing issues.
  *
  */
-	function admin_adminpage(){
+	public function dashboard(){
 	}
 
-	function admin_catalogs($catalogId = null) {
+	public function admin_catalogs($catalogId = null) {
 		$this->set('catalogId', $catalogId);
 		$this->CatalogItem->recursive = 1;
 		$this->set('catalogItems', $this->paginate('CatalogItem',
 			array('CatalogItem.catalog_id'=>$catalogId)));
 	}
 
-	/*
-	 * Temp Function Added for trying code
-	 */
-
-	function tryme(){
+/*
+ * Temp Function Added for trying code
+ */
+	public function tryme(){
 		$data = $this->__content_belongs('CatalogItems' , 12);
 		$this->set('dat' , $data);
 		$this->set('udat' , $this->Auth->user());
 	}
 
-	function get_items($catalogBrandId = null) {
+	public function get_items($catalogBrandId = null) {
 		if ($catalogBrandId) {
 			$this->set('items', $this->CatalogItem->find('list', array(
 					'conditions' => array('CatalogItem.catalog_brand_id'=>$catalogBrandId))));
@@ -469,12 +475,12 @@ class CatalogItemsController extends CatalogsAppController {
 	}
 
 
-	/**
-	 * Set the variables for n number of random products for display in the random element.
-	 *
-	 * @param {int}		The number of items you want to pull.
-	 */
-	function random_product($count = 3) {
+/**
+ * Set the variables for n number of random products for display in the random element.
+ *
+ * @param {int}		The number of items you want to pull.
+ */
+	public function random_product($count = 3) {
 		$catalogItems = $this->CatalogItem->find('all', array(
 			'limit' => $count,
 			'order' => array(
@@ -488,11 +494,11 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 	}
 
-	/*
-	 * function deal_a_day() uses to find deal of day according to
-	 * current dateTime
-	 */
-	function deal_a_day() {
+/*
+ * function deal_a_day() uses to find deal of day according to
+ * current dateTime
+ */
+	public function deal_a_day() {
 		$options['order'] = array('CatalogItem.end_date ASC');
 		$options['conditions'] = array('CatalogItem.end_date >' => date('Y-m-d h:i:s'));
 		$options['conditions'] = array('CatalogItem.parent_id' => null);
@@ -505,11 +511,10 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 	}
 
-	/**
-	 *
-	 */
-
-	function buy(){
+/**
+ *
+ */
+	public function buy(){
 		$ret = $this->CatalogItem->OrderItem->addToCart($this->request->data, $this->Auth->user("id"));
 		if ($ret['state']) {
 			$this->redirect(array('plugin'=>'orders','controller'=>'order_transactions' , 'action'=>'checkout'));
@@ -517,11 +522,11 @@ class CatalogItemsController extends CatalogsAppController {
 	}
 
 
-	/*
-	 * get attribute values according to selected options
-	 *
-	 */
-	function get_attribute_values() {
+/**
+ * get attribute values according to selected options
+ *
+ */
+	public function get_attribute_values() {
 
 		$this->layout = false;
 		$this->autoRender = false;
@@ -591,7 +596,5 @@ class CatalogItemsController extends CatalogsAppController {
 
 		echo json_encode($data);
 	}
-
-
+	
 }
-?>
