@@ -4,8 +4,8 @@
     <td class="catalogs_admin">
     	<span class="admin_header">Orders</span>
     	<ul>
-    		<!--li><?php echo $this->Html->link("View Complete Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index', 'admin'=>true, 'successful'));?></li>
-    		<li><?php echo $this->Html->link("View Pending Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'pending'));?></li-->
+    		<li><?php echo $this->Html->link("View Complete Orders" , array('plugin' => 'orders', 'controller' => 'order_items' , 'action' => 'index', 'filter' => 'status:successful'));?></li>
+    		<li><?php echo $this->Html->link("View Pending Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'pending'));?></li>
     		<li><?php echo $this->Html->link("View Orders In Users Cart" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'incart'));?></li>
     		<li><?php echo $this->Html->link("View Sent Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'sent'));?></li>
     		<li><?php echo $this->Html->link("View Paid Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'paid'));?></li>
