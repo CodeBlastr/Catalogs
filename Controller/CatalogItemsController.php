@@ -58,7 +58,7 @@ class CatalogItemsController extends CatalogsAppController {
 		# category id named
 		if (!empty($this->request->params['named']['category'])) {
 			$categoryId = $this->request->params['named']['category'];
-			return $this->params['joins'] = array(array(
+			$this->params['joins'] = array(array(
 				'table' => 'categorizeds',
 				'alias' => 'Categorized',
 				'type' => 'INNER',
@@ -68,6 +68,8 @@ class CatalogItemsController extends CatalogsAppController {
 					"Categorized.category_id = '{$categoryId}'",
 				),
 			));
+			$contain = $this->params['contain'][] = 'Category';
+			return $this->params;
 		} else {
 			return null;
 		}
