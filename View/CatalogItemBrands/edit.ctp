@@ -7,8 +7,9 @@
 		echo $this->Form->input('CatalogItemBrand.catalog_id', array('label' => 'Which catalog does this brand belong to?'));
 		echo $this->Form->input('CatalogItemBrand.name', array('A brand needs a name.'));
 		echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Upload the brand\'s logo.'));
+		echo $this->Form->input('CatalogItemBrand.summary', array('type' => 'richtext', 'label' => 'Quick brand data summary', 'ckeSettings' => array('buttons' => array('Source','Bold','Italic','Underline','FontSize','TextColor','BGColor','-','NumberedList','BulletedList','Blockquote','JustifyLeft','JustifyCenter','JustifyRight','-','Link','Unlink','-', 'Image'))));
 		echo $this->Form->input('CatalogItemBrand.description', array('type' => 'richtext', 'label' => 'Promotional copy for this brand?', 'ckeSettings' => array('buttons' => array('Bold','Italic','Underline','FontSize','TextColor','BGColor','-','NumberedList','BulletedList','Blockquote','JustifyLeft','JustifyCenter','JustifyRight','-','Link','Unlink','-', 'Image'))));
-		
+
 		#echo $this->Form->input('address');
 	?>
 	</fieldset>
