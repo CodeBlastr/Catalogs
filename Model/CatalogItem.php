@@ -22,6 +22,7 @@ App::uses('CatalogsAppModel', 'Catalogs.Model');
 class CatalogItem extends CatalogsAppModel {
 
 	public $name = 'CatalogItem';
+	
 	public $validate = array(
 		'name' => array('notempty'),
 	);
@@ -33,7 +34,6 @@ class CatalogItem extends CatalogsAppModel {
 	public $order = 'price';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
 	public $hasMany = array(
 		'OrderItem' => array(
 			'className' => 'Orders.OrderItem',
@@ -52,7 +52,7 @@ class CatalogItem extends CatalogsAppModel {
 			'dependent' => true,
 		),
 	);
-
+	
 	public $hasOne = array(
 		'Gallery' => array(
 			'className' => 'Galleries.Gallery',
@@ -69,9 +69,8 @@ class CatalogItem extends CatalogsAppModel {
 			'conditions' => array('Location.model' => 'CatalogItem'),
 		)
 	);
-
-	//catalog items association.
-
+	
+	//catalog items association. 
 	public $belongsTo = array(
 		'Catalog'=>array(
 			'className' => 'Catalogs.Catalog',
@@ -98,7 +97,7 @@ class CatalogItem extends CatalogsAppModel {
 			'order' => ''
 		),
 	);
-
+	
     public $hasAndBelongsToMany = array(
         'Category' => array(
             'className' => 'Categories.Category',
@@ -115,15 +114,13 @@ class CatalogItem extends CatalogsAppModel {
             'associationForeignKey' => 'category_option_id',
     		//'unique' => true,
         ),
-    );
-
-
+    );  
+	
 	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 	}
-
-
+	
 	public function beforeFind($queryData) {
 		$this->filterPrice = true;
 		if (defined('__CATALOGS_ENABLE_LOCATIONS')) {
@@ -149,8 +146,7 @@ class CatalogItem extends CatalogsAppModel {
 
 		return $queryData;
 	}
-
-
+	
 	public function afterFind($results, $primary) {
 		# only play with prices if the find is not list type (which doesn't need prices)
 		if (!empty($this->filterPrice)) :
@@ -166,7 +162,6 @@ class CatalogItem extends CatalogsAppModel {
 		endif;
 		return $results;
 	}
-
 
 /**
  * Handles the adding of catalog items and any additional functions that need to run with it.
@@ -233,8 +228,7 @@ class CatalogItem extends CatalogsAppModel {
 		}
 		return $ret;
 	}
-
-
+	
 /**
  * Cleans catalogItems
  *
@@ -270,7 +264,6 @@ class CatalogItem extends CatalogsAppModel {
 		}
 		return $catalogItems;
 	}
-
 
 /**
  * Cleans a single catalogItems
