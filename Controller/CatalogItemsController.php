@@ -30,29 +30,21 @@ class CatalogItemsController extends CatalogsAppController {
  * Grabs the variables from the model to send to the index view.
  */
 	public function index() {
-
-		$this->params['conditions'] = isset($this->request->params['named']['stock']) ?
-			array('CatalogItem.stock_item' => $this->request->params['named']['stock']):
-			null;
-		$this->params['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
-
-		$this->params['conditions']['OR'] = array(
+		# setup paginate
+		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
+		$this->paginate['conditions']['OR'] = array(
 			array('CatalogItem.end_date >' => date('Y-m-d h:i:s')),
 			array('CatalogItem.end_date' => null),
 			array('CatalogItem.end_date' => '0000-00-00 00:00:00')
 		);
-
 		$this->_namedParameterJoins();
-
-		$this->params['conditions']['CatalogItem.parent_id'] = null;
-
-		$this->paginate = $this->params;
+		$this->paginate['conditions']['CatalogItem.parent_id'] = null;
+		
 		$catalogItems = $this->paginate();
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
 		$this->set(compact('catalogItems'));
 	}
-
 
 
 	private function _namedParameterJoins() {
@@ -75,7 +67,6 @@ class CatalogItemsController extends CatalogsAppController {
 			return null;
 		}
 	}
-
 
 
 	public function view($id = null) {
@@ -454,12 +445,6 @@ class CatalogItemsController extends CatalogsAppController {
 	public function dashboard(){
 	}
 
-	public function admin_catalogs($catalogId = null) {
-		$this->set('catalogId', $catalogId);
-		$this->CatalogItem->recursive = 1;
-		$this->set('catalogItems', $this->paginate('CatalogItem',
-			array('CatalogItem.catalog_id'=>$catalogId)));
-	}
 
 /*
  * Temp Function Added for trying code

@@ -1,70 +1,75 @@
-<br><br>
-<table class="catalogs_admin">
-  <tr>
-    <td class="catalogs_admin">
-    	<span class="admin_header">Orders</span>
+<?php 
+# this will be used on many dashboard pages and we should put it somewhere else
+echo $this->Html->script('system/jquery.masonry.min.js', array('inline' => 'false')); ?>
+
+
+<div class="catalogItems dashboard masonry">
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Transactions</h3>
     	<ul>
-    		<li><?php echo $this->Html->link("View Complete Orders" , array('plugin' => 'orders', 'controller' => 'order_items' , 'action' => 'index', 'filter' => 'status:successful'));?></li>
-    		<li><?php echo $this->Html->link("View Pending Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'pending'));?></li>
-    		<li><?php echo $this->Html->link("View Orders In Users Cart" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'incart'));?></li>
-    		<li><?php echo $this->Html->link("View Sent Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'sent'));?></li>
-    		<li><?php echo $this->Html->link("View Paid Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'paid'));?></li>
-    		<!--li><?php echo $this->Html->link("View Frozen Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index' , 'admin'=>true, 'frozen'));?></li>
-    		<li><?php echo $this->Html->link("View Cancelled Orders" , array('plugin'=>'orders', 'controller'=>'order_items' , 'action'=>'index', 'admin'=>true, 'cancelled'));?></li-->
+    		<li><?php echo $this->Html->link('Paid Transactions', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:paid'));?></li>
+    		<li><?php echo $this->Html->link('Shipped Transactions', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:shipped'));?></li>
     	</ul>
-    </td>
-    <td class="catalogs_admin">
-    	<span class="admin_header">Transactions</span>
+    </div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Order Items</h3>
     	<ul>
-    		<li><?php echo $this->Html->link("View Paid transactions" , array('plugin'=>'orders', 'controller'=>'order_transactions' , 'action'=>'index', 'paid', 'admin'=>true));?></li>
-    		<li><?php echo $this->Html->link("View Shipped Transactions" , array('plugin'=>'orders', 'controller'=>'order_transactions' , 'action'=>'index', 'shipped', 'admin'=>true));?></li>
-    		<!--li><?php echo $this->Html->link("View Reports" , array('plugin'=>'orders', 'controller'=>'order_transactions' , 'action'=>'add' , 'admin'=>true));?></li-->
+    		<li><?php echo $this->Html->link('Completed Items', array('plugin' => 'orders', 'controller' => 'order_items' , 'action' => 'index', 'filter' => 'status:successful'));?></li>
+    		<li><?php echo $this->Html->link('Pending Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:pending'));?></li>
+    		<li><?php echo $this->Html->link('In Cart Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:incart'));?></li>
+    		<li><?php echo $this->Html->link('Sent Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:sent'));?></li>
+    		<li><?php echo $this->Html->link('Paid Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:paid'));?></li>
+    		<li><?php echo $this->Html->link('Frozen Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:frozen'));?></li>
+    		<li><?php echo $this->Html->link('Cancelled Items', array('plugin'=>'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:cancelled'));?></li>
     	</ul>
-    </td>
-    <td class="catalogs_admin">
-    	<span class="admin_header">Catalog Items</span>
+	</div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Catalog Items</h3>
     	<ul>
-    		<li><?php echo $this->Html->link("View Catalog Items" , array('controller'=>'catalog_items' , 'action'=>'index', 'admin'=> false));?></li>
-    		<li><?php echo $this->Html->link("Add A Catalog Item" , array('controller'=>'catalog_items' , 'action'=>'add' , 'admin'=>false));?></li>
+    		<li><?php echo $this->Html->link('List Catalog Items', array('plugin' => 'catalogs', 'controller' => 'catalog_items' , 'action' => 'index'));?></li>
+    		<li><?php echo $this->Html->link('Add a Catalog Item', array('plugin' => 'catalogs', 'controller' => 'catalog_items' , 'action'=>'add'));?></li>
+    		<li><?php echo $this->Html->link('Out Of Stock items', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'index', 'filter' => 'stockItem:0'));?></li>
     	</ul>
-    </td>
-   </tr>
-   <tr>
-    <td class="catalogs_admin">
-    	<span class="admin_header">Brands</span>
+    </div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Brands</h3>
     	<ul>
-    		<li><?php echo $this->Html->link("Add Brand" , array('plugin'=>'catalogs', 'controller'=>'catalog_item_brands' , 'action'=>'add' , 'admin'=>true));?></li>
-    		<li><?php echo $this->Html->link("View Brands" , array('plugin'=>'catalogs', 'controller'=>'catalog_item_brands' , 'action'=>'index' , 'admin'=>true));?></li>
+    		<li><?php echo $this->Html->link('List Brands', array('plugin' => 'catalogs', 'controller' => 'catalog_item_brands', 'action' => 'index'));?></li>
+    		<li><?php echo $this->Html->link('Add Brand', array('plugin' => 'catalogs', 'controller' => 'catalog_item_brands', 'action' => 'add'));?></li>
     	</ul>
-    </td>
-    <td class="catalogs_admin">
-    	<span class="admin_header">Access Control</span>
+	</div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Privileges</h3>
     	<ul>
-    		<li><?php echo $this->Html->link("Edit Permissions" , array('plugin'=>'privileges', 'controller'=>'sections' , 'action'=>'index' , 'admin' => false));?></li>
+    		<li><?php echo $this->Html->link('Edit Privileges', array('plugin' => 'privileges', 'controller' => 'sections', 'action' => 'index'));?></li>
     	</ul>
-    </td>
-    <td class="catalogs_admin">
-    	<span class="admin_header">Stock</span>
+	</div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Categories</h3>
     	<ul>
-    		<li><?php echo $this->Html->link("View Out Of Stock items" , array('plugin'=>'catalogs', 'controller'=>'catalog_items' , 'action' => 'index', 'stock' => 0, 'admin' => false));?></li>
+    		<li><?php echo $this->Html->link('Add Category', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'add', 'model' => 'Catalog'));?></li>
+    		<li><?php echo $this->Html->link('List Categories', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree'));?></li>
     	</ul>
-    </td>
-  </tr>
-  <tr>
-  	<td class="catalogs_admin">
-    	<span class="admin_header">Categories</span>
-    	<ul>
-    		<li><?php echo $this->Html->link("Add A Category" , array('plugin'=>'categories', 'controller'=>'categories' , 'action'=>'add' , 'admin'=>true, 'model' => 'Catalog'));?></li>
-    		<li><?php echo $this->Html->link("View Categories" , array('plugin'=>'categories', 'controller'=>'categories' , 'action'=>'tree' , 'admin'=>true));?></li>
+	</div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3 class="toggleClick" name="customersBox">Customers</h3>
+    	<ul class="customersBox">
+    		<li><?php echo $this->Html->link('List Customers', array('plugin'=>'categories', 'controller'=>'categories' , 'action'=>'tree' , 'admin'=>true));?></li>
     	</ul>
-    </td>
-    <td class="catalogs_admin">
-    	<!--span class="admin_header">Customers</span>
-    	<ul>
-    		<li><?php echo $this->Html->link("View Out Of Stock items" , array('plugin'=>'catalogs', 'controller'=>'catalog_items' , 'action'=>'index' , 'admin'=>true));?></li>
-    		<li><?php echo $this->Html->link("View In stock items" , array('plugin'=>'catalogs', 'controller'=>'catalog_items' , 'action'=>'add' , 'admin'=>true));?></li>
-    	</ul-->
-    </td>
-    <td class="catalogs_admin"></td>
-  </tr>
-</table>
+	</div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3 class="toggleClick" name="customersBox">Attributes</h3>
+    	<ul class="customersBox">
+    		<li><?php echo $this->Html->link('List Customers', array('plugin'=>'categories', 'controller'=>'categories' , 'action'=>'tree' , 'admin'=>true));?></li>
+    	</ul>
+	</div>
+    
+</div>
