@@ -105,6 +105,7 @@ class CatalogItem extends CatalogsAppModel {
             'foreignKey' => 'foreign_key',
             'associationForeignKey' => 'category_id',
     		'conditions' => 'Categorized.model = "CatalogItem"',
+			'counterCache' => 'record_count',
     		// 'unique' => true,
         ),
         'CategoryOption' => array(
