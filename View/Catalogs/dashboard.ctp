@@ -54,16 +54,16 @@
 	</div>
     
     <div class="catalogItems dashboardBox">
-    	<h3 class="toggleClick" name="customersBox">Customers</h3>
-    	<ul class="customersBox">
-    		<li><?php echo $this->Html->link('List Customers', array('plugin'=>'categories', 'controller'=>'categories' , 'action'=>'tree' , 'admin'=>true));?></li>
+    	<h3>Customers</h3>
+    	<ul>
+    		<li><?php echo $this->Html->link('List Customers', array('plugin' => 'contacts', 'controller' => 'contacts' , 'action' => 'people'));?></li>
     	</ul>
 	</div>
     
     <div class="catalogItems dashboardBox">
-    	<h3 class="toggleClick" name="customersBox">Attributes</h3>
-    	<ul class="customersBox">
-    		<li><?php echo $this->Html->link('List Customers', array('plugin'=>'categories', 'controller'=>'categories' , 'action'=>'tree' , 'admin'=>true));?></li>
+    	<h3>Attributes</h3>
+    	<ul>
+    		<li><?php echo $this->Html->link('Product Attributes', array('plugin' => 'categories', 'controller' => 'category_options' , 'action' => 'index'));?></li>
     	</ul>
 	</div>
     

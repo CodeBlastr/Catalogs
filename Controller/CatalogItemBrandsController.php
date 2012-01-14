@@ -25,19 +25,10 @@ class CatalogItemBrandsController extends CatalogsAppController {
 	public $paginate = array();
 
 	public function index() {
-		$this->paginate = array(
-			'fields' => array(
-				'id',
-				'name',
-				),
-			'order' => array(
-				'CatalogItemBrand.name'
-				),
-			'limit' => 10,
-			);
+		$this->paginate['fields'] = array('id', 'name');
+		$this->paginate['order'] = array('CatalogItemBrand.name');
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', '');
-		#$this->paginate = $this->settings;
 		$this->set('catalogItemBrands', $this->paginate());
 	}
 
