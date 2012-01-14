@@ -218,7 +218,7 @@ class CatalogItemsController extends CatalogsAppController {
 			$this->request->data = $this->CatalogItem->find('first', array(
 				'conditions' => array(
 					'CatalogItem.id' => $id),
-					'recursive'=>2,
+					'recursive' => 2,
 					'contain' => array(
 						'Catalog',
 						'Category',
@@ -228,7 +228,7 @@ class CatalogItemsController extends CatalogsAppController {
 						'Location',
 						)
 					));
-			if (!empty($this->request->data)) :
+			if (!empty($this->request->data)) {
 				// remodifying data to bring support for controls
 				$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
 				# removed in order to work with the new checkboxes (instead of the old expanding category widget)
@@ -278,14 +278,16 @@ class CatalogItemsController extends CatalogsAppController {
 				#NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
 				# and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
 				# this will be a problem for items in multiple categories.
-				$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-					'conditions' => array('CategoryOption.category_id' => $this->request->data['Category'][0]['id']),
-					'order' => 'CategoryOption.type'
-				)));
-			else :
+				if (!empty($this->request->data['Category'])) {
+					$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
+						'conditions' => array('CategoryOption.category_id' => $this->request->data['Category'][0]['id']),
+						'order' => 'CategoryOption.type'
+						)));
+				}
+			} else {
 				$this->Session->setFlash(__('Invalid Item', true));
 				$this->redirect(array('action' => 'index'));
-			endif;
+			}
 		else :
 			$this->Session->setFlash(__('Invalid Item', true));
 			$this->redirect(array('action' => 'index'));
@@ -378,7 +380,7 @@ class CatalogItemsController extends CatalogsAppController {
 				'conditions'=>array('CategoryOption.category_id' => $this->request->data['Category']),
 				'order' => 'CategoryOption.type'
 			));
-				$this->set('options', $catOptions);
+			$this->set('options', $catOptions);
 		}
 	}
 
