@@ -437,15 +437,6 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 	}
 
-/**
- * Admin page view function. Could code a static_page but have to iverride the pagesController.
- * @TODO this is a place holder because of timing issues.
- *
- */
-	public function dashboard(){
-	}
-
-
 /*
  * Temp Function Added for trying code
  */

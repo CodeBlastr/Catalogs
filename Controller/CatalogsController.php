@@ -24,16 +24,15 @@ class CatalogsController extends CatalogsAppController {
 	public $name = 'Catalogs';
 	public $uses = 'Catalogs.Catalog';
 	
-	function dashboard() {
-		$this->paginate = array(
-			'fields' => array(
-				'id',
-				'name',
-				'summary',
-				'published',
-				));
-		$this->set('catalogs', $this->paginate());
+
+
+/**
+ * Ecommerce dashboard.
+ *
+ */
+	public function dashboard(){
 	}
+
 	
 	function index() {
 		$this->paginate = array(
