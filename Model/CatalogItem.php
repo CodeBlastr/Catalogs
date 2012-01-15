@@ -277,9 +277,9 @@ class CatalogItem extends CatalogsAppModel {
 		if (!empty($catalogItem['CatalogItemPrice'][0])) :
 			foreach ($catalogItem['CatalogItemPrice'] as $price) :
 				# set the price in the original catalogItems to user role price
-				if ($price['price_type_id'] == Zuha::enum('PRICETYPE', 'Sale')) :
+				if ($price['price_type_id'] == Zuha::enum('PRICE_TYPE', 'Sale')) :
 					$catalogItem['CatalogItem']['sale_price'] = ZuhaInflector::pricify($price['price']);
-				elseif ($price['price_type_id'] == Zuha::enum('PRICETYPE', 'Default')) :
+				elseif ($price['price_type_id'] == Zuha::enum('PRICE_TYPE', 'Default')) :
 					$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);
 				else :
 					$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);

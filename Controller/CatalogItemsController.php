@@ -267,7 +267,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 				$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
 				$priceTypes = ($this->CatalogItem->CatalogItemPrice->PriceType->find('list',
-						array('conditions' => array('PriceType.type' => 'PRICETYPE'),)));
+						array('conditions' => array('PriceType.type' => 'PRICE_TYPE'),)));
 				$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 				$this->set(compact('userRoles', 'priceTypes', 'catalogItemBrands'));
 
