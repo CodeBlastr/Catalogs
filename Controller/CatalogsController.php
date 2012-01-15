@@ -31,6 +31,8 @@ class CatalogsController extends CatalogsAppController {
  *
  */
 	public function dashboard(){
+		$this->set('transactionStatuses', ClassRegistry::init('Orders.OrderTransaction')->statuses());
+		$this->set('itemStatuses', ClassRegistry::init('Orders.OrderItem')->statuses());
 	}
 
 	

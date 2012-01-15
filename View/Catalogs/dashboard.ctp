@@ -2,26 +2,18 @@
     <div class="catalogItems dashboardBox">
     	<h3>Transactions</h3>
     	<ul>
-    		<li><?php echo $this->Html->link('List Failed', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:failed'));?></li>
-    		<li><?php echo $this->Html->link('List Successful', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:success'));?></li>
-    		<li><?php echo $this->Html->link('List Paid', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:paid'));?></li>
-    		<li><?php echo $this->Html->link('List Pending', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:pending'));?></li>
-    		<li><?php echo $this->Html->link('List Shipped', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:shipped'));?></li>
-    		<li><?php echo $this->Html->link('List Frozen', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:frozen'));?></li>
-    		<li><?php echo $this->Html->link('List Cancelled', array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:cancelled'));?></li>
+        <?php foreach ($transactionStatuses as $key => $status) { ?>
+			<li><?php echo $this->Html->link('List ' . $status, array('plugin' => 'orders', 'controller' => 'order_transactions', 'action' => 'index', 'filter' => 'status:'.$key)); ?></li>
+		<?php } ?>
     	</ul>
     </div>
     
     <div class="catalogItems dashboardBox">
     	<h3>Order Items</h3>
     	<ul>
-    		<li><?php echo $this->Html->link('Completed Items', array('plugin' => 'orders', 'controller' => 'order_items' , 'action' => 'index', 'filter' => 'status:successful'));?></li>
-    		<li><?php echo $this->Html->link('Pending Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:pending'));?></li>
-    		<li><?php echo $this->Html->link('In Cart Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:incart'));?></li>
-    		<li><?php echo $this->Html->link('Sent Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:sent'));?></li>
-    		<li><?php echo $this->Html->link('Paid Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:paid'));?></li>
-    		<li><?php echo $this->Html->link('Frozen Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:frozen'));?></li>
-    		<li><?php echo $this->Html->link('Cancelled Items', array('plugin'=>'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:cancelled'));?></li>
+        <?php foreach ($itemStatuses as $key => $status) { ?>
+			<li><?php echo $this->Html->link($status . ' Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:'.$key)); ?></li>
+		<?php } ?>
     	</ul>
 	</div>
     
@@ -68,6 +60,14 @@
     	<h3>Attributes</h3>
     	<ul>
     		<li><?php echo $this->Html->link('Product Attributes', array('plugin' => 'categories', 'controller' => 'category_options' , 'action' => 'index'));?></li>
+    	</ul>
+	</div>
+    
+    <div class="catalogItems dashboardBox">
+    	<h3>Settings</h3>
+    	<ul>
+    		<li><?php echo $this->Html->link('Transaction Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:ORDER_ITEM_STATUS'), array('escape' => false));?></li>
+            <li><?php echo $this->Html->link('Item Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'filter:ORDER_TRANSACTION_STATUS'), array('escape' => false)); ?></li>
     	</ul>
 	</div>
     
