@@ -133,27 +133,28 @@ class CatalogItemsController extends CatalogsAppController {
 
 
 /**
+ * add method
+ * 
  * Users can add catalog items belonging to catalogs and brands.
  */
 	public function add($catalogItemBrandId = null) {
 
 		if (!empty($this->request->data)) {
-			if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id']))
+			# Why wuould catalog id ever be an array (there should be a comment about this here)
+			if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id'])) {
 				 $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
-			#$this->request->data['CatalogItem']['catalog_id'] = $this->request->data['Catalog']['id'];
-
+			}
+			
+			# Handle ARB (automatic recurring billing) Settings (THIS SHOULD BE IN THE MODEL!!!!)
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings'])
-									? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
-			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
+				? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
+									
+			# Handle payment type (I think this should be in the model)
+			if(!empty($this->request->data['CatalogItem']['payment_type'])) {
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
-			endif;
+			}
 
-			if(!empty($this->data['CatalogItem']['is_virtual'])
-					&& $this->data['CatalogItem']['is_virtual'] == 'on') :
-				$this->data['CatalogItem']['model'] = 'Webpage';
-			endif;
-
-			if ($this->CatalogItem->add( $this->request->data, $this->Auth->user('id'))) {
+			if ($this->CatalogItem->add($this->request->data, $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('CatalogItem saved.', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id));
 			} else {
@@ -165,8 +166,9 @@ class CatalogItemsController extends CatalogsAppController {
 		App::import('Model', 'Webpages.Webpage');
         $this->Webpage = new Webpage();
         $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
-        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
-        $catalogItemParentIds = $this->CatalogItem->generateTreeList();
+        
+		
+		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
@@ -192,28 +194,31 @@ class CatalogItemsController extends CatalogsAppController {
 	}
 
 /**
- * Edit Existing Catalog Items
+ * edit method
  *
- * @todo	Having a lot of trouble with multiple catalogs and how to edit catalog items. Plenty of usability work to do there.  (note: the importance of having multiple stores is for easily expanding a business in the future, with multiple price testing, and look and feel locations).
  */
 	public function edit($id = null) {
-
-		if (!empty($this->request->data)) :
+		$this->OrderItem->id = $id;
+		if (!$this->CatalogItem->exists()) {
+			throw new NotFoundException(__('Invalid catalog item'));
+		}
+		
+		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
 			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
 			endif;
 
-			if ($this->CatalogItem->add($this->request->data)) :
+			try {
+				$this->CatalogItem->add($this->request->data);
 				$this->Session->setFlash(__('Item saved', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id), 'success');
-			else :
-				$this->Session->setFlash(__('Save error', true));
-				$this->redirect(array('action' => 'edit', $this->CatalogItem->id), 'failure');
-			endif;
-		endif;
+			} catch (Exception $e) {
+				$this->Session->setFlash($e->getMessage());
+			}
+		}
 
-		// the following block is to support edit
+		# _viewVars
 		if (!empty($id)) :
 			$this->request->data = $this->CatalogItem->find('first', array(
 				'conditions' => array(
