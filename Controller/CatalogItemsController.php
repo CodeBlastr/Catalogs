@@ -198,7 +198,7 @@ class CatalogItemsController extends CatalogsAppController {
  *
  */
 	public function edit($id = null) {
-		$this->OrderItem->id = $id;
+		$this->CatalogItem->id = $id;
 		if (!$this->CatalogItem->exists()) {
 			throw new NotFoundException(__('Invalid catalog item'));
 		}
