@@ -27,7 +27,10 @@ class CatalogItemsController extends CatalogsAppController {
 	public $uses = 'Catalogs.CatalogItem';
 
 /**
- * Grabs the variables from the model to send to the index view.
+ * Index method.
+ *
+ * @param void
+ * @return void
  */
 	public function index() {
 		# setup paginate

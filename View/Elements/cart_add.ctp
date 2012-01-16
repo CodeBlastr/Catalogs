@@ -14,7 +14,7 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
  
 <div class="actions">
 	<div class="action itemCartText catalogItemCartText">
-<?php
+	<?php
 	# don't show add to cart button for items with options on the index page
     if($this->params->action == 'index' && ($catalogItem['CatalogItem']['children'] === null || $catalogItem['CatalogItem']['children'] > 0)) { ?>
 		<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId), array('class' => 'button')); ?> </div>
@@ -23,10 +23,10 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 	# NOTE : This children check is temporary.  The assumption is that if it has children the stock is probably not zero, but instead we need to make an afterSave function or some other callback, which updates the parent stock_item so that it is equal to the sum of all the children stock_items.
 	} else if($catalogItem['CatalogItem']['stock_item'] > 0 || !empty($catalogItem['CatalogItemChildren'][0])) { ?>
     	<div class="action itemAddCart catalogItemAddCart">
-<?php 
+		<?php 
 		if(isset($options) && !empty($options) && $this->params->action == 'index') { ?>
 			<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId)); ?> </div>
-<?php
+		<?php
 		} else {
 			echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
 			echo $this->Form->input('OrderItem.quantity' , array('label' => ' Quantity ', 'value' => 1));
@@ -40,12 +40,12 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 			
 			echo $this->Form->end(); ?>
     	  </div><!-- end action itemAddCart catalogItemAddCart -->
-<?php 
+		<?php 
 		} // end options
 	} else { ?>
     	<div class="action itemAddCart catalogItemAddCart itemAddCartNoStock">
       		<p>The item is out of stock. Please come back later</p> </div>
 <?php
-	} // end no_stock check ?>
+	} ?>
     </div>
 </div>

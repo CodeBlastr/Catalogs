@@ -1,6 +1,6 @@
 <?php 
 /**
- * Catalog Items Admin Edit View
+ * Catalog Items Edit View
  *
  * PHP versions 5
  *
@@ -18,10 +18,8 @@
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
  ?>
-<div class="catalogItemAdd form">
-	<?php 
-	echo $this->Form->create('CatalogItem', array('type' => 'file'));
-	?>
+<div class="catalogItemEdit form">
+	<?php echo $this->Form->create('CatalogItem', array('type' => 'file')); ?>
     <h2><?php echo __('Edit '.$this->request->data['CatalogItem']['name']); ?></h2>
     <fieldset>
     	<?php
@@ -29,14 +27,12 @@
 		echo $this->Form->input('CatalogItem.published', array('default' => 1, 'type' => 'hidden'));
 		echo $this->Form->input('CatalogItem.name', array('label' => 'Item display name ('.$this->Html->link('edit images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->request->data['CatalogItem']['id'])).')'));
 		echo $this->Form->input('CatalogItem.sku');
-		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
-					
-		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
+		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));					
+		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('label' => 'What brand is this item? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
 		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price? ('.$this->Html->link('advanced pricing', array('plugin' => 'catalogs', 'controller' => 'catalog_item_prices', 'action' => 'edit', $this->request->data['CatalogItem']['id'])/*, array('id' => 'priceID')*/).')'));
 		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
 		echo $this->Form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
-		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy, or full description for this item?', 'after' => 'This is what people will read in order to decide if they want it.'));
-		?>
+		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'Sales copy, description for this item?')); ?>
     </fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Do you offer shipping for this item?');?></legend>
@@ -52,10 +48,7 @@
 		endforeach; endif;
 		$radioOptions += array('FIXEDSHIPPING' => 'FIX SHIPPING', 'FREESHIPPING' => 'FREE SHIPPING') ;
 		echo $this->Form->radio('CatalogItem.shipping_type', $radioOptions, array('class' => 'shipping_type' , 'default' => ''));
-	 	?>
-	 	<div id='ShippingPrice'>
-	 		<?php echo $this->Form->input('CatalogItem.shipping_charge');?>
-		</div>
+	 	echo $this->Form->input('CatalogItem.shipping_charge'); ?>
     </fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Do you want to limit geographic availability of this item?');?></legend>
@@ -112,21 +105,20 @@
 	</fieldset>
 
 	<fieldset>
- 		<legend class="toggleClick"><?php echo __('Does this item need to be categorized?');?></legend>
-			<?php
-				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categories, and '.$this->Html->link('advanced attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->request->data['CatalogItem']['id'])).')'));	 
-			?>
+ 		<legend class="toggleClick"><?php echo __('Does this item need to be categorized?'); ?></legend>
+        <?php echo $this->Html->link('Categories', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree', 'model' => 'Catalog'), array('class' => 'button')); ?>
+        <?php echo $this->Html->link('Attributes', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'update', $this->request->data['CatalogItem']['id']), array('class' => 'button')); ?>
+		<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Please choose categories.')); ?>
 	</fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Is this a recurring billing item?');?></legend>
-			<?php
-				echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
-																			trialOccurrences (No Of Billing Cycles For Trial),
-																			totalOccurrences (Total Billing Cycles),
-																			interval_length (How Many Months Do You Want In A Billing Cycle),
-																			trialAmount (Amount If Any For Trial Period) )'
-				));	 
-			?>
+		<?php
+		echo $this->Form->input('CatalogItem.arb_settings', array(
+			'rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
+				trialOccurrences (No Of Billing Cycles For Trial),
+				totalOccurrences (Total Billing Cycles),
+				interval_length (How Many Months Do You Want In A Billing Cycle),
+				trialAmount (Amount If Any For Trial Period) )'));	?>
 	</fieldset>
 
 	<?php
@@ -160,16 +152,16 @@ $this->set('context_menu', array('menus' => array(
 	array(
 		'heading' => 'Catalog Items',
 		'items' => array(
-			$this->Html->link(__d('catalogs', 'List'), array('controller' => 'catalog_items', 'action' => 'index')),
-			$this->Html->link(__d('catalogs', 'Add'), array('controller' => 'catalog_items', 'action' => 'add')),
-			$this->Html->link(__d('catalogs', 'Delete'), array('action' => 'delete', $this->Form->value('CatalogItem.id')), null, sprintf(__('Are you sure you want to delete # %s?', true), $this->Form->value('CatalogItem.id'))),
+			$this->Html->link(__('List'), array('controller' => 'catalog_items', 'action' => 'index')),
+			$this->Html->link(__('Add'), array('controller' => 'catalog_items', 'action' => 'add')),
+			$this->Html->link(__('Delete'), array('action' => 'delete', $this->Form->value('CatalogItem.id')), null, sprintf(__('Are you sure you want to delete # %s?', true), $this->Form->value('CatalogItem.id'))),
 			)
 		),
 	))); 
 ?>
+</div>
 
 <script type="text/javascript">
-
 $('#addCat').click(function(e){
 	e.preventDefault();
 	$('#anotherCategory').show();
@@ -188,9 +180,9 @@ function rem($id) {
 
 $(document).ready( function(){
 	if($('input.shipping_type:checked').val() == 'FIXEDSHIPPING') {
-		$('#ShippingPrice').show();
+		$('#CatalogItemShippingCharge').parent().show();
 	} else {
-		$('#ShippingPrice').hide();
+		$('#CatalogItemShippingCharge').parent().hide();
 	}	
 });
 
@@ -198,13 +190,10 @@ var shipTypeValue = null;
 $('input.shipping_type').click(function(e){
 	shipTypeValue = ($('input.shipping_type:checked').val());
 	if(shipTypeValue == 'FIXEDSHIPPING') {
-		$('#ShippingPrice').show();
+		$('#CatalogItemShippingCharge').parent().show();
 	} else {
-		$('#ShippingPrice').hide();
+		$('#CatalogItemShippingCharge').parent().hide();
 	}
 });
 
 </script>
-
-
-</div>
