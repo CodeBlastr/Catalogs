@@ -22,26 +22,18 @@ class CatalogItemBrandsController extends CatalogsAppController {
 
 	public $name = 'CatalogItemBrands';
 	public $uses = 'Catalogs.CatalogItemBrand';
+	public $paginate = array();
 
-	function index() {
-		$this->paginate = array(
-			'fields' => array(
-				'id',
-				'name',
-				),
-			'order' => array(
-				'CatalogItemBrand.name'
-				),
-			'limit' => 10,
-			);
+	public function index() {
+		$this->paginate['fields'] = array('id', 'name');
+		$this->paginate['order'] = array('CatalogItemBrand.name');
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', '');
-		#$this->paginate = $this->settings;
 		$this->set('catalogItemBrands', $this->paginate());
 	}
 
 
-	function add() {
+	public function add() {
 		if (!empty($this->request->data)) {
 			if ($this->CatalogItemBrand->add($this->request->data)) {
 				$this->Session->setFlash(__('The CatalogItemBrand has been saved', true));
@@ -53,7 +45,7 @@ class CatalogItemBrandsController extends CatalogsAppController {
 		$this->set('catalogs', $this->CatalogItemBrand->Catalog->find('list'));
 	}
 
-	function edit($id = null) {
+	public function edit($id = null) {
 		if (!empty($this->request->data)) {
 			if ($this->CatalogItemBrand->save($this->request->data)) {
 				$this->Session->setFlash(__('The CatalogItemBrand has been saved', true));
@@ -67,8 +59,12 @@ class CatalogItemBrandsController extends CatalogsAppController {
 			$this->set('catalogs', $this->CatalogItemBrand->Catalog->find('list'));
 		}
 	}
-
-	function view($id = null) {
+	
+	
+/**
+ * @todo		This cleanItemsPrices thing is probably in the model.  Check and remove unecessary code from this function.
+ */
+	public function view($id = null) {
 		$catalogItemBrand = $this->CatalogItemBrand->find('first' , array(
 			'conditions'=>array(
 				'CatalogItemBrand.id'=>$id
@@ -78,16 +74,15 @@ class CatalogItemBrandsController extends CatalogsAppController {
 		$this->set(compact('catalogItemBrand'));
 
 		# get the items for this brand
-		$this->settings['conditions']['CatalogItem.catalog_item_brand_id'] = $id;
-		$this->settings['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
-		$this->paginate = $this->settings;
-		$catalogItems = $this->paginate($this->CatalogItemBrand->CatalogItem, array('catalog_item_brand_id'=>$id));
+		$this->paginate['conditions']['CatalogItem.catalog_item_brand_id'] = $id;
+		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
+		$catalogItems = $this->paginate('CatalogItem');
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItemBrand->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
 		$this->set(compact('catalogItems'));
 	}
 
-	function delete($id = null) {
+	public function delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for CatalogItemBrand', true));
 			$this->redirect(array('action'=>'index'));
@@ -98,7 +93,7 @@ class CatalogItemBrandsController extends CatalogsAppController {
 		}
 	}
 
-	function get_brands($catalogID = null) {
+	public function get_brands($catalogID = null) {
 		if ($catalogID) {
 			$this->set('brands', $this->CatalogItemBrand->find('list', array(
 					'conditions' => array('CatalogItemBrand.catalog_id'=>$catalogID))));

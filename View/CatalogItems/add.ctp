@@ -147,8 +147,8 @@
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Do you want to create this item as virtual?');?></legend>
     	<?php
-			echo $this->Form->hidden('CatalogItem.model', array('value' => 'Webpage'));
-			echo $this->Form->input('CatalogItem.foreign_key');
+			echo $this->Form->input('CatalogItem.model', array('options' => array('Webpage' => 'Webpage'), 'empty' => true));
+			echo $this->Form->input('CatalogItem.foreign_key', array('empty' => true));
 			echo $this->Form->input('CatalogItem.is_virtual');
 		?>
     </fieldset>

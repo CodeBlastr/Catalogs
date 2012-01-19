@@ -21,22 +21,20 @@
 class CatalogsAppController extends AppController {
 
 	
-	/*
-	 * Override the $components in Zuha's AppController for removing ACL  
-	 */
+/**
+ * Override the $components in Zuha's AppController for removing ACL  
+ */
+	public $components = array('RequestHandler', 'Email', 'Auth' , 'Session');
 	
-	var $components = array('RequestHandler', 'Email', 'Auth' , 'Session');
 	
-	
-	/*
-	 * Check if the content belongs to the specified user .
-	 * If admin always returns true.
-	 * @param {string} model -> The model name 
-	 * @param {int} id -> The id of the record
-	 * @return bool
-	 */
-	
-	function beforeFilter(){
+/**
+ * Check if the content belongs to the specified user .
+ * If admin always returns true.
+ * @param {string} model -> The model name 
+ * @param {int} id -> The id of the record
+ * @return bool
+ */
+	public function beforeFilter(){
 		parent::beforeFilter();
 		if($this->Auth->user('isadmin')){
 			$this->set('user_is_admin' , true);
@@ -45,7 +43,10 @@ class CatalogsAppController extends AppController {
 		}
 	}
 	
-	function __content_belongs($model , $id){
+/**
+ * 
+ */
+	public function __content_belongs($model , $id){
 		$uid = $this->Auth->user('id');
 		//check if user is admin
 		if($this->Auth->user('isadmin')){
@@ -64,12 +65,11 @@ class CatalogsAppController extends AppController {
 		
 	}
 	
-	/*
-	 * Cehck if user is admin for admin functions
-	 * @return {bool}
-	 */
-	
-	function __is_admin(){
+/**
+ * Check if user is admin for admin functions
+ * @return {bool}
+ */
+	public function __is_admin(){
 		if($this->Auth->user('isadmin')){
 			return true;
 		}else{
@@ -77,5 +77,3 @@ class CatalogsAppController extends AppController {
 		}
 	}
 }
-
-?>

@@ -48,7 +48,7 @@ class CatalogItemPrice extends CatalogsAppModel {
 		'PriceType' => array(
 			'className' => 'Enumeration',
 			'foreignKey' => 'price_type_id',
-			'conditions' => array('PriceType.type' => 'PRICETYPE'),
+			'conditions' => array('PriceType.type' => 'PRICE_TYPE'),
 			'fields' => '',
 			'order' => 'CatalogItemPrice.user_role_id asc, CatalogItemPrice.price_type_id asc'
   		),
