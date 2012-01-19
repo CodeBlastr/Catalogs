@@ -76,7 +76,7 @@ class CatalogItemBrandsController extends CatalogsAppController {
 		# get the items for this brand
 		$this->paginate['conditions']['CatalogItem.catalog_item_brand_id'] = $id;
 		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
-		$catalogItems = $this->paginate($this->CatalogItemBrand->CatalogItem, array('catalog_item_brand_id'=>$id));
+		$catalogItems = $this->paginate('CatalogItem');
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItemBrand->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
 		$this->set(compact('catalogItems'));
