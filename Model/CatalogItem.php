@@ -172,7 +172,7 @@ class CatalogItem extends CatalogsAppModel {
  * @todo		The manual items that come after saveAll should be verified and roll back the item if its not updated correctly.
  * @todo		This function should use the throw exception syntax, and the controller should catch.
  */
-	public function add($data, $userId = null) {
+	public function add($data) {
 		$ret = false;
 		# generate a random sku if it doesn't exist already
 		$data['CatalogItem']['sku'] = (!empty($data['CatalogItem']['sku']) ? $data['CatalogItem']['sku'] : rand(10000, 99000));
@@ -199,10 +199,9 @@ class CatalogItem extends CatalogsAppModel {
 			if (isset($data['CatalogItem']['id']) || $imageSaved) {
 				# this could should be deprecated once all instances of catalog item add are updated
 				if (isset($data['Category']['id'])) {
-					$categorized = array('CatalogItem' => array('id' =>
-						array($this->id)));
+					$categorized = array('CatalogItem' => array('id' =>	array($this->id)));
 					$categorized['Category']['id'] = ($data['Category']);
-					$this->Category->categorized($userId, $categorized, 'CatalogItem');
+					$this->Category->categorized($categorized, 'CatalogItem');
 				}
 				# this is how the categories data should look when coming in.
 				if (isset($data['Category']['Category'][0])) :
@@ -210,11 +209,11 @@ class CatalogItem extends CatalogsAppModel {
 					foreach ($data['Category']['Category'] as $catId) :
 						$categorized['Category']['id'][] = $catId;
 					endforeach;
-					$this->Category->categorized($userId, $categorized, 'CatalogItem');
+					$this->Category->categorized($categorized, 'CatalogItem');
 				endif;
 
 				if(isset($data['CategoryOption'])) {
-					$this->CategoryOption->categorized_option($userId, $data, 'CatalogItem');
+					$this->CategoryOption->categorized_option($data, 'CatalogItem');
 				}
 				$this->Location->add($this->id, $this->name, $data);
 				$ret = true;

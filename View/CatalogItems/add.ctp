@@ -116,24 +116,23 @@
 
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Does this item need to be categorized?');?></legend>
-			<?php
-				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)'));
-			?>
+			<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)')); ?>
 	</fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Is this a recurring billing item?');?></legend>
 			<?php
-				echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
-																			trialOccurrences (No Of Billing Cycles For Trial),
-																			totalOccurrences (Total Billing Cycles),
-																			interval_length (How Many Months Do You Want In A Billing Cycle),
-																			trialAmount (Amount If Any For Trial Period) )'
-				));
-			?>
+				echo $this->Form->input('CatalogItem.arb_settings', array(
+					'rows' => 1, 
+					'cols' => 30,
+					'label' => 'Arb Settings (
+									trialOccurrences (No Of Billing Cycles For Trial),
+									totalOccurrences (Total Billing Cycles),
+									interval_length (How Many Months Do You Want In A Billing Cycle),
+									trialAmount (Amount If Any For Trial Period) )'
+					)); ?>
 	</fieldset>
 	<?php
-		if(!empty($paymentOptions)) :
-	?>
+		if(!empty($paymentOptions)) { ?>
 		<fieldset>
 			<legend class="toggleClick"><?php echo __('Select Payment Types For The Item.');?></legend>
 			<?php
@@ -141,9 +140,7 @@
 			?>
 		</fieldset>
 	<?php
-		endif;
-
-	?>
+		} ?>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Do you want to create this item as virtual?');?></legend>
     	<?php
