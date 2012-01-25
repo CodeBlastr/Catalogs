@@ -33,12 +33,12 @@
 		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('empty' => '-- Select --', 'label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
 		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price?'));
 		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
-		echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Upload your best image for this item.', 'after' => ' <p> This image will be the thumbnail. You can add additional images after save.</p>'));
+		echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Upload your best image for this item.', 'after' => ' <p> You can add additional images after you save.</p>'));
 	    echo $this->Form->input('GalleryImage.dir', array('type' => 'hidden'));
 	    echo $this->Form->input('GalleryImage.mimetype', array('type' => 'hidden'));
 	    echo $this->Form->input('GalleryImage.filesize', array('type' => 'hidden'));
 		echo $this->Form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
-		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy, or full description for this item?', 'after' => 'This is what people will read in order to decide if they want it.'));
+		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?'));
 		?>
     </fieldset>
 	<fieldset>
@@ -116,24 +116,23 @@
 
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Does this item need to be categorized?');?></legend>
-			<?php
-				echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)'));
-			?>
+			<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)')); ?>
 	</fieldset>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Is this a recurring billing item?');?></legend>
 			<?php
-				echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30 ,'label' => 'Arb Settings (
-																			trialOccurrences (No Of Billing Cycles For Trial),
-																			totalOccurrences (Total Billing Cycles),
-																			interval_length (How Many Months Do You Want In A Billing Cycle),
-																			trialAmount (Amount If Any For Trial Period) )'
-				));
-			?>
+				echo $this->Form->input('CatalogItem.arb_settings', array(
+					'rows' => 1, 
+					'cols' => 30,
+					'label' => 'Arb Settings (
+									trialOccurrences (No Of Billing Cycles For Trial),
+									totalOccurrences (Total Billing Cycles),
+									interval_length (How Many Months Do You Want In A Billing Cycle),
+									trialAmount (Amount If Any For Trial Period) )'
+					)); ?>
 	</fieldset>
 	<?php
-		if(!empty($paymentOptions)) :
-	?>
+		if(!empty($paymentOptions)) { ?>
 		<fieldset>
 			<legend class="toggleClick"><?php echo __('Select Payment Types For The Item.');?></legend>
 			<?php
@@ -141,9 +140,7 @@
 			?>
 		</fieldset>
 	<?php
-		endif;
-
-	?>
+		} ?>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Do you want to create this item as virtual?');?></legend>
     	<?php

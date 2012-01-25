@@ -22,7 +22,7 @@ App::uses('CatalogsAppModel', 'Catalogs.Model');
 class CatalogItem extends CatalogsAppModel {
 
 	public $name = 'CatalogItem';
-	
+
 	public $validate = array(
 		'name' => array('notempty'),
 	);
@@ -30,7 +30,7 @@ class CatalogItem extends CatalogsAppModel {
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
 	);
-	
+
 	public $order = 'price';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -52,7 +52,7 @@ class CatalogItem extends CatalogsAppModel {
 			'dependent' => true,
 		),
 	);
-	
+
 	public $hasOne = array(
 		'Gallery' => array(
 			'className' => 'Galleries.Gallery',
@@ -69,8 +69,8 @@ class CatalogItem extends CatalogsAppModel {
 			'conditions' => array('Location.model' => 'CatalogItem'),
 		)
 	);
-	
-	//catalog items association. 
+
+	//catalog items association.
 	public $belongsTo = array(
 		'Catalog'=>array(
 			'className' => 'Catalogs.Catalog',
@@ -97,7 +97,7 @@ class CatalogItem extends CatalogsAppModel {
 			'order' => ''
 		),
 	);
-	
+
     public $hasAndBelongsToMany = array(
         'Category' => array(
             'className' => 'Categories.Category',
@@ -114,13 +114,13 @@ class CatalogItem extends CatalogsAppModel {
             'associationForeignKey' => 'category_option_id',
     		//'unique' => true,
         ),
-    );  
-	
+    );
+
 	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 	}
-	
+
 	public function beforeFind($queryData) {
 		$this->filterPrice = true;
 		if (defined('__CATALOGS_ENABLE_LOCATIONS')) {
@@ -146,7 +146,7 @@ class CatalogItem extends CatalogsAppModel {
 
 		return $queryData;
 	}
-	
+
 	public function afterFind($results, $primary) {
 		# only play with prices if the find is not list type (which doesn't need prices)
 		if (!empty($this->filterPrice)) :
@@ -172,7 +172,7 @@ class CatalogItem extends CatalogsAppModel {
  * @todo		The manual items that come after saveAll should be verified and roll back the item if its not updated correctly.
  * @todo		This function should use the throw exception syntax, and the controller should catch.
  */
-	public function add($data, $userId = null) {
+	public function add($data) {
 		$ret = false;
 		# generate a random sku if it doesn't exist already
 		$data['CatalogItem']['sku'] = (!empty($data['CatalogItem']['sku']) ? $data['CatalogItem']['sku'] : rand(10000, 99000));
@@ -183,7 +183,6 @@ class CatalogItem extends CatalogsAppModel {
 			$this->CatalogItemPrice->deleteAll(array('catalog_item_id' => $itemData['CatalogItem']['id']));
 			#$itemData['CatalogItemPrice'] = $data['CatalogItemPrice'];
 		}
-
 		if ($this->saveAll($itemData)) {
 			$data['CatalogItem']['id'] = $this->id ;
 			$data['Gallery']['model'] = 'CatalogItem';
@@ -195,26 +194,18 @@ class CatalogItem extends CatalogsAppModel {
 					$imageSaved = true;
 				}
 			}
-
 			if (isset($data['CatalogItem']['id']) || $imageSaved) {
-				# this could should be deprecated once all instances of catalog item add are updated
-				if (isset($data['Category']['id'])) {
-					$categorized = array('CatalogItem' => array('id' =>
-						array($this->id)));
-					$categorized['Category']['id'] = ($data['Category']);
-					$this->Category->categorized($userId, $categorized, 'CatalogItem');
-				}
 				# this is how the categories data should look when coming in.
 				if (isset($data['Category']['Category'][0])) :
 					$categorized = array('CatalogItem' => array('id' => array($this->id)));
 					foreach ($data['Category']['Category'] as $catId) :
 						$categorized['Category']['id'][] = $catId;
 					endforeach;
-					$this->Category->categorized($userId, $categorized, 'CatalogItem');
+					$this->Category->categorized($categorized, 'CatalogItem');
 				endif;
 
 				if(isset($data['CategoryOption'])) {
-					$this->CategoryOption->categorized_option($userId, $data, 'CatalogItem');
+					$this->CategoryOption->categorized_option($data, 'CatalogItem');
 				}
 				$this->Location->add($this->id, $this->name, $data);
 				$ret = true;
@@ -228,7 +219,7 @@ class CatalogItem extends CatalogsAppModel {
 		}
 		return $ret;
 	}
-	
+
 /**
  * Cleans catalogItems
  *
@@ -269,8 +260,8 @@ class CatalogItem extends CatalogsAppModel {
  * Cleans a single catalogItems
  *
  * If the advanced price matrix exists, then we set the price using that, other wise leave the default price intact.
- * 
- * @param {array} 		Typical structured data array 
+ *
+ * @param {array} 		Typical structured data array
  * @todo				This price with Zuha::enum() thing is not very reliable, as the names are hard coded.  Haven't thought of a good way around it quite yet, but no one is using multiple or sales prices so removing giving it an easy default for now.  But if we use more prices in the matrix than we need to, its going to cause the wrong prices to be spit out.
  */
 	public function cleanItemPrice($catalogItem) {

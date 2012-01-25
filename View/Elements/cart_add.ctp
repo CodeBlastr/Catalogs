@@ -6,12 +6,12 @@ if(!empty($instance) && defined('__ELEMENT_CATALOGS_CART_ADD_'.$instance)) {
 } else if (defined('__ELEMENT_CATALOGS_CART_ADD')) {
 	extract(unserialize(__ELEMENT_CATALOGS_CART_ADD));
 }
-	
+
 # set up defaults
 $catalogItemId = !empty($catalogItemId) ? $catalogItemId : $catalogItem['CatalogItem']['id'];
 $catalogItemPrice = !empty($catalogItemPrice) ? $catalogItemPrice : $catalogItem['CatalogItem']['price'];
 $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentType : $catalogItem['CatalogItem']['payment_type']; ?>
- 
+
 <div class="actions">
 	<div class="action itemCartText catalogItemCartText">
 	<?php
@@ -21,9 +21,13 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 <?php
 	# show items that have stock else don't
 	# NOTE : This children check is temporary.  The assumption is that if it has children the stock is probably not zero, but instead we need to make an afterSave function or some other callback, which updates the parent stock_item so that it is equal to the sum of all the children stock_items.
-	} else if($catalogItem['CatalogItem']['stock_item'] > 0 || !empty($catalogItem['CatalogItemChildren'][0])) { ?>
+	} else if(
+            ( $catalogItem['CatalogItem']['stock_item'] > 0 || $catalogItem['CatalogItem']['stock_item'] === NULL )
+            || !empty($catalogItem['CatalogItemChildren'][0])
+            ) {
+      ?>
     	<div class="action itemAddCart catalogItemAddCart">
-		<?php 
+		<?php
 		if(isset($options) && !empty($options) && $this->params->action == 'index') { ?>
 			<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId)); ?> </div>
 		<?php
@@ -34,13 +38,13 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 			echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItemId));
 			echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItemPrice));
 			echo $this->Form->hidden('OrderItem.payment_type' , array('value' => $catalogItemPaymentType));
-				
-			echo $this->Element('item_options', array(), array('plugin' => 'catalogs')); 
-			echo $this->Element('payment_type', array(), array('plugin' => 'catalogs')); 
-			
+
+			echo $this->Element('item_options', array(), array('plugin' => 'catalogs'));
+			echo $this->Element('payment_type', array(), array('plugin' => 'catalogs'));
+
 			echo $this->Form->end(); ?>
     	  </div><!-- end action itemAddCart catalogItemAddCart -->
-		<?php 
+		<?php
 		} // end options
 	} else { ?>
     	<div class="action itemAddCart catalogItemAddCart itemAddCartNoStock">
