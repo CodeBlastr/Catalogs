@@ -183,7 +183,6 @@ class CatalogItem extends CatalogsAppModel {
 			$this->CatalogItemPrice->deleteAll(array('catalog_item_id' => $itemData['CatalogItem']['id']));
 			#$itemData['CatalogItemPrice'] = $data['CatalogItemPrice'];
 		}
-
 		if ($this->saveAll($itemData)) {
 			$data['CatalogItem']['id'] = $this->id ;
 			$data['Gallery']['model'] = 'CatalogItem';
@@ -195,14 +194,7 @@ class CatalogItem extends CatalogsAppModel {
 					$imageSaved = true;
 				}
 			}
-
 			if (isset($data['CatalogItem']['id']) || $imageSaved) {
-				# this could should be deprecated once all instances of catalog item add are updated
-				if (isset($data['Category']['id'])) {
-					$categorized = array('CatalogItem' => array('id' =>	array($this->id)));
-					$categorized['Category']['id'] = ($data['Category']);
-					$this->Category->categorized($categorized, 'CatalogItem');
-				}
 				# this is how the categories data should look when coming in.
 				if (isset($data['Category']['Category'][0])) :
 					$categorized = array('CatalogItem' => array('id' => array($this->id)));
