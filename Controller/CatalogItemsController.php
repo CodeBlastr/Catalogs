@@ -73,6 +73,11 @@ class CatalogItemsController extends CatalogsAppController {
 
 
 	public function view($id = null) {
+		$this->CatalogItem->id = $id;
+		if (!$this->CatalogItem->exists()) {
+			throw new NotFoundException(__('Invalid catalog item'));
+		}
+		
 		$catalogItem = $this->CatalogItem->find('first' , array(
 			'conditions' => array(
 				'CatalogItem.id' => $id
