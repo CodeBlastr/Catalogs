@@ -42,7 +42,6 @@ class CatalogItemsController extends CatalogsAppController {
 		);
 		$this->_namedParameterJoins();
 		$this->paginate['conditions']['CatalogItem.parent_id'] = null;
-		
 		$catalogItems = $this->paginate();
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
@@ -54,7 +53,7 @@ class CatalogItemsController extends CatalogsAppController {
 		# category id named
 		if (!empty($this->request->params['named']['category'])) {
 			$categoryId = $this->request->params['named']['category'];
-			$this->params['joins'] = array(array(
+			$this->paginate['joins'] = array(array(
 				'table' => 'categorizeds',
 				'alias' => 'Categorized',
 				'type' => 'INNER',
@@ -64,8 +63,8 @@ class CatalogItemsController extends CatalogsAppController {
 					"Categorized.category_id = '{$categoryId}'",
 				),
 			));
-			$contain = $this->params['contain'][] = 'Category';
-			return $this->params;
+			$contain = $this->paginate['contain'][] = 'Category';
+			return $this->paginate;
 		} else {
 			return null;
 		}
