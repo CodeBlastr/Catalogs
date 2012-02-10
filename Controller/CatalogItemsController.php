@@ -101,7 +101,7 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->request->data = $this->CatalogItem->find('first',
 				array('conditions'=>array('CatalogItem.id'=>$id), 'recursive'=>2,
 					'contain'=>array('Catalog.id', 'Category.id', 'CatalogItemBrand',
-							'CategoryOption', 'CatalogItemPrice')));
+							'CatalogItemPrice')));
 				// remodifying data to bring support for controls
 		$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
 		$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
