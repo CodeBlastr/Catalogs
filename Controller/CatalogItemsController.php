@@ -42,7 +42,6 @@ class CatalogItemsController extends CatalogsAppController {
 		);
 		$this->_namedParameterJoins();
 		$this->paginate['conditions']['CatalogItem.parent_id'] = null;
-		
 		$catalogItems = $this->paginate();
 		# removes items and changes prices based on user role
 		$catalogItems = $this->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
@@ -54,7 +53,7 @@ class CatalogItemsController extends CatalogsAppController {
 		# category id named
 		if (!empty($this->request->params['named']['category'])) {
 			$categoryId = $this->request->params['named']['category'];
-			$this->params['joins'] = array(array(
+			$this->paginate['joins'] = array(array(
 				'table' => 'categorizeds',
 				'alias' => 'Categorized',
 				'type' => 'INNER',
@@ -64,8 +63,8 @@ class CatalogItemsController extends CatalogsAppController {
 					"Categorized.category_id = '{$categoryId}'",
 				),
 			));
-			$contain = $this->params['contain'][] = 'Category';
-			return $this->params;
+			$contain = $this->paginate['contain'][] = 'Category';
+			return $this->paginate;
 		} else {
 			return null;
 		}
@@ -102,7 +101,7 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->request->data = $this->CatalogItem->find('first',
 				array('conditions'=>array('CatalogItem.id'=>$id), 'recursive'=>2,
 					'contain'=>array('Catalog.id', 'Category.id', 'CatalogItemBrand',
-							'CategoryOption', 'CatalogItemPrice')));
+							'CatalogItemPrice')));
 				// remodifying data to bring support for controls
 		$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
 		$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
