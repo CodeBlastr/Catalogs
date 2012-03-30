@@ -38,11 +38,13 @@
 	$before = (!empty($before) ? '<p>'.$before.'</p>' : false);
 	$inbetween = (!empty($inbetween) ? '<p>'.$inbetween.'</p>' : false);
 	$after = (!empty($after) ? '<p>'.$after.'</p>' : false);
+	$catalog_item_brand_id = (!empty($catalog_item_brand_id) ? $catalog_item_brand_id : false);
 
 ?>
 
 <?php
-	$catalogItems = $this->requestAction(array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'random_product'), array('pass' => array($itemCount)));
+	#$catalogItems = $this->requestAction(array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'random_product'), array('pass' => array($itemCount, $catalog_item_brand_id)));
+	$catalogItems = $this->requestAction('/catalogs/catalog_items/random_product/'.$itemCount.'/'.$catalog_item_brand_id);
 	if (!empty($catalogItems)) :
 ?>
 <ul class="elementCatalogRandom" id="elementCatalogRandom<?php echo $instance; ?>">
@@ -56,9 +58,11 @@
                 ), array('plugin' => 'galleries'));  ?></div>
     <div class="txt">
 	  <?php echo $before; ?>
-      <h3><?php echo $this->Html->link($catalogItem['CatalogItem']['name'] , array('plugin' => 'catalogs', 'controller' => 'catalog_items' , 'action'=>'view' , $catalogItem["CatalogItem"]["id"])); ?></h3>
+      <b><?php echo $this->Html->link($catalogItem['CatalogItem']['name'] , array('plugin' => 'catalogs', 'controller' => 'catalog_items' , 'action'=>'view' , $catalogItem["CatalogItem"]["id"])); ?></b>
 	  <?php echo $inbetween; ?>
+      <?php if($showViewLink): ?>
       <div class="more-holder"><?php echo $this->Html->link($viewLinkText , array('plugin' => 'catalogs', 'controller' => 'catalog_items' , 'action'=>'view' , $catalogItem["CatalogItem"]["id"])); ?></div>
+      <?php endif; ?>
 	  <?php echo $after; ?>
     </div>
     <!-- /txt end -->

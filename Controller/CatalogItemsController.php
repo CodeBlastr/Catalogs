@@ -76,7 +76,7 @@ class CatalogItemsController extends CatalogsAppController {
 		if (!$this->CatalogItem->exists()) {
 			throw new NotFoundException(__('Invalid catalog item'));
 		}
-		
+
 		$catalogItem = $this->CatalogItem->find('first' , array(
 			'conditions' => array(
 				'CatalogItem.id' => $id
@@ -141,7 +141,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 /**
  * add method
- * 
+ *
  * Users can add catalog items belonging to catalogs and brands.
  */
 	public function add($catalogItemBrandId = null) {
@@ -151,11 +151,11 @@ class CatalogItemsController extends CatalogsAppController {
 			if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id'])) {
 				 $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
 			}
-			
+
 			# Handle ARB (automatic recurring billing) Settings (THIS SHOULD BE IN THE MODEL!!!!)
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings'])
 				? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
-									
+
 			# Handle payment type (I think this should be in the model)
 			if(!empty($this->request->data['CatalogItem']['payment_type'])) {
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
@@ -173,8 +173,8 @@ class CatalogItemsController extends CatalogsAppController {
 		App::import('Model', 'Webpages.Webpage');
         $this->Webpage = new Webpage();
         $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
-        
-		
+
+
 		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
@@ -209,7 +209,7 @@ class CatalogItemsController extends CatalogsAppController {
 		if (!$this->CatalogItem->exists()) {
 			throw new NotFoundException(__('Invalid catalog item'));
 		}
-		
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
 			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
@@ -374,7 +374,7 @@ class CatalogItemsController extends CatalogsAppController {
 			$this->request->data = $this->CatalogItem->find('first', array(
 				'conditions' => array(
 					'CatalogItem.id' => $id
-					), 
+					),
 				'recursive' => 2,
 				'contain' => array(
 					'Catalog.id',
@@ -473,9 +473,11 @@ class CatalogItemsController extends CatalogsAppController {
  *
  * @param {int}		The number of items you want to pull.
  */
-	public function random_product($count = 3) {
+	public function random_product($count = 3, $catalog_item_brand_id = null) {
+        $conditions = ($catalog_item_brand_id) ? array('CatalogItem.catalog_item_brand_id' => $catalog_item_brand_id) : false;
 		$catalogItems = $this->CatalogItem->find('all', array(
 			'limit' => $count,
+            'conditions' => $conditions,
 			'order' => array(
 				'RAND()',
 				),
@@ -589,5 +591,5 @@ class CatalogItemsController extends CatalogsAppController {
 
 		echo json_encode($data);
 	}
-	
+
 }
