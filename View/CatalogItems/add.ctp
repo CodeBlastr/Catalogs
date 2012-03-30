@@ -39,6 +39,7 @@
 	    echo $this->Form->input('GalleryImage.filesize', array('type' => 'hidden'));
 		echo $this->Form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
 		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?'));
+		echo $this->Form->input('CatalogItem.video_url', array('type' => 'text', 'label' => 'Is there a video for this product?', 'after' => '(may not be used in all themes)', 'placeholder'=>'http://www.youtube.com/watch?v=aM94aorYVS4'));
 		?>
     </fieldset>
 	<fieldset>
@@ -122,7 +123,7 @@
  		<legend class="toggleClick"><?php echo __('Is this a recurring billing item?');?></legend>
 			<?php
 				echo $this->Form->input('CatalogItem.arb_settings', array(
-					'rows' => 1, 
+					'rows' => 1,
 					'cols' => 30,
 					'label' => 'Arb Settings (
 									trialOccurrences (No Of Billing Cycles For Trial),
