@@ -196,5 +196,4 @@ $('input.shipping_type').click(function(e){
 		$('#CatalogItemShippingCharge').parent().hide();
 	}
 });
-
 </script>
