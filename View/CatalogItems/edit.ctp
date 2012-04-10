@@ -140,6 +140,7 @@
 			echo $this->Form->input('CatalogItem.model', array('options' => array('Webpage' => 'Webpage'), 'empty' => true));
 			echo $this->Form->input('CatalogItem.foreign_key', array('empty' => true));
 			echo $this->Form->input('CatalogItem.is_virtual');
+            echo $this->Form->input('CatalogItem.hours_expire', array('after' => 'Number of hours that this item will be available to the customer after purchase'));
 		?>
     </fieldset>
 
