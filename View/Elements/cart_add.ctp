@@ -10,7 +10,11 @@ if(!empty($instance) && defined('__ELEMENT_CATALOGS_CART_ADD_'.$instance)) {
 # set up defaults
 $catalogItemId = !empty($catalogItemId) ? $catalogItemId : $catalogItem['CatalogItem']['id'];
 $catalogItemPrice = !empty($catalogItemPrice) ? $catalogItemPrice : $catalogItem['CatalogItem']['price'];
-$catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentType : $catalogItem['CatalogItem']['payment_type']; ?>
+$catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentType : $catalogItem['CatalogItem']['payment_type'];
+
+$minQty = !empty($catalogItem['CatalogItem']['cart_min']) ? $catalogItem['CatalogItem']['cart_min'] : 1;
+$maxQty = !empty($catalogItem['CatalogItem']['cart_max']) ? $catalogItem['CatalogItem']['cart_max'] : null;
+?>
 
 <div class="actions">
 	<div class="action itemCartText catalogItemCartText">
@@ -33,7 +37,7 @@ $catalogItemPaymentType = !empty($catalogItemPaymentType) ? $catalogItemPaymentT
 		<?php
 		} else {
 			echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
-			echo $this->Form->input('OrderItem.quantity' , array('label' => ' Quantity ', 'value' => 1));
+			echo $this->Form->input('OrderItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
 			echo $this->Form->hidden('OrderItem.parent_id' , array('value' => $catalogItemId));
 			echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItemId));
 			echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItemPrice));

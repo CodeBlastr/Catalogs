@@ -31,6 +31,8 @@
 		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('label' => 'What brand is this item? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
 		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price? ('.$this->Html->link('advanced pricing', array('plugin' => 'catalogs', 'controller' => 'catalog_item_prices', 'action' => 'edit', $this->request->data['CatalogItem']['id'])/*, array('id' => 'priceID')*/).')'));
 		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
+		echo $this->Form->input('CatalogItem.cart_min', array('label' => 'Minimun Cart Quantity?', 'after' => '<p>Enter the minimum cart quantity or leave blank for 1</p>'));
+		echo $this->Form->input('CatalogItem.cart_max', array('label' => 'Maximum Cart Quantity?', 'after' => '<p>Enter the max cart quantity or leave blank for unlimited</p>'));
 		echo $this->Form->input('CatalogItem.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
 		echo $this->Form->input('CatalogItem.description', array('type' => 'richtext', 'label' => 'Sales copy, description for this item?'));
 		echo $this->Form->input('CatalogItem.video_url', array('type' => 'text', 'label' => 'Is there a video for this product?', 'after' => '(may not be used in all themes)', 'placeholder'=>'http://www.youtube.com/watch?v=aM94aorYVS4')); ?>
