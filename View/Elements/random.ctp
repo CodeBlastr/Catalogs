@@ -29,22 +29,19 @@
 
 // set up the default config vars
 	$itemCount = (!empty($itemCount) ? $itemCount : 3);
-	$showGalleryThumb = (!empty($showGalleryThumb) ? $showGalleryThumb : false);
+	$showGalleryThumb = (isset($showGalleryThumb) ? $showGalleryThumb : false);
 	$galleryThumbSize = ($showGalleryThumb === 1 ? 'small' : $showGalleryThumb);
 	$showItemName = (!empty($showItemName) ? $showItemName : true);
-	$showItemDescription = (!empty($showItemDescription) ? $showItemDescription : true);
-	$showViewLink = (!empty($showViewLink) ? $showViewLink : true);
+	$showItemDescription = (isset($showItemDescription) ? $showItemDescription : true);
+	$showViewLink = (isset($showViewLink) ? $showViewLink : true);
 	$viewLinkText = (!empty($viewLinkText) ? $viewLinkText : 'View');
 	$before = (!empty($before) ? '<p>'.$before.'</p>' : false);
 	$inbetween = (!empty($inbetween) ? '<p>'.$inbetween.'</p>' : false);
 	$after = (!empty($after) ? '<p>'.$after.'</p>' : false);
-	$catalog_item_brand_id = (!empty($catalog_item_brand_id) ? $catalog_item_brand_id : false);
+	$catalogItemBrandId = (!empty($catalogItemBrandId) ? $catalogItemBrandId : false);
 
-?>
-
-<?php
 	#$catalogItems = $this->requestAction(array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'random_product'), array('pass' => array($itemCount, $catalog_item_brand_id)));
-	$catalogItems = $this->requestAction('/catalogs/catalog_items/random_product/'.$itemCount.'/'.$catalog_item_brand_id);
+	$catalogItems = $this->requestAction('/catalogs/catalog_items/random_product/'.$itemCount.'/'.$catalogItemBrandId);
 	if (!empty($catalogItems)) :
 ?>
 <ul class="elementCatalogRandom" id="elementCatalogRandom<?php echo $instance; ?>">
