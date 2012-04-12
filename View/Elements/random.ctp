@@ -30,7 +30,7 @@
 // set up the default config vars
 	$itemCount = (!empty($itemCount) ? $itemCount : 3);
 	$showGalleryThumb = (isset($showGalleryThumb) ? $showGalleryThumb : false);
-	$galleryThumbSize = ($showGalleryThumb === 1 ? 'small' : $showGalleryThumb);
+	$galleryThumbSize = ($showGalleryThumb === 1) ? 'small' : $showGalleryThumb;
 	$showItemName = (!empty($showItemName) ? $showItemName : true);
 	$showItemDescription = (isset($showItemDescription) ? $showItemDescription : true);
 	$showViewLink = (isset($showViewLink) ? $showViewLink : true);
