@@ -200,6 +200,99 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->set('title_for_layout', __('Add Item Form', true));
 	}
 
+
+
+	public function add_virtual($catalogItemBrandId = null) {
+
+          App::import('Model', 'Webpages.Webpage');
+          $this->Webpage = new Webpage();
+
+          if (!empty($this->request->data)) {
+
+
+            /**
+             *from Webpages::add()
+             */
+            try {
+              $this->request->data['Webpages']['id'] = $uuid;
+
+              $this->Webpage->add($this->request->data);
+              $this->Session->setFlash(__('Webpage Saved successfully', true));
+              #$this->redirect(array('action' => 'index'));
+
+              // set the foreign_key of the virtual CatalogItem to the ID of the Webpage that we just created.
+              $this->request->data['CatalogItem']['foreign_key'] = $this->Webpage->getLastInsertID();
+
+              # Why would catalog id ever be an array (there should be a comment about this here)
+              if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id'])) {
+                  $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
+              }
+
+              # Handle ARB (automatic recurring billing) Settings (THIS SHOULD BE IN THE MODEL!!!!)
+              $this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings'])
+                  ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
+
+              # Handle payment type (I think this should be in the model)
+              if(!empty($this->request->data['CatalogItem']['payment_type'])) {
+                  $this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
+              }
+
+              if ($this->CatalogItem->add($this->request->data, $this->Auth->user('id'))) {
+                  $this->Session->setFlash(__('CatalogItem saved.', true));
+                  #$this->redirect(array('action' => 'edit', $this->CatalogItem->id));
+                  $this->redirect(array('action' => 'index'));#
+              } else {
+                  $this->Session->setFlash(__('Catalog Item could not be saved.', true));
+              }
+
+
+
+            } catch (Exception $e) {
+              $this->Session->setFlash($e->getMessage());
+            }
+
+		}
+
+		// get webpages records
+        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+
+
+		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
+		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
+		$catalogs = $this->CatalogItem->Catalog->find('list');
+		$categories = $this->CatalogItem->Category->generateTreeList();
+		if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE')) :
+			$paymentOptions = defined('__ORDERS_ENABLE_PAYMENT_OPTIONS') ? unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS) : null;
+			$this->set(compact('paymentOptions'));
+		endif;
+
+		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
+		if(isset($this->request->params['named']['catalog'])) :
+			$categoryElement['parentId'] = $this->request->params['named']['catalog'];
+		endif;
+		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
+		$this->set(compact('catalogItemBrandId', 'catalogItemBrands', 'catalogs', 'categories', 'categoryElement', 'userRoles', 'catalogItemParentIds', 'foreignKeys'));
+
+		$categories = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
+		if(isset($this->request->params['named']['catalog'])) :
+			$categories['parentId'] = $this->request->params['named']['catalog'];
+		endif;
+
+		$this->set('page_title_for_layout', __('Catalog Items', true));
+		$this->set('title_for_layout', __('Add Item Form', true));
+
+
+        /**
+         *from Webpages::add()
+         */
+        # required to have per page permissions
+		$this->request->data['Alias']['name'] = !empty($this->request->params['named']['alias']) ? $this->request->params['named']['alias'] : null;
+		$this->UserRole = ClassRegistry::init('Users.UserRole');
+		$userRoles = $this->UserRole->find('list');
+		$types = $this->Webpage->types();
+    	$this->set(compact('userRoles', 'types'));
+	}
+
 /**
  * edit method
  *
