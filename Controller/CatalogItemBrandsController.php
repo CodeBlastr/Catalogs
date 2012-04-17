@@ -1,6 +1,6 @@
 <?php
 /**
- * Catalog Brands Controller
+ * Catalog Brands Controller (testing cloud9 ide)
  *
  *
  * PHP versions 5
