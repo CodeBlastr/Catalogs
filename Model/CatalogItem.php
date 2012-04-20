@@ -31,7 +31,7 @@ class CatalogItem extends CatalogsAppModel {
 		'Tree' => array('parent' => 'parent_id'),
 	);
 
-	public $order = 'price';
+	public $order = '';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
@@ -119,6 +119,7 @@ class CatalogItem extends CatalogsAppModel {
 	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
+		$this->order = array($this->alias . '.' . 'price');
 	}
 
 	public function beforeFind($queryData) {
@@ -183,7 +184,7 @@ class CatalogItem extends CatalogsAppModel {
 			$this->CatalogItemPrice->deleteAll(array('catalog_item_id' => $itemData['CatalogItem']['id']));
 			#$itemData['CatalogItemPrice'] = $data['CatalogItemPrice'];
 		}
-		if ($this->saveAll($itemData)) {
+		if ($this->save($itemData)) {
 			$data['CatalogItem']['id'] = $this->id ;
 			$data['Gallery']['model'] = 'CatalogItem';
 			$data['Gallery']['foreign_key'] = $this->id;
