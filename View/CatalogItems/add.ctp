@@ -31,6 +31,7 @@
 		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
 
 		echo $this->Form->input('CatalogItem.catalog_item_brand_id', array('empty' => '-- Select --', 'label' => 'What is this item\'s brand name? ('.$this->Html->link('add', array('controller' => 'catalog_item_brands', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalog_item_brands', 'action' => 'index')).' brands)'));
+		echo $this->Form->input('CatalogItem.cost', array('label' => 'What does the product cost you?'));
 		echo $this->Form->input('CatalogItem.price', array('label' => 'What is the retail price?'));
 		echo $this->Form->input('CatalogItem.stock_item', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
 		echo $this->Form->input('CatalogItem.cart_min', array('label' => 'Minimun Cart Quantity?', 'after' => '<p>Enter the minimum cart quantity or leave blank for 1</p>'));

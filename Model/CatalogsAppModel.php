@@ -3,7 +3,7 @@
  * Catalog App Model
  *
  *
- * PHP versions 5
+ * PHP versions 5.3
  *
  * Zuha(tm) : Business Management Applications (http://zuha.com)
  * Copyright 2009-2010, Zuha Foundation Inc. (http://zuha.org)
@@ -20,7 +20,25 @@
  */
 
 class CatalogsAppModel extends AppModel {
-
+	
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		
+		// automatic upgrade the workflow item events table 4/19/2012
+		if (defined('__SYSTEM_ZUHA_DB_VERSION') && __SYSTEM_ZUHA_DB_VERSION < 0.0190) {
+			$columns = $this->query('SHOW COLUMNS FROM catalog_items');
+			foreach ($columns as $column) {
+				if ($column['COLUMNS']['Field'] == 'cost') {
+					//its there 
+					$alter = false;
+					break;
+				} else {
+					$alter = true;
+				}
+			}
+			if (!empty($alter)) {
+				$this->query('ALTER TABLE `catalog_items` ADD `cost` FLOAT NULL AFTER `cart_max`');
+			}
+		}
+	}
 }
-
-?>

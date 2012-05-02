@@ -22,8 +22,25 @@ App::uses('CatalogsAppController', 'Catalogs.Controller');
  */
 class CatalogItemsController extends CatalogsAppController {
 
+/**
+ * Name
+ *
+ * @var string
+ */
 	public $name = 'CatalogItems';
+
+/**
+ * Allowed Actions
+ * 
+ * @var array
+ */
 	public $allowedActions = array('get_attribute_values');
+
+/**
+ * Uses
+ *
+ * @var string
+ */
 	public $uses = 'Catalogs.CatalogItem';
 
 /**
@@ -48,13 +65,21 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->set(compact('catalogItems'));
 	}
 
-
-	private function _namedParameterJoins() {
+/**
+ * Named Parameter Joins
+ * 
+ * Handles when there are named parameters to populate the variables for the view correctly.
+ *
+ * @access protected
+ * @param void
+ * @return void
+ */
+	protected function _namedParameterJoins() {
 		# category id named
 		if (!empty($this->request->params['named']['category'])) {
 			$categoryId = $this->request->params['named']['category'];
 			$this->paginate['joins'] = array(array(
-				'table' => 'categorizeds',
+				'table' => 'categorized',
 				'alias' => 'Categorized',
 				'type' => 'INNER',
 				'conditions' => array(
@@ -70,7 +95,10 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 	}
 
-
+/**
+ * It is imperative that we document this function
+ * @todo make this more isolated and modular (its calling multiple related models from other plugins)
+ */
 	public function view($id = null) {
 		$this->CatalogItem->id = $id;
 		if (!$this->CatalogItem->exists()) {
@@ -83,10 +111,15 @@ class CatalogItemsController extends CatalogsAppController {
 				),
 			'contain' => array(
 				'CatalogItemBrand' => array(
-					'fields' => array('name' , 'id')
+					'fields' => array(
+						'name', 
+						'id')
 					),
 				'Catalog' => array(
-					'fields'=>array('name' , 'id')
+					'fields' => array(
+						'name',
+						'id'
+						)
 					),
 				'CatalogItemPrice' => array(
 					'conditions' => array(
@@ -98,32 +131,47 @@ class CatalogItemsController extends CatalogsAppController {
 			));
 		$catalogItem = $this->CatalogItem->cleanItemPrice($catalogItem, $this->userRoleId);
 
-		$this->request->data = $this->CatalogItem->find('first',
-				array('conditions'=>array('CatalogItem.id'=>$id), 'recursive'=>2,
-					'contain'=>array('Catalog.id', 'Category.id', 'CatalogItemBrand',
-							'CatalogItemPrice')));
-				// remodifying data to bring support for controls
+		$this->request->data = $this->CatalogItem->find('first', array(
+			'conditions' => array(
+				'CatalogItem.id' => $id
+				), 
+			'recursive' => 2,
+			'contain' => array(
+				'Catalog.id', 
+				'Category.id', 
+				'CatalogItemBrand',
+				'CatalogItemPrice'
+				)
+			));
+		// remodifying data to bring support for controls
 		$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
 		$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
 		$catOptions = array();
-
 
 		$catOptions = $this->CatalogItem->Category->CategoryOption->find('threaded', array(
 			'conditions' => array(
 				'CategoryOption.category_id' => $this->request->data['Category'],
 				),
-			'order'=>'CategoryOption.type',
+			'fields' => array(
+				'CategoryOption' => 'id',
+				'CategoryOption' => 'name',
+				'CategoryOption' => 'type',
+				),
+			'order' => 'CategoryOption.type',
 			));
 
 		$this->set('options', $catOptions);
 
 		$attributeData = $this->CatalogItem->find('all', array(
-					'fields' => array('CatalogItem.id'),
-					'conditions'=>array('CatalogItem.parent_id'=>$id),
-					'recursive'=>1,
-					'contain'=>array('CategoryOption'),
-		//			'group' => 'CategoryOption.parent_id'
-		));
+			'conditions' => array(
+				'CatalogItem.parent_id' => $id
+				),
+			'fields' => array(
+				'CatalogItem.id'
+				),
+			'recursive' => 1,
+			//'group' => 'CategoryOption.parent_id'
+			));
 
 		//Set catalog item view vars
 		$this->set(compact('attributeData', 'catalogItem'));
@@ -140,7 +188,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 
 /**
- * add method
+ * Add method
  *
  * Users can add catalog items belonging to catalogs and brands.
  */

@@ -21,7 +21,14 @@
  */
 class CatalogsController extends CatalogsAppController {
 
+/**
+ * var string
+ */
 	public $name = 'Catalogs';
+
+/**
+ * var string
+ */
 	public $uses = 'Catalogs.Catalog';
 	
 
@@ -37,7 +44,13 @@ class CatalogsController extends CatalogsAppController {
 	}
 
 	
-	function index() {
+/**
+ * Index method.
+ *
+ * @param void
+ * @return void
+ */
+	public function index() {
 		$this->paginate = array(
 			'fields' => array(
 				'id',
@@ -48,43 +61,58 @@ class CatalogsController extends CatalogsAppController {
 		$this->set('catalogs', $this->paginate());
 	}
 	
-	/*
-	 * Viewing a catalog. 
-	 * Displays all the items in the catalog.
-	 */
-	function view($id) {
-		$catalog = $this->Catalog->find('first' , array(
-			'conditions' => array(
-				'Catalog.id'=>$id
-				),
-			'fields' => array(
-				'name',
-				'summary',
-				'introduction',
-				'description',
-				'additional',
-				),
-			));
-		$this->set(compact('catalog'));
+/**
+ * View method.
+ *
+ * @param string
+ * @return void
+ */
+	public function view($id = null) {
+		# setup paginate
+		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
+		$this->paginate['conditions']['OR'] = array(
+			array('CatalogItem.end_date >' => date('Y-m-d h:i:s')),
+			array('CatalogItem.end_date' => null),
+			array('CatalogItem.end_date' => '0000-00-00 00:00:00')
+		);
+		$this->paginate['conditions']['CatalogItem.parent_id'] = null;
+		$catalogItems = $this->paginate('CatalogItem');
+		# removes items and changes prices based on user role
+		$catalogItems = $this->Catalog->CatalogItem->cleanItemsPrices($catalogItems, $this->userRoleId);
+		$this->set(compact('catalogItems'));
 	}
 
-	function add() {
+	
+/**
+ * Add method.
+ *
+ * @param void
+ * @return void
+ */
+	public function add() {
 		if (!empty($this->request->data)) {
 			$this->Catalog->create();
 			if ($this->Catalog->save($this->request->data)) {
-				$this->flash(__('Catalog saved.', true), array('action'=>'index'));
+				$this->flash(__('Catalog saved.'), array('action' => 'index'));
 			} else {
 			}
 		}
 	}
 
-	function edit($id = null) {
+	
+/**
+ * Edit method.
+ *
+ * @param string
+ * @return void
+ */
+	public function edit($id = null) {
 		if (!$id && empty($this->request->data)) {
-			$this->flash(__('Invalid Catalog', true), array('action'=>'index'));
+			$this->flash(__('Invalid Catalog', true), array('action' => 'index'));
 		}
 		if (!empty($this->request->data)) {
 			if ($this->Catalog->save($this->request->data)) {
-				$this->flash(__('The Catalog has been saved.', true), array('action'=>'index'));
+				$this->flash(__('The Catalog has been saved.'), array('action' => 'index'));
 			} else {
 			}
 		}
@@ -93,14 +121,20 @@ class CatalogsController extends CatalogsAppController {
 		}
 	}
 
-	function delete($id = null) {
+	
+/**
+ * Delete method.
+ *
+ * @param string
+ * @return void
+ */
+	public function delete($id = null) {
 		if (!$id) {
-			$this->flash(__('Invalid Catalog', true), array('action'=>'index'));
+			$this->flash(__('Invalid Catalog'), array('action' => 'index'));
 		}
 		if ($this->Catalog->delete($id)) {
-			$this->flash(__('Catalog deleted', true), array('action'=>'index'));
+			$this->flash(__('Catalog deleted'), array('action' => 'index'));
 		}
 	}
 	
 }
-?>

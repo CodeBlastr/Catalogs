@@ -47,7 +47,7 @@ class Catalog extends CatalogsAppModel {
     var $hasAndBelongsToMany = array(
         'Category' => array(
             'className' => 'Categories.Category',
-       		'joinTable' => 'categorizeds',
+       		'joinTable' => 'categorized',
             'foreignKey' => 'foreign_key',
             'associationForeignKey' => 'category_id',
     		'conditions' => 'Categorized.model = "Catalog"',
@@ -55,7 +55,7 @@ class Catalog extends CatalogsAppModel {
         ),
     );  
 
- /**
+/**
  * Adds a new record to the database
  *
  * @param string $userId, user id

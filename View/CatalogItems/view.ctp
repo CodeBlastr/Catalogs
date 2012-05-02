@@ -34,5 +34,4 @@ $this->set('context_menu', array('menus' => array(
 			$this->Html->link(__d('catalogs', 'Delete'), array('action' => 'delete', $catalogItem['CatalogItem']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $catalogItem['CatalogItem']['id'])),
 			),
 		),
-	)));
-?>
+	))); ?>

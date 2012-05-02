@@ -28,12 +28,16 @@ if(isset($options) && !empty($options)) {
 		}
 		
 		if (!empty($sel))
-			echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], 
-				array('options'=>$sel, 'multiple'=>'checkbox', 'div'=>false, 
-						'selected' => $selected, 'class' => 'CatalogAttribute', 'legend' => false,
-						//'default' => $default,
-						'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
-		?>
+			echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], array(
+				'options' => $sel, 
+				'multiple' => 'checkbox', 
+				'div' => false,
+				'selected' => $selected, 
+				'class' => 'CatalogAttribute', 
+				'legend' => false,
+				//'default' => $default,
+				'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'
+				)); ?>
         </fieldset>
       </div><!-- end .catalogItemOptions -->
       <?php
