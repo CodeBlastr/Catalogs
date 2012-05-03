@@ -111,11 +111,8 @@ class CatalogItem extends CatalogsAppModel {
     );
 
 	public function __construct($id = null, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
-		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
-		$this->order = array($this->alias . '.' . 'price');
-		
-		if (in_array('Location', CakePlugin::loaded())) {
+		// load associated plugins
+		if (in_array('Locations', CakePlugin::loaded())) {
 			$this->hasOne['Location'] = array(
 				'className' => 'Locations.Location',
 				'foreignKey' => 'foreign_key',
@@ -123,6 +120,11 @@ class CatalogItem extends CatalogsAppModel {
 				'conditions' => array('Location.model' => 'CatalogItem'),
 				);
 		}
+		
+		parent::__construct($id, $table, $ds);
+		
+		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
+		$this->order = array($this->alias . '.' . 'price');
 	}
 
 	public function beforeFind($queryData) {
@@ -139,31 +141,46 @@ class CatalogItem extends CatalogsAppModel {
 				$queryData['conditions'][] = array("{$this->alias}.id  in ({$available})");
 			}
 		}
-		# always limit catalog items by the user role if the price matrix is used
+		// always limit catalog items by the user role if the price matrix is used
 		App::import('Model', 'CakeSession');
         $this->Session = new CakeSession();
 		$userRoleId = $this->Session->read('Auth.User.user_role_id');
 		$queryData['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $userRoleId;
 
-		# stop filtering the price if we use fields and price isn't included
+		// stop filtering the price if we use fields and price isn't included
 		$this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('CatalogItem.price', $queryData['fields']) === false) ? false : true;
 
 		return $queryData;
 	}
 
 	public function afterFind($results, $primary) {
-		# only play with prices if the find is not list type (which doesn't need prices)
-		if (!empty($this->filterPrice)) :
-			# this is for the find "all" type where the data format is $results[0]['CatalogItem']['id'];
-			if (isset($results[0]['CatalogItem']) && !empty($results[0]['CatalogItem'])) :
+		// only play with prices if the find is not list type (which doesn't need prices)
+		if (!empty($this->filterPrice)) {
+			// this is for the find "all" type where the data format is $results[0]['CatalogItem']['id'];
+			if (isset($results[0]['CatalogItem']) && !empty($results[0]['CatalogItem'])) {
 				$results = $this->cleanItemsPrices($results);
-			endif;
+			}
 
-			# this is for single catalog items being returned
-			if (isset($results['CatalogItem']['id']) && !empty($results['CatalogItem']['id'])) :
+			// this is for single catalog items being returned
+			if (isset($results['CatalogItem']['id']) && !empty($results['CatalogItem']['id'])) {
 				$results = $this->cleanItemPrice($results);
-			endif;
-		endif;
+			}
+		}
+		
+		$i = 0;
+		foreach ($results as $result) {
+			$i = $i + 1;
+			if(!empty($result['CatalogItem']['arb_settings'])) {
+				// set arb back to input values
+				$arbSettingsArray = unserialize($result['CatalogItem']['arb_settings']);
+				$arbSettingsString = '';
+				foreach ($arbSettingsArray as $key => $value ){
+					$arbSettingsString .= "$key = $value\n";
+				}
+				$results[$i]['CatalogItem']['arb_settings'] = $arbSettingsString ;
+			}
+		}
+		
 		return $results;
 	}
 
@@ -177,13 +194,14 @@ class CatalogItem extends CatalogsAppModel {
  * @todo		This function should use the throw exception syntax, and the controller should catch.
  */
 	public function add($data) {
+		$data = $this->_cleanAddData($data);
 		$ret = false;
-		# generate a random sku if it doesn't exist already
-		$data['CatalogItem']['sku'] = (!empty($data['CatalogItem']['sku']) ? $data['CatalogItem']['sku'] : rand(10000, 99000));
-		# remove some information for saveAll, because we need to deal with it manually
+
+		// remove some information for saveAll, because we need to deal with it manually
 		$itemData = array('CatalogItem' => $data['CatalogItem']);
+		
 		if (isset($data['CatalogItemPrice'])) {
-			# why is this here?  save HABTM does this for you RK - 7/18/2011
+			# why is this here?  save HABTM does this for you ... RK - 7/18/2011
 			$this->CatalogItemPrice->deleteAll(array('catalog_item_id' => $itemData['CatalogItem']['id']));
 			#$itemData['CatalogItemPrice'] = $data['CatalogItemPrice'];
 		}
@@ -222,6 +240,29 @@ class CatalogItem extends CatalogsAppModel {
 			throw new Exception(__d('catalogs', 'Error: ...', true));
 		}
 		return $ret;
+	}
+	
+/**
+ * Cleans data for adding
+ * 
+ * @access protected
+ * @param array
+ * @return array
+ */ 
+ 	protected function _cleanAddData($data) {
+		if (!empty($data['CatalogItem']['arb_settings'])) {
+			$data['CatalogItem']['arb_settings'] = serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings']));
+		}
+			
+		if(!empty($data['CatalogItem']['payment_type'])) {
+			$data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
+		}
+		
+		if (empty($data['CatalogItem']['sku'])) {
+			$data['CatalogItem']['sku'] = rand(10000, 99000); // generate random sku if none exists
+		}
+		
+		return $data;
 	}
 
 /**

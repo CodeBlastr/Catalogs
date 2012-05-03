@@ -200,10 +200,6 @@ class CatalogItemsController extends CatalogsAppController {
 				 $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
 			}
 
-			# Handle ARB (automatic recurring billing) Settings (THIS SHOULD BE IN THE MODEL!!!!)
-			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings'])
-				? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
-
 			# Handle payment type (I think this should be in the model)
 			if(!empty($this->request->data['CatalogItem']['payment_type'])) {
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
@@ -273,10 +269,6 @@ class CatalogItemsController extends CatalogsAppController {
               if(isset($this->request->data['Catalog']) && is_array($this->request->data['Catalog']['id'])) {
                   $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
               }
-
-              # Handle ARB (automatic recurring billing) Settings (THIS SHOULD BE IN THE MODEL!!!!)
-              $this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings'])
-                  ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
 
               # Handle payment type (I think this should be in the model)
               if(!empty($this->request->data['CatalogItem']['payment_type'])) {
@@ -351,11 +343,6 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
-			if(!empty($this->request->data['CatalogItem']['payment_type'])) {
-				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
-			}
-
 			try {
 				$this->CatalogItem->add($this->request->data);
 				$this->Session->setFlash(__('Item saved'));
@@ -365,33 +352,26 @@ class CatalogItemsController extends CatalogsAppController {
 			}
 		}
 
-		// _viewVars
-		$this->request->data = $this->CatalogItem->find('first', array(
+		$catalogItem = $this->CatalogItem->find('first', array(
 			'conditions' => array(
-				'CatalogItem.id' => $id),
-				'recursive' => 2,
-				'contain' => array(
-					'Catalog',
-					'Category',
-					'CatalogItemBrand',
-					'CategoryOption',
-					'CatalogItemPrice',
-					'Location',
-					)
-				));
+				'CatalogItem.id' => $id
+				),
+			'contain' => array(
+				'Catalog',
+				'Category',
+				'CatalogItemBrand',
+				'CategoryOption',
+				'CatalogItemPrice',
+				'Location',
+				)
+			));
 		// remodifying data to bring support for controls
-		$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
+		// $catalogItem['Catalog']['id'] = array('0' => $catalogItem['Catalog']['id']); (this makes NO SENSE!!  5/2/2012 RK)
+																						 
 		$catOptions = array();
-		// if arb_settings defined for CI then it will unserialize the values
-		if(!empty($this->request->data['CatalogItem']['arb_settings'])) {
-			$arb_settings_array = unserialize($this->request->data['CatalogItem']['arb_settings']);
-			$arb_settings_string = '';
-			foreach ($arb_settings_array as $key => $value ){
-				$arb_settings_string .= "$key = $value\n";
-			}
-			$this->request->data['CatalogItem']['arb_settings'] = $arb_settings_string ;
-		}
+		
 		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
+		
 		foreach($this->request->data['CategoryOption'] as $catOpt) {
 			if($catOpt['type'] == 'Option Type') {
 				$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
@@ -432,6 +412,8 @@ class CatalogItemsController extends CatalogsAppController {
 				'order' => 'CategoryOption.type'
 				)));
 		}
+		
+		$this->request->data = $catalogItem;
 	}
 
 
