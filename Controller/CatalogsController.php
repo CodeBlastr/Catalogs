@@ -56,7 +56,7 @@ class CatalogsController extends CatalogsAppController {
 				'id',
 				'name',
 				'summary',
-				'published',
+				'is_public',
 				));
 		$this->set('catalogs', $this->paginate());
 	}

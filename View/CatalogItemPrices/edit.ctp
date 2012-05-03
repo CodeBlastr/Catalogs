@@ -2,38 +2,22 @@
 <?php echo $this->Form->create('CatalogItemPrice');?>
 	<fieldset>
  		<legend><?php echo __('Advanced Pricing for '.$catalogItem['CatalogItem']['name'].' : Default Price '.$catalogItem['CatalogItem']['price']);?></legend>
-<table>
-	<tr>
-		<th>User Roles</th>
-			<?php
-				foreach($priceTypes as $ptID => $pt) {
-					echo '<th>' . $pt . '</th>';
-				}?>
-	</tr>
-	<?php $index = 0;?>
-	<?php foreach($userRoles as $ugID => $ug) {?>
-	<tr>
-		<td><?php echo $ug;?></td>
-		<?php foreach($priceTypes as $ptID => $pt) {
-			echo '<td>';
-			echo $this->Form->hidden("CatalogItemPrice.{$index}.id");
-			echo $this->Form->input("CatalogItemPrice.{$index}.price",
-				array('default'=>0, 'div'=>false, 'label'=>false));
-			echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value' => $catalogItem['CatalogItem']['id'])); 
-			echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('default'=>$ugID));
-			echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('default'=>$ptID));
-			echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_id", array('value' => $catalogItem['CatalogItem']['catalog_id']));
-			echo '</td>';
-			$index++;
-		}?>
-	</tr>
-	<?php }?>
-</table>
+		<table>
+			<tr>
+				<th>User Roles</th>
+			</tr>
+			<?php 
+			$i = 0; 
+			foreach($userRoles as $ugID => $ug) { 
+				echo '<tr><td>' . $ug . '</td><td>';
+				echo $this->Form->hidden("CatalogItemPrice.{$i}.id");
+				echo $this->Form->input("CatalogItemPrice.{$i}.price",	array('default'=>0, 'div'=>false, 'label'=>false));
+				echo $this->Form->hidden("CatalogItemPrice.{$i}.catalog_item_id", array('value'=>$this->request->data['CatalogItem']['id'])); 
+				echo $this->Form->hidden("CatalogItemPrice.{$i}.user_role_id", array('default'=>$ugID));
+				echo '</td></tr>';
+				$i = $i + 1;
+			}?>
+		</table>
 	</fieldset>
 <?php echo $this->Form->end('Submit');?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $this->Html->link(__('List Prices', true), array('action' => 'index'));?></li>
-	</ul>
 </div>

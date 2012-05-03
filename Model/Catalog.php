@@ -36,13 +36,6 @@ class Catalog extends CatalogsAppModel {
 		)
 	);
 	
-	var $belongsTo = array(
-		'Alias'=>array(
-			'className' => 'Catalogs.Alias',
-			'foreignKey' => 'alias_id'
-		),
-	);
-	
 
     var $hasAndBelongsToMany = array(
         'Category' => array(

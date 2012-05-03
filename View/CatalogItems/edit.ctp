@@ -24,7 +24,7 @@
     <fieldset>
     	<?php
 		echo $this->Form->input('CatalogItem.id');
-		echo $this->Form->input('CatalogItem.published', array('default' => 1, 'type' => 'hidden'));
+		echo $this->Form->input('CatalogItem.is_public', array('default' => 1, 'type' => 'hidden'));
 		echo $this->Form->input('CatalogItem.name', array('label' => 'Item display name ('.$this->Html->link('edit images', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'CatalogItem', $this->request->data['CatalogItem']['id'])).')'));
 		echo $this->Form->input('CatalogItem.sku');
 		echo $this->Form->input('CatalogItem.catalog_id', array('label' => 'Which catalog should hold this item? ('.$this->Html->link('add', array('controller' => 'catalogs', 'action' => 'add')).' / '.$this->Html->link('edit', array('controller' => 'catalogs', 'action' => 'index')).' catalogs)'));
@@ -64,18 +64,17 @@
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Does this item have a schedule?');?></legend>
     	<?php
-		echo $this->Form->input('CatalogItem.start_date', array('empty' => true));
-		echo $this->Form->input('CatalogItem.end_date', array('empty' => true));
+		echo $this->Form->input('CatalogItem.started', array('empty' => true));
+		echo $this->Form->input('CatalogItem.ended', array('empty' => true));
 
-		if (isset($this->request->data['CatalogItemPrice'])) :
-			foreach($this->request->data['CatalogItemPrice'] as $index => $val) :
+		if (isset($this->request->data['CatalogItemPrice'])) {
+			foreach($this->request->data['CatalogItemPrice'] as $index => $val) {
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.id", array('value'=>$val['id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.price", array('value'=>$val['price']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.catalog_item_id", array('value'=>$val['catalog_item_id']));
 				echo $this->Form->hidden("CatalogItemPrice.{$index}.user_role_id", array('value'=>$val['user_role_id']));
-				echo $this->Form->hidden("CatalogItemPrice.{$index}.price_type_id", array('value'=>$val['price_type_id']));
-			endforeach;
-		endif;
+			}
+		}
 		$i = 0;
 		if (!empty($this->request->data['Category'])) { foreach($this->request->data['Category'] as $value) {
 			++$i;

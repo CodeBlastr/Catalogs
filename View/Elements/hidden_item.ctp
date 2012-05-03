@@ -15,7 +15,7 @@
 	    echo $this->Form->input('GalleryImage.filesize', array('type' => 'hidden'));
 		
 		echo $this->Form->hidden('CatalogItem.description',array('value'=>$this->request->data['CatalogItem']['description']));
-		echo $this->Form->hidden('CatalogItem.published',array('value'=>$this->request->data['CatalogItem']['published']));
+		echo $this->Form->hidden('CatalogItem.is_public',array('value'=>$this->request->data['CatalogItem']['is_public']));
 		echo $this->Form->hidden('CatalogItem.catalog_id',array('value'=>$this->request->data['CatalogItem']['catalog_id']));
 		
 		foreach($this->request->data['Category'] as $val) {

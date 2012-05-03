@@ -44,7 +44,7 @@ class CatalogItem extends CatalogsAppModel {
 			'className' => 'Catalogs.CatalogItemPrice',
 			'foreignKey' => 'catalog_item_id',
 			'dependent' => true,
-			'order' => 'CatalogItemPrice.user_role_id asc, CatalogItemPrice.price_type_id asc'
+			'order' => 'CatalogItemPrice.user_role_id asc'
 		),
 		'CatalogItemChildren' => array(
 			'className' => 'Catalogs.CatalogItem',
@@ -73,7 +73,7 @@ class CatalogItem extends CatalogsAppModel {
 		'CatalogItemParent'=>array(
 			'className' => 'Catalogs.CatalogItem',
 			'foreignKey' => 'parent_id',
-			'counterCache' => 'children_count',
+			'counterCache' => 'children',
 			'counterScope' => array('CatalogItem.parent_id IS NOT NULL'),
 		),
 		'CatalogItemBrand' => array(
@@ -310,22 +310,16 @@ class CatalogItem extends CatalogsAppModel {
  * @todo				This price with Zuha::enum() thing is not very reliable, as the names are hard coded.  Haven't thought of a good way around it quite yet, but no one is using multiple or sales prices so removing giving it an easy default for now.  But if we use more prices in the matrix than we need to, its going to cause the wrong prices to be spit out.
  */
 	public function cleanItemPrice($catalogItem) {
-		if (!empty($catalogItem['CatalogItemPrice'][0])) :
-			foreach ($catalogItem['CatalogItemPrice'] as $price) :
+		if (!empty($catalogItem['CatalogItemPrice'][0])) {
+			foreach ($catalogItem['CatalogItemPrice'] as $price) {
 				# set the price in the original catalogItems to user role price
-				if ($price['price_type_id'] == Zuha::enum('PRICE_TYPE', 'Sale')) :
-					$catalogItem['CatalogItem']['sale_price'] = ZuhaInflector::pricify($price['price']);
-				elseif ($price['price_type_id'] == Zuha::enum('PRICE_TYPE', 'Default')) :
-					$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);
-				else :
-					$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);
-				endif;
-			endforeach;
-		endif;
+				$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($price['price']);
+			}
+		}
 
-		if (!empty($catalogItem['CatalogItem']['price'])) :
+		if (!empty($catalogItem['CatalogItem']['price'])) {
 			$catalogItem['CatalogItem']['price'] = ZuhaInflector::pricify($catalogItem['CatalogItem']['price']);
-		endif;
+		}
 
 		unset($catalogItem['CatalogItemPrice']); // its not needed now
 		return $catalogItem;

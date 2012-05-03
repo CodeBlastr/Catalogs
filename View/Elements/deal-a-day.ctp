@@ -12,8 +12,8 @@ $gallery = $dealItem;
 echo $this->Html->script('/catalogs/js/time.js');
 
 if (!empty($dealItem)) {
-	$startDateTime = explode(' ', $dealItem['CatalogItem']['start_date']);
-	$endDateTime = explode(' ', $dealItem['CatalogItem']['end_date']);
+	$startDateTime = explode(' ', $dealItem['CatalogItem']['started']);
+	$endDateTime = explode(' ', $dealItem['CatalogItem']['ended']);
 	#$starttime		=	explode(":", $startDateTime[1]);
 	$endtime		=	explode(":", $endDateTime[1]);
 	$stardate		=	explode("-", $startDateTime[0]);

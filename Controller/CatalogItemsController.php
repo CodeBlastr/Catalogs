@@ -200,11 +200,6 @@ class CatalogItemsController extends CatalogsAppController {
 				 $this->request->data['Catalog']['id'] = $this->request->data['Catalog']['id'][0];
 			}
 
-			# Handle payment type (I think this should be in the model)
-			if(!empty($this->request->data['CatalogItem']['payment_type'])) {
-				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
-			}
-
 			if ($this->CatalogItem->add($this->request->data, $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('CatalogItem saved.', true));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id));
@@ -321,7 +316,7 @@ class CatalogItemsController extends CatalogsAppController {
         /**
          *from Webpages::add()
          */
-        # required to have per page permissions
+        // required to have per page permissions
 		$this->request->data['Alias']['name'] = !empty($this->request->params['named']['alias']) ? $this->request->params['named']['alias'] : null;
 		$this->UserRole = ClassRegistry::init('Users.UserRole');
 		$userRoles = $this->UserRole->find('list');
@@ -388,13 +383,8 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->set(compact('foreignKeys'));
 
 		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
-		$priceTypes = $this->CatalogItem->CatalogItemPrice->PriceType->find('list', array(
-			'conditions' => array(
-				'PriceType.type' => 'PRICE_TYPE'
-				)
-			));
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
-		$this->set(compact('userRoles', 'priceTypes', 'catalogItemBrands'));
+		$this->set(compact('userRoles', 'catalogItemBrands'));
 
 		$this->set('catalogs', $this->CatalogItem->Catalog->find('list'));
 		$this->set('catalogBrands', $this->CatalogItem->CatalogItemBrand->get_brands($this->request->data['Catalog']['id'][0]));

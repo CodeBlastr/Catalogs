@@ -53,8 +53,7 @@ class CatalogItemPricesController extends CatalogsAppController {
 		if (!empty($catalogItemId)) :
 			$catalogItem = $this->CatalogItemPrice->CatalogItem->find('first', array('conditions' => array('CatalogItem.id' => $catalogItemId)));
 			$userRoles = $this->CatalogItemPrice->UserRole->find('list');
-			$priceTypes = $this->CatalogItemPrice->PriceType->find('list', array('conditions' => array('PriceType.type' => 'PRICE_TYPE'),));
-			$this->set(compact('catalogItem', 'userRoles', 'priceTypes'));
+			$this->set(compact('catalogItem', 'userRoles'));
 		else :
 			$this->Session->setFlash(__('Invalid Item', true));
 			$this->redirect($this->referer());
@@ -87,8 +86,7 @@ class CatalogItemPricesController extends CatalogsAppController {
 		if (!empty($this->request->data)) {
 			$this->set('referer', $this->referer());
 			$userRoles = $this->CatalogItemPrice->UserRole->find('list');
-			$priceTypes = ($this->CatalogItemPrice->PriceType->find('list', array('conditions' => array('PriceType.type' => 'PRICE_TYPE'),)));
-			$this->set(compact('userRoles', 'priceTypes'));
+			$this->set(compact('userRoles'));
 		}
 	}
 

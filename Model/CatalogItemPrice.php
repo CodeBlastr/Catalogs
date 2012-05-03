@@ -29,29 +29,19 @@ class CatalogItemPrice extends CatalogsAppModel {
 			'foreignKey' => 'user_role_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => 'CatalogItemPrice.user_role_id asc, CatalogItemPrice.price_type_id asc'
 		),
 		'CatalogItem' => array(
 			'className' => 'Catalogs.CatalogItem',
 			'foreignKey' => 'catalog_item_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => 'CatalogItemPrice.user_role_id asc, CatalogItemPrice.price_type_id asc' 
 		),
 		'Catalog' => array(
 			'className' => 'Catalogs.Catalog',
 			'foreignKey' => 'catalog_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => 'CatalogItemPrice.user_role_id asc, CatalogItemPrice.price_type_id asc'
-		),
-		'PriceType' => array(
-			'className' => 'Enumeration',
-			'foreignKey' => 'price_type_id',
-			'conditions' => array('PriceType.type' => 'PRICE_TYPE'),
-			'fields' => '',
-			'order' => 'CatalogItemPrice.user_role_id asc, CatalogItemPrice.price_type_id asc'
-  		),
+		)
 	);
 	
 	function get_price($user_role_id, $catalog_item_id) {
