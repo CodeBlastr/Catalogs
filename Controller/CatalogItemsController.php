@@ -227,10 +227,8 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
-		if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE')) :
-			$paymentOptions = defined('__ORDERS_ENABLE_PAYMENT_OPTIONS') ? unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS) : null;
-			$this->set(compact('paymentOptions'));
-		endif;
+		
+		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
 
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
 		if(isset($this->request->params['named']['catalog'])) :
@@ -309,10 +307,8 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
-		if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE')) :
-			$paymentOptions = defined('__ORDERS_ENABLE_PAYMENT_OPTIONS') ? unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS) : null;
-			$this->set(compact('paymentOptions'));
-		endif;
+		
+		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
 
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
 		if(isset($this->request->params['named']['catalog'])) :
@@ -342,8 +338,11 @@ class CatalogItemsController extends CatalogsAppController {
 	}
 
 /**
- * edit method
+ * Edit method
  *
+ * @access public
+ * @param string
+ * @return void
  */
 	public function edit($id = null) {
 		$this->CatalogItem->id = $id;
@@ -353,98 +352,86 @@ class CatalogItemsController extends CatalogsAppController {
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->request->data['CatalogItem']['arb_settings'] = !empty($this->request->data['CatalogItem']['arb_settings']) ? serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings'])) : '' ;
-			if(!empty($this->request->data['CatalogItem']['payment_type'])) :
+			if(!empty($this->request->data['CatalogItem']['payment_type'])) {
 				$this->request->data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
-			endif;
+			}
 
 			try {
 				$this->CatalogItem->add($this->request->data);
-				$this->Session->setFlash(__('Item saved', true));
+				$this->Session->setFlash(__('Item saved'));
 				$this->redirect(array('action' => 'edit', $this->CatalogItem->id), 'success');
 			} catch (Exception $e) {
 				$this->Session->setFlash($e->getMessage());
 			}
 		}
 
-		# _viewVars
-		if (!empty($id)) :
-			$this->request->data = $this->CatalogItem->find('first', array(
-				'conditions' => array(
-					'CatalogItem.id' => $id),
-					'recursive' => 2,
-					'contain' => array(
-						'Catalog',
-						'Category',
-						'CatalogItemBrand',
-						'CategoryOption',
-						'CatalogItemPrice',
-						'Location',
-						)
-					));
-			if (!empty($this->request->data)) {
-				// remodifying data to bring support for controls
-				$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
-				# removed in order to work with the new checkboxes (instead of the old expanding category widget)
-				# rk 7/27/2011  # delete completely if nothing else is broken
-				# $this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
-				$catOptions = array();
-
-				# if arb_settings defined for CI then it will unserialize the values
-				if(!empty($this->request->data['CatalogItem']['arb_settings'])) {
-					$arb_settings_array = unserialize($this->request->data['CatalogItem']['arb_settings']);
-					$arb_settings_string = '';
-					foreach ($arb_settings_array as $key => $value ){
-						$arb_settings_string .= "$key = $value\n";
- 					}
-					$this->request->data['CatalogItem']['arb_settings'] = $arb_settings_string ;
-				}
-
-				if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE')) :
-					$paymentOptions = defined('__ORDERS_ENABLE_PAYMENT_OPTIONS') ? unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS) : null;
-					$this->set(compact('paymentOptions'));
-				endif;
-
-				foreach($this->request->data['CategoryOption'] as $catOpt) {
-					if($catOpt['type'] == 'Option Type')
-						$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
-					else
-						$catOptions[$catOpt['parent_id']] = $catOpt['id'];
-				}
-				$this->request->data['CategoryOption'] = $catOptions;
-
-				// get webpages records
-				App::import('Model', 'Webpages.Webpage');
-		        $this->Webpage = new Webpage();
-		        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
-				$this->set(compact('foreignKeys'));
-
-				$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
-				$priceTypes = ($this->CatalogItem->CatalogItemPrice->PriceType->find('list',
-						array('conditions' => array('PriceType.type' => 'PRICE_TYPE'),)));
-				$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
-				$this->set(compact('userRoles', 'priceTypes', 'catalogItemBrands'));
-
-				$this->set('catalogs', $this->CatalogItem->Catalog->find('list'));
-				$this->set('catalogBrands',
-						$this->CatalogItem->CatalogItemBrand->get_brands($this->request->data['Catalog']['id'][0]));
-				$this->set('categories', $this->CatalogItem->Category->generateTreeList());
-				#NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
-				# and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
-				# this will be a problem for items in multiple categories.
-				if (!empty($this->request->data['Category'])) {
-					$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
-						'conditions' => array('CategoryOption.category_id' => $this->request->data['Category'][0]['id']),
-						'order' => 'CategoryOption.type'
-						)));
-				}
-			} else {
-				$this->Session->setFlash(__('Invalid Item', true));
-				$this->redirect(array('action' => 'index'));
+		// _viewVars
+		$this->request->data = $this->CatalogItem->find('first', array(
+			'conditions' => array(
+				'CatalogItem.id' => $id),
+				'recursive' => 2,
+				'contain' => array(
+					'Catalog',
+					'Category',
+					'CatalogItemBrand',
+					'CategoryOption',
+					'CatalogItemPrice',
+					'Location',
+					)
+				));
+		// remodifying data to bring support for controls
+		$this->request->data['Catalog']['id'] = array('0' => $this->request->data['Catalog']['id']);
+		$catOptions = array();
+		// if arb_settings defined for CI then it will unserialize the values
+		if(!empty($this->request->data['CatalogItem']['arb_settings'])) {
+			$arb_settings_array = unserialize($this->request->data['CatalogItem']['arb_settings']);
+			$arb_settings_string = '';
+			foreach ($arb_settings_array as $key => $value ){
+				$arb_settings_string .= "$key = $value\n";
 			}
-		else :
-			$this->Session->setFlash(__('Invalid Item', true));
-			$this->redirect(array('action' => 'index'));
-		endif;
+			$this->request->data['CatalogItem']['arb_settings'] = $arb_settings_string ;
+		}
+		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
+		foreach($this->request->data['CategoryOption'] as $catOpt) {
+			if($catOpt['type'] == 'Option Type') {
+				$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
+			} else {
+				$catOptions[$catOpt['parent_id']] = $catOpt['id'];
+			}
+		}
+		$this->request->data['CategoryOption'] = $catOptions;
+
+		// get webpages records
+		App::import('Model', 'Webpages.Webpage');
+		$this->Webpage = new Webpage();
+		$foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+		$this->set(compact('foreignKeys'));
+
+		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
+		$priceTypes = $this->CatalogItem->CatalogItemPrice->PriceType->find('list', array(
+			'conditions' => array(
+				'PriceType.type' => 'PRICE_TYPE'
+				)
+			));
+		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
+		$this->set(compact('userRoles', 'priceTypes', 'catalogItemBrands'));
+
+		$this->set('catalogs', $this->CatalogItem->Catalog->find('list'));
+		$this->set('catalogBrands', $this->CatalogItem->CatalogItemBrand->get_brands($this->request->data['Catalog']['id'][0]));
+		
+		$this->set('categories', $this->CatalogItem->Category->generateTreeList());
+		
+		// NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
+		// and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
+		// this will be a problem for items in multiple categories.
+		if (!empty($this->request->data['Category'])) {
+			$this->set('options', $this->CatalogItem->Category->CategoryOption->find('threaded', array(
+				'conditions' => array(
+					'CategoryOption.category_id' => $this->request->data['Category'][0]['id']
+					),
+				'order' => 'CategoryOption.type'
+				)));
+		}
 	}
 
 

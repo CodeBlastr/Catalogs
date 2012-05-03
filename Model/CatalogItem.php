@@ -61,12 +61,6 @@ class CatalogItem extends CatalogsAppModel {
 			'conditions' => array('Gallery.model' => 'CatalogItem'),
 			'fields' => '',
 			'order' => ''
-		),
-		'Location' => array(
-			'className' => 'Locations.Location',
-			'foreignKey' => 'foreign_key',
-			'dependent' => false,
-			'conditions' => array('Location.model' => 'CatalogItem'),
 		)
 	);
 
@@ -120,6 +114,15 @@ class CatalogItem extends CatalogsAppModel {
 		parent::__construct($id, $table, $ds);
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 		$this->order = array($this->alias . '.' . 'price');
+		
+		if (in_array('Location', CakePlugin::loaded())) {
+			$this->hasOne['Location'] = array(
+				'className' => 'Locations.Location',
+				'foreignKey' => 'foreign_key',
+				'dependent' => false,
+				'conditions' => array('Location.model' => 'CatalogItem'),
+				);
+		}
 	}
 
 	public function beforeFind($queryData) {
@@ -286,6 +289,20 @@ class CatalogItem extends CatalogsAppModel {
 		unset($catalogItem['CatalogItemPrice']); // its not needed now
 		return $catalogItem;
 	}
+	
+/**
+ * Payment Options 
+ * 
+ * @access public
+ * @param void
+ * @return string
+ */
+	public function paymentOptions() {
+		if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE') && defined('__ORDERS_ENABLE_PAYMENT_OPTIONS')) {
+			return unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS); 
+		} else {
+			return null;
+		}
+	}
 
 }
-?>
