@@ -71,9 +71,9 @@ class CatalogsController extends CatalogsAppController {
 		# setup paginate
 		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		$this->paginate['conditions']['OR'] = array(
-			array('CatalogItem.end_date >' => date('Y-m-d h:i:s')),
-			array('CatalogItem.end_date' => null),
-			array('CatalogItem.end_date' => '0000-00-00 00:00:00')
+			array('CatalogItem.ended >' => date('Y-m-d h:i:s')),
+			array('CatalogItem.ended' => null),
+			array('CatalogItem.ended' => '0000-00-00 00:00:00')
 		);
 		$this->paginate['conditions']['CatalogItem.parent_id'] = null;
 		$catalogItems = $this->paginate('CatalogItem');

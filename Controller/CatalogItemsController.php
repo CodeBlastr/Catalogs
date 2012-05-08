@@ -53,9 +53,9 @@ class CatalogItemsController extends CatalogsAppController {
 		# setup paginate
 		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		$this->paginate['conditions']['OR'] = array(
-			array('CatalogItem.end_date >' => date('Y-m-d h:i:s')),
-			array('CatalogItem.end_date' => null),
-			array('CatalogItem.end_date' => '0000-00-00 00:00:00')
+			array('CatalogItem.ended >' => date('Y-m-d h:i:s')),
+			array('CatalogItem.ended' => null),
+			array('CatalogItem.ended' => '0000-00-00 00:00:00')
 		);
 		$this->_namedParameterJoins();
 		$this->paginate['conditions']['CatalogItem.parent_id'] = null;
@@ -594,8 +594,8 @@ class CatalogItemsController extends CatalogsAppController {
  * current dateTime
  */
 	public function deal_a_day() {
-		$options['order'] = array('CatalogItem.end_date ASC');
-		$options['conditions'] = array('CatalogItem.end_date >' => date('Y-m-d h:i:s'));
+		$options['order'] = array('CatalogItem.ended ASC');
+		$options['conditions'] = array('CatalogItem.ended >' => date('Y-m-d h:i:s'));
 		$options['conditions'] = array('CatalogItem.parent_id' => null);
 		$options['contain'] = array('CatalogItemBrand', 'Gallery' => array('GalleryImage'));
 		$dealItem = $this->CatalogItem->find('first', $options);
