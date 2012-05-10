@@ -36,7 +36,9 @@
     echo $this->Form->input('GalleryImage.dir', array('type' => 'hidden'));
     echo $this->Form->input('GalleryImage.mimetype', array('type' => 'hidden'));
     echo $this->Form->input('GalleryImage.filesize', array('type' => 'hidden'));
-    echo $this->Form->input('price', array('label' => 'Will the selected attribute(s) change the price?', 'after' => ' (Leave blank to use ' . $catalogItem['CatalogItem']['name'] . '\'s price)')); ?>
+    echo $this->Form->input('price', array('label' => 'Will the selected attribute(s) change the price?', 'after' => ' (Leave blank to use ' . $catalogItem['CatalogItem']['name'] . '\'s price)'));
+    echo $this->Form->input('sku', array('label' => 'Will this use a new SKU?', 'after' => ' (Leave blank to use current sku: ' . $catalogItem['CatalogItem']['sku'] ));
+    ?>
     <fieldset>
       <legend class="toggleClick"><?php echo __('Add ARB settings for option?');?></legend>
       <?php echo $this->Form->input('CatalogItem.arb_settings', array('rows'=>1, 'cols' => 30,'label' => 'Arb Settings')); ?>
