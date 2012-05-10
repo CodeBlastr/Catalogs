@@ -153,13 +153,14 @@ class CatalogItemsController extends CatalogsAppController {
 				'CategoryOption.category_id' => $this->request->data['Category'],
 				),
 			'fields' => array(
-				'CategoryOption' => 'id',
-				'CategoryOption' => 'name',
-				'CategoryOption' => 'type',
+                'CategoryOption.id',
+                'CategoryOption.parent_id',
+				'CategoryOption.name',
+				'CategoryOption.type',
 				),
 			'order' => 'CategoryOption.type',
 			));
-
+//debug($catOptions);die();
 		$this->set('options', $catOptions);
 
 		$attributeData = $this->CatalogItem->find('all', array(
