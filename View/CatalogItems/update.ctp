@@ -18,7 +18,7 @@
 			$optionName .= $option['name'] . ', ';
 		endforeach;?>
       <td><?php echo $optionName; ?></td>
-      <td><?php echo $child['stock_item']; ?></td>
+      <td><?php echo $child['stock']; ?></td>
       <td><?php echo $this->Html->link('Edit', array('action' => 'edit', $child['id'])); ?> <?php echo $this->Html->link('Delete', array('action' => 'delete', $child['id'])); ?></td>
     </tr>
     <?php

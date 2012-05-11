@@ -13,5 +13,5 @@ if(isset($options)) {
 				'type' => $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'));
 		}
 	}
-	echo $this->Form->input('CatalogItem.stock_item', array('label' => 'How many of the selected attribute type do you have in stock?', 'value' => 999999));
+	echo $this->Form->input('CatalogItem.stock', array('label' => 'How many of the selected attribute type do you have in stock?', 'value' => 999999));
 }

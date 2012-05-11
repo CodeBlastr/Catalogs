@@ -45,7 +45,7 @@ echo $this->Form->create('CatalogItem', array(
 	<?php
 	foreach ($catalogitems as $catalogitem): ?>
 	
-	<?php 	if($catalogitem['CatalogItem']['stock_item'] != 0) {
+	<?php 	if($catalogitem['CatalogItem']['stock'] != 0) {
 	
 	?>	
 	<tr>
@@ -53,7 +53,7 @@ echo $this->Form->create('CatalogItem', array(
 		<td><?php echo $catalogitem['CatalogItem']['name']; ?>&nbsp;</td>
 		<td><?php echo $catalogitem['CatalogItem']['description']; ?>&nbsp;</td>
 		<td><?php echo $catalogitem['CatalogItem']['price']; ?>&nbsp;</td>
-		<td><?php echo $catalogitem['CatalogItem']['stock_item']; ?>&nbsp;</td>
+		<td><?php echo $catalogitem['CatalogItem']['stock']; ?>&nbsp;</td>
 		<td><?php echo $catalogitem['CatalogItem']['created']; ?>&nbsp;</td>
 		<td><?php echo $catalogitem['CatalogItem']['modified']; ?>&nbsp;</td>
 	</tr>

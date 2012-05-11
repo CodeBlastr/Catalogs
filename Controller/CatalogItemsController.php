@@ -634,7 +634,7 @@ class CatalogItemsController extends CatalogsAppController {
 		//get catalog_items children bases on parent_id
 		$catalogItemId = !empty($this->request->data['OrderItem']['parent_id']) ? $this->request->data['OrderItem']['parent_id'] : $this->request->data['OrderItem']['catalog_item_id'];
 		$ci = $this->CatalogItem->find('list', array(
-				'fields' => array('price', 'stock_item', 'id'),
+				'fields' => array('price', 'stock', 'id'),
 				'conditions'=>array('CatalogItem.parent_id' => $catalogItemId ),
 			));
 		$children = array_keys($ci);
