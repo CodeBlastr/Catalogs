@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(isset($options) && !empty($options)) {
 	echo '<div id="stock"> </div>';
 	# get group for minimum atributes
@@ -7,8 +7,8 @@ if(isset($options) && !empty($options)) {
 	}
 	# minimun attribute value
 	# geting group key for minimum atributes
-	$min_key = array_search(min($count), $count); 
-	
+	$min_key = array_search(min($count), $count);
+
 	foreach($options as $key => $opt) { ?>
       <div class="catalogItemOptions">
         <fieldset>
@@ -26,14 +26,14 @@ if(isset($options) && !empty($options)) {
 				$sel[$child['CategoryOption']['id']] = $child['CategoryOption']['name'];
 			}
 		}
-		
+
 		if (!empty($sel))
 			echo $this->Form->input('CategoryOption.'.$opt['CategoryOption']['id'], array(
-				'options' => $sel, 
-				'multiple' => 'checkbox', 
+				'options' => $sel,
+				'multiple' => 'checkbox',
 				'div' => false,
-				'selected' => $selected, 
-				'class' => 'CatalogAttribute', 
+				'selected' => $selected,
+				'class' => 'CatalogAttribute',
 				'legend' => false,
 				//'default' => $default,
 				'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'
@@ -43,4 +43,4 @@ if(isset($options) && !empty($options)) {
       <?php
 	} // end foreach options
 	echo $this->Html->script('/catalogs/js/options');
-} // endif options 
+} // endif options

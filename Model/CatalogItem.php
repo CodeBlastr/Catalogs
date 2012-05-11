@@ -120,9 +120,9 @@ class CatalogItem extends CatalogsAppModel {
 				'conditions' => array('Location.model' => 'CatalogItem'),
 				);
 		}
-		
+
 		parent::__construct($id, $table, $ds);
-		
+
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 		$this->order = array($this->alias . '.' . 'price');
 	}
@@ -166,7 +166,7 @@ class CatalogItem extends CatalogsAppModel {
 				$results = $this->cleanItemPrice($results);
 			}
 		}
-		
+
 		$i = 0;
 		foreach ($results as $result) {
 			$i = $i + 1;
@@ -180,7 +180,7 @@ class CatalogItem extends CatalogsAppModel {
 				$results[$i]['CatalogItem']['arb_settings'] = $arbSettingsString ;
 			}
 		}
-		
+
 		return $results;
 	}
 
@@ -199,7 +199,7 @@ class CatalogItem extends CatalogsAppModel {
 
 		// remove some information for saveAll, because we need to deal with it manually
 		$itemData = array('CatalogItem' => $data['CatalogItem']);
-		
+
 		if (isset($data['CatalogItemPrice'])) {
 			# why is this here?  save HABTM does this for you ... RK - 7/18/2011
 			$this->CatalogItemPrice->deleteAll(array('catalog_item_id' => $itemData['CatalogItem']['id']));
@@ -241,27 +241,27 @@ class CatalogItem extends CatalogsAppModel {
 		}
 		return $ret;
 	}
-	
+
 /**
  * Cleans data for adding
- * 
+ *
  * @access protected
  * @param array
  * @return array
- */ 
+ */
  	protected function _cleanAddData($data) {
 		if (!empty($data['CatalogItem']['arb_settings'])) {
 			$data['CatalogItem']['arb_settings'] = serialize(parse_ini_string($this->request->data['CatalogItem']['arb_settings']));
 		}
-			
+
 		if(!empty($data['CatalogItem']['payment_type'])) {
 			$data['CatalogItem']['payment_type'] = implode(',', $this->request->data['CatalogItem']['payment_type']);
 		}
-		
+
 		if (empty($data['CatalogItem']['sku'])) {
 			$data['CatalogItem']['sku'] = rand(10000, 99000); // generate random sku if none exists
 		}
-		
+
 		return $data;
 	}
 
@@ -324,17 +324,17 @@ class CatalogItem extends CatalogsAppModel {
 		unset($catalogItem['CatalogItemPrice']); // its not needed now
 		return $catalogItem;
 	}
-	
+
 /**
- * Payment Options 
- * 
+ * Payment Options
+ *
  * @access public
  * @param void
  * @return string
  */
 	public function paymentOptions() {
 		if(defined('__ORDERS_ENABLE_SINGLE_PAYMENT_TYPE') && defined('__ORDERS_ENABLE_PAYMENT_OPTIONS')) {
-			return unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS); 
+			return unserialize(__ORDERS_ENABLE_PAYMENT_OPTIONS);
 		} else {
 			return null;
 		}

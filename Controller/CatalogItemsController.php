@@ -31,7 +31,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 /**
  * Allowed Actions
- * 
+ *
  * @var array
  */
 	public $allowedActions = array('get_attribute_values');
@@ -67,7 +67,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 /**
  * Named Parameter Joins
- * 
+ *
  * Handles when there are named parameters to populate the variables for the view correctly.
  *
  * @access protected
@@ -112,7 +112,7 @@ class CatalogItemsController extends CatalogsAppController {
 			'contain' => array(
 				'CatalogItemBrand' => array(
 					'fields' => array(
-						'name', 
+						'name',
 						'id')
 					),
 				'Catalog' => array(
@@ -134,11 +134,11 @@ class CatalogItemsController extends CatalogsAppController {
 		$this->request->data = $this->CatalogItem->find('first', array(
 			'conditions' => array(
 				'CatalogItem.id' => $id
-				), 
+				),
 			'recursive' => 2,
 			'contain' => array(
-				'Catalog.id', 
-				'Category.id', 
+				'Catalog.id',
+				'Category.id',
 				'CatalogItemBrand',
 				'CatalogItemPrice'
 				)
@@ -153,13 +153,14 @@ class CatalogItemsController extends CatalogsAppController {
 				'CategoryOption.category_id' => $this->request->data['Category'],
 				),
 			'fields' => array(
-				'CategoryOption' => 'id',
-				'CategoryOption' => 'name',
-				'CategoryOption' => 'type',
+                'CategoryOption.id',
+                'CategoryOption.parent_id',
+				'CategoryOption.name',
+				'CategoryOption.type',
 				),
 			'order' => 'CategoryOption.type',
 			));
-
+//debug($catOptions);die();
 		$this->set('options', $catOptions);
 
 		$attributeData = $this->CatalogItem->find('all', array(
@@ -218,7 +219,7 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
-		
+
 		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
 
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
@@ -294,7 +295,7 @@ class CatalogItemsController extends CatalogsAppController {
 		$catalogItemBrands = $this->CatalogItem->CatalogItemBrand->find('list');
 		$catalogs = $this->CatalogItem->Catalog->find('list');
 		$categories = $this->CatalogItem->Category->generateTreeList();
-		
+
 		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
 
 		$categoryElement = array('plugin' => 'categories', 'parent' => 'Catalog', 'parents' => $catalogs);
@@ -362,11 +363,11 @@ class CatalogItemsController extends CatalogsAppController {
 			));
 		// remodifying data to bring support for controls
 		// $catalogItem['Catalog']['id'] = array('0' => $catalogItem['Catalog']['id']); (this makes NO SENSE!!  5/2/2012 RK)
-																						 
+
 		$catOptions = array();
-		
+
 		$this->set('paymentOptions', $this->CatalogItem->paymentOptions());
-		
+
 		foreach($this->request->data['CategoryOption'] as $catOpt) {
 			if($catOpt['type'] == 'Option Type') {
 				$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
@@ -388,9 +389,9 @@ class CatalogItemsController extends CatalogsAppController {
 
 		$this->set('catalogs', $this->CatalogItem->Catalog->find('list'));
 		$this->set('catalogBrands', $this->CatalogItem->CatalogItemBrand->get_brands($this->request->data['Catalog']['id'][0]));
-		
+
 		$this->set('categories', $this->CatalogItem->Category->generateTreeList());
-		
+
 		// NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
 		// and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
 		// this will be a problem for items in multiple categories.
@@ -402,7 +403,7 @@ class CatalogItemsController extends CatalogsAppController {
 				'order' => 'CategoryOption.type'
 				)));
 		}
-		
+
 		$this->request->data = $catalogItem;
 	}
 

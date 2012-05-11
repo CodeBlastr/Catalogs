@@ -59,8 +59,8 @@ class CatalogItemBrandsController extends CatalogsAppController {
 			$this->set('catalogs', $this->CatalogItemBrand->Catalog->find('list'));
 		}
 	}
-	
-	
+
+
 /**
  * @todo		This cleanItemsPrices thing is probably in the model.  Check and remove unecessary code from this function.
  */
@@ -75,6 +75,7 @@ class CatalogItemBrandsController extends CatalogsAppController {
 
 		# get the items for this brand
 		$this->paginate['conditions']['CatalogItem.catalog_item_brand_id'] = $id;
+		$this->paginate['conditions']['CatalogItem.parent_id'] = null; // don't show child products on the brand page
 		$this->paginate['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $this->userRoleId;
 		$catalogItems = $this->paginate('CatalogItem');
 		# removes items and changes prices based on user role
