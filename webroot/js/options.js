@@ -13,8 +13,13 @@ $(function() {
     });
 
     $('#add_button').click(function (e) {
-        // it will check if radio button exists on form and not checked
-        if($('.CatalogAttribute').length != 0 && !$('input[type=radio]:checked', '#OrderItemViewForm').val()) {
+        // this will check if radio button(s) exist on form and are not checked
+        // it will also now only fire if they aren't all disabled
+        var allDisabled = true;
+        $("input[type=radio]").each(function(){
+          if(!$(this).attr('disabled')) allDisabled = false;
+        });
+        if($('.CatalogAttribute').length != 0 && !$('input[type=radio]:checked', '#OrderItemViewForm').val() && !allDisabled) {
             e.preventDefault();
             alert('Please choose options');
         }
