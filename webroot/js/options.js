@@ -72,9 +72,22 @@ $(function() {
                 if (!flag) {
                     $(this).attr('checked', false);
                     $(this).attr('disabled', true);
+                    $(this).hide().next().hide(); // hide invalids and their following label
                 }
 
             });
+
+
+            // hides the fieldset if none of the options are displayed.
+            $(".catalogItemOptions").each(function(){
+                var allHidden = true;
+                $parent = $(this);
+                $parent.find("input").each(function(){
+                    if($(this).is(":visible")) allHidden = false;
+                });
+                if(allHidden == true) $parent.hide();
+            });
+
 
             if(response["CatalogItem"]) {
                 if(response["CatalogItem"]["stock"] != '' && response["CatalogItem"]["stock"] != "0") {
