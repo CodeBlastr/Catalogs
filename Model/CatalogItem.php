@@ -218,13 +218,13 @@ class CatalogItem extends CatalogsAppModel {
 			}
 			if (isset($data['CatalogItem']['id']) || $imageSaved) {
 				# this is how the categories data should look when coming in.
-				if (isset($data['Category']['Category'][0])) :
+				if (isset($data['Category']['Category'][0])) {
 					$categorized = array('CatalogItem' => array('id' => array($this->id)));
-					foreach ($data['Category']['Category'] as $catId) :
+					foreach ($data['Category']['Category'] as $catId) {
 						$categorized['Category']['id'][] = $catId;
-					endforeach;
+					}
 					$this->Category->categorized($categorized, 'CatalogItem');
-				endif;
+				}
 
 				if(isset($data['CategoryOption'])) {
 					$this->CategoryOption->categorized_option($data, 'CatalogItem');
