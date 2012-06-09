@@ -42,5 +42,6 @@ if(isset($options) && !empty($options)) {
       </div><!-- end .catalogItemOptions -->
       <?php
 	} // end foreach options
+    echo $this->Form->button('Reset the Options', array('type'=>'button', 'id'=>'resetOptions'));
 	echo $this->Html->script('/catalogs/js/options');
 } // endif options

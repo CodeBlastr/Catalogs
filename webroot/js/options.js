@@ -8,8 +8,12 @@ $(function() {
         url: "/catalogs/catalog_items/get_attribute_values/co_id:" ,
         dataType: "text",
         success:function(data){
-        response(data)
+        response(data, true)
         }
+    });
+
+    $('#resetOptions').click(function (e) {
+        $(':radio').attr('disabled', false);
     });
 
     $('#add_button').click(function (e) {
@@ -50,7 +54,7 @@ $(function() {
             });
         }
     });
-    function response(data) {
+    function response(data, firstRun) {
         if (data.length > 0) {
             var response = JSON.parse(data);
             $(':radio').attr('disabled', false);
@@ -72,7 +76,7 @@ $(function() {
                 if (!flag) {
                     $(this).attr('checked', false);
                     $(this).attr('disabled', true);
-                    $(this).hide().next().hide(); // hide invalids and their following label
+                    if(firstRun) $(this).hide().next().hide(); // hide invalids and their following label
                 }
 
             });
