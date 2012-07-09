@@ -358,7 +358,6 @@ class CatalogItemsController extends CatalogsAppController {
 				'CatalogItemBrand',
 				'CategoryOption',
 				'CatalogItemPrice',
-				'Location',
 				)
 			));
 		// remodifying data to bring support for controls

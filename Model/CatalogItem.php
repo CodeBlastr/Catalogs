@@ -111,16 +111,6 @@ class CatalogItem extends CatalogsAppModel {
     );
 
 	public function __construct($id = null, $table = null, $ds = null) {
-		// load associated plugins
-		if (in_array('Locations', CakePlugin::loaded())) {
-			$this->hasOne['Location'] = array(
-				'className' => 'Locations.Location',
-				'foreignKey' => 'foreign_key',
-				'dependent' => false,
-				'conditions' => array('Location.model' => 'CatalogItem'),
-				);
-		}
-
 		parent::__construct($id, $table, $ds);
 
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
@@ -129,22 +119,8 @@ class CatalogItem extends CatalogsAppModel {
 
 	public function beforeFind($queryData) {
 		$this->filterPrice = true;
-		if (defined('__CATALOGS_ENABLE_LOCATIONS')) {
-			// restricted locations to be removed
-			$restricted = $this->Location->get_restricted_keys($this->name);
-			if ($restricted && (is_array($queryData['conditions']) || empty($queryData['conditions']))) {
-				$queryData['conditions'][] = array("{$this->alias}.id not in ({$restricted})");
-			}
-			// if no item is available in this zip code dont show anything.
-			$available = $this->Location->get_available_keys($this->name);
-			if ($available && (is_array($queryData['conditions']) || empty($queryData['conditions']))) {
-				$queryData['conditions'][] = array("{$this->alias}.id  in ({$available})");
-			}
-		}
 		// always limit catalog items by the user role if the price matrix is used
-		App::import('Model', 'CakeSession');
-        $this->Session = new CakeSession();
-		$userRoleId = $this->Session->read('Auth.User.user_role_id');
+		$userRoleId = CakeSession::read('Auth.User.user_role_id');
 		$queryData['contain']['CatalogItemPrice']['conditions']['CatalogItemPrice.user_role_id'] = $userRoleId;
 
 		// stop filtering the price if we use fields and price isn't included
@@ -229,7 +205,6 @@ class CatalogItem extends CatalogsAppModel {
 				if(isset($data['CategoryOption'])) {
 					$this->CategoryOption->categorized_option($data, 'CatalogItem');
 				}
-				$this->Location->add($this->id, $this->name, $data);
 				$ret = true;
 			} else {
 				$this->delete($this->id);
