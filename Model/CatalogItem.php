@@ -109,7 +109,7 @@ class CatalogItem extends CatalogsAppModel {
     		//'unique' => true,
         ),
     );
-
+    
 	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 
@@ -315,4 +315,38 @@ class CatalogItem extends CatalogsAppModel {
 		}
 	}
 
+	
+	/**
+	 * This trims an object, formats it's values if you need to, and returns the data to be merged with the Transaction data.
+	 * @param string $key
+	 * @return array The necessary fields to add a Transaction Item
+	 */
+	public function mapTransactionItem($key) {
+	    
+	    $itemData = $this->find('first', array('conditions' => array('id' => $key)));
+	    
+	    $fieldsToCopyDirectly = array(
+		'name',
+		'weight',
+		'height',
+		'width',
+		'length',
+		'shipping_type',
+		'shipping_charge',
+		'payment_type',
+		'is_virtual'
+	    );
+	    
+	    foreach($itemData['CatalogItem'] as $k => $v) {
+		if(in_array($k, $fieldsToCopyDirectly)) {
+		    $return['TransactionItem'][$k] = $v;
+		}
+	    }
+	    
+	    //$itemData['TransactionItem'] = $itemData['CatalogItem'];
+	    
+	    //unset($itemData['CatalogItem']);
+	    return $return;
+	}
+	
 }

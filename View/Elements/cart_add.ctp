@@ -38,8 +38,9 @@ $maxQty = !empty($catalogItem['CatalogItem']['cart_max']) ? $catalogItem['Catalo
 		} else {
 			echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add')));
 			echo $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
-			echo $this->Form->hidden('TransactionItem.parent_id' , array('value' => $catalogItemId));
-			echo $this->Form->hidden('TransactionItem.catalog_item_id' , array('value' => $catalogItemId));
+			//echo $this->Form->hidden('TransactionItem.parent_id' , array('value' => $catalogItemId));
+			echo $this->Form->hidden('TransactionItem.model' , array('value' => 'CatalogItem'));
+			echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $catalogItemId));
 			echo $this->Form->hidden('TransactionItem.price' , array('value' => $catalogItemPrice));
 			echo $this->Form->hidden('TransactionItem.payment_type' , array('value' => $catalogItemPaymentType));
 
