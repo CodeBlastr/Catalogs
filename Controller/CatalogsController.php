@@ -13,7 +13,7 @@
  * Must retain the above copyright notice and release modifications publicly.
  *
  * @copyright     Copyright 2009-2012, Zuha Foundation Inc. (http://zuha.com)
- * @link          http://zuha.com Zuha™ Project
+ * @link          http://zuha.com Zuhaï¿½ Project
  * @package       zuha
  * @subpackage    zuha.app.plugins.catalogs
  * @since         Zuha(tm) v 0.0.1
@@ -38,8 +38,8 @@ class CatalogsController extends CatalogsAppController {
  *
  */
 	public function dashboard(){
-		$this->set('transactionStatuses', ClassRegistry::init('Orders.OrderTransaction')->statuses());
-		$this->set('itemStatuses', ClassRegistry::init('Orders.OrderItem')->statuses());
+		$this->set('transactionStatuses', ClassRegistry::init('Transactions.Transaction')->statuses());
+		$this->set('itemStatuses', ClassRegistry::init('Transactions.TransactionItem')->statuses());
 		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
 	}
 

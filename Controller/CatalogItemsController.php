@@ -179,11 +179,11 @@ class CatalogItemsController extends CatalogsAppController {
 
 		//check if the item is already inCart
 
-		$this->set('itemInCart', $this->CatalogItem->OrderItem->find('count', array(
+		$this->set('itemInCart', $this->CatalogItem->TransactionItem->find('count', array(
 			'conditions' => array(
-				'OrderItem.customer_id' => $this->Auth->user('id'),
-				'OrderItem.status' => 'incart',
-				'OrderItem.catalog_item_id' => $id,)
+				'TransactionItem.customer_id' => $this->Auth->user('id'),
+				'TransactionItem.status' => 'incart',
+				'TransactionItem.catalog_item_id' => $id,)
 			)));
 	}
 
@@ -610,9 +610,9 @@ class CatalogItemsController extends CatalogsAppController {
  *
  */
 	public function buy(){
-		$ret = $this->CatalogItem->OrderItem->addToCart($this->request->data, $this->Auth->user("id"));
+		$ret = $this->CatalogItem->TransactionItem->addToCart($this->request->data, $this->Auth->user("id"));
 		if ($ret['state']) {
-			$this->redirect(array('plugin'=>'orders','controller'=>'order_transactions' , 'action'=>'checkout'));
+			$this->redirect(array('plugin'=>'transactions','controller'=>'transactions' , 'action'=>'checkout'));
 		}
 	}
 
@@ -631,7 +631,7 @@ class CatalogItemsController extends CatalogsAppController {
 
 		// clicked category option
 		//get catalog_items children bases on parent_id
-		$catalogItemId = !empty($this->request->data['OrderItem']['parent_id']) ? $this->request->data['OrderItem']['parent_id'] : $this->request->data['OrderItem']['catalog_item_id'];
+		$catalogItemId = !empty($this->request->data['TransactionItem']['parent_id']) ? $this->request->data['TransactionItem']['parent_id'] : $this->request->data['TransactionItem']['catalog_item_id'];
 		$ci = $this->CatalogItem->find('list', array(
 				'fields' => array('price', 'stock', 'id'),
 				'conditions'=>array('CatalogItem.parent_id' => $catalogItemId ),

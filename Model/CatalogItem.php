@@ -35,8 +35,8 @@ class CatalogItem extends CatalogsAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
-		'OrderItem' => array(
-			'className' => 'Orders.OrderItem',
+		'TransactionItem' => array(
+			'className' => 'Transactions.TransactionItem',
 			'foreignKey' => 'catalog_item_id',
 			'dependent' => false,
 		),

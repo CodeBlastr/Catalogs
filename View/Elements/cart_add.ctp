@@ -36,12 +36,12 @@ $maxQty = !empty($catalogItem['CatalogItem']['cart_max']) ? $catalogItem['Catalo
 			<div class="action itemAddCart catalogItemAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'catalogs', 'action' => 'catalog_items', 'action' => 'view', $catalogItemId)); ?> </div>
 		<?php
 		} else {
-			echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
-			echo $this->Form->input('OrderItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
-			echo $this->Form->hidden('OrderItem.parent_id' , array('value' => $catalogItemId));
-			echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $catalogItemId));
-			echo $this->Form->hidden('OrderItem.price' , array('value' => $catalogItemPrice));
-			echo $this->Form->hidden('OrderItem.payment_type' , array('value' => $catalogItemPaymentType));
+			echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add')));
+			echo $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
+			echo $this->Form->hidden('TransactionItem.parent_id' , array('value' => $catalogItemId));
+			echo $this->Form->hidden('TransactionItem.catalog_item_id' , array('value' => $catalogItemId));
+			echo $this->Form->hidden('TransactionItem.price' , array('value' => $catalogItemPrice));
+			echo $this->Form->hidden('TransactionItem.payment_type' , array('value' => $catalogItemPaymentType));
 
 			echo $this->Element('item_options', array(), array('plugin' => 'catalogs'));
 			echo $this->Element('payment_type', array(), array('plugin' => 'catalogs'));

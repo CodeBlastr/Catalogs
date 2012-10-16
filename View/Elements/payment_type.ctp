@@ -1,8 +1,8 @@
 <?php
     // check for payment types if session has payment type value the show according to selected payment type 
 		if(!empty($catalogItemPaymentType)) :
-			if($this->Session->check('OrderPaymentType')) :
-				$paymentTypes = $this->Session->read('OrderPaymentType');
+			if($this->Session->check('TransactionPaymentType')) :
+				$paymentTypes = $this->Session->read('TransactionPaymentType');
 				$newPaymentTypes = explode(',', $catalogItemPaymentType);
 				$commonPaymentType = array_intersect($paymentTypes, $newPaymentTypes);
 				if(!empty($commonPaymentType)) :
