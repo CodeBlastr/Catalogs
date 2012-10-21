@@ -212,7 +212,7 @@ class CatalogItemsController extends CatalogsAppController {
 		// get webpages records
 		App::import('Model', 'Webpages.Webpage');
         $this->Webpage = new Webpage();
-        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
 
 
 		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
@@ -288,7 +288,7 @@ class CatalogItemsController extends CatalogsAppController {
 		}
 
 		// get webpages records
-        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
 
 
 		$catalogItemParentIds = $this->CatalogItem->generateTreeList();
@@ -379,7 +379,7 @@ class CatalogItemsController extends CatalogsAppController {
 		// get webpages records
 		App::import('Model', 'Webpages.Webpage');
 		$this->Webpage = new Webpage();
-		$foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'page_content')));
+		$foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
 		$this->set(compact('foreignKeys'));
 
 		$userRoles = $this->CatalogItem->CatalogItemPrice->UserRole->find('list');
