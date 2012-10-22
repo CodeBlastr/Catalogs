@@ -183,7 +183,7 @@ class CatalogItemsController extends CatalogsAppController {
 			'conditions' => array(
 				'TransactionItem.customer_id' => $this->Auth->user('id'),
 				'TransactionItem.status' => 'incart',
-				'TransactionItem.catalog_item_id' => $id,)
+				'TransactionItem.foreign_key' => $id,)
 			)));
 	}
 
