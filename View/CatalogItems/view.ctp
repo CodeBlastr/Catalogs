@@ -12,6 +12,9 @@
   <?php if (!empty($catalogItem['CatalogItemChildren'][0])) : foreach ($catalogItem['CatalogItemChildren'] as $child) : ?><div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->Element('gallery', array('model' => 'CatalogItem', 'foreignKey' => $child['id']), array('plugin' => 'galleries')); ?></div><?php endforeach; endif; ?>
   <!-- End child images -->
 
+  <div class="itemSummary catalogItemSummary">
+      <?php echo $catalogItem['CatalogItem']['summary']; ?>
+  </div>
   <div class="itemDescription catalogItemDescription">
       <?php echo $catalogItem['CatalogItem']['description']; ?>
       <?php if($catalogItem['CatalogItem']['hours_expire'] !== NULL) { ?>
