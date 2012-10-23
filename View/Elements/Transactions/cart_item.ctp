@@ -18,10 +18,15 @@ echo $this->element('thumb', array(
 	    ),
 	array('plugin' => 'galleries')
 	);
+
+$minQty = !empty($catalogItem['CatalogItem']['cart_min']) ? $catalogItem['CatalogItem']['cart_min'] : 1;
+$maxQty = !empty($catalogItem['CatalogItem']['cart_max']) ? $catalogItem['CatalogItem']['cart_max'] : null;
+
 echo $this->Form->input("TransactionItem.{$i}.quantity", array(
     'label' => 'Qty.',
     'div' => array('style' => 'display:inline-block'),
     'value' => $transactionItem['quantity'],
+    'min' => $minQty, 'max' => $maxQty,
     'size' => 1
     ));
 ?>
