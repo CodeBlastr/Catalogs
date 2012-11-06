@@ -1,16 +1,16 @@
 <?php
 if(isset($options) && !empty($options)) {
 	echo '<div id="stock"> </div>';
-	# get group for minimum atributes
+	// get group for minimum atributes
 	foreach($options as $key => $opt) {
 		$count[$key] = count($opt['children']);
 	}
-	# minimun attribute value
-	# geting group key for minimum atributes
+	// minimun attribute value
+    // geting group key for minimum atributes
 	$min_key = array_search(min($count), $count);
 
 	foreach($options as $key => $opt) { ?>
-      <div class="catalogItemOptions">
+      <div class="productOptions">
         <fieldset>
           <legend><?php echo $opt['CategoryOption']['name']; ?></legend>
           <?php
@@ -33,15 +33,15 @@ if(isset($options) && !empty($options)) {
 				'multiple' => 'checkbox',
 				'div' => false,
 				'selected' => $selected,
-				'class' => 'CatalogAttribute',
+				'class' => 'ProductAttribute',
 				'legend' => false,
 				//'default' => $default,
 				'type'=> $opt['CategoryOption']['type'] == 'Attribute Group' ? 'radio' : 'select'
 				)); ?>
         </fieldset>
-      </div><!-- end .catalogItemOptions -->
+      </div><!-- end .productOptions -->
       <?php
 	} // end foreach options
     echo $this->Form->button('Reset the Options', array('type'=>'button', 'id'=>'resetOptions'));
-	echo $this->Html->script('/catalogs/js/options');
+	echo $this->Html->script('/products/js/options');
 } // endif options

@@ -1,1 +1,0 @@
-<?php echo $this->Form->select("CatalogItem.catalog_item_brand_id", $brands);?>

@@ -1,0 +1,1 @@
+<?php echo $this->Form->select("Product.product_brand_id", $brands);?>

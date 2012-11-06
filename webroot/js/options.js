@@ -5,7 +5,7 @@ $(function() {
     $.ajax({
         type: "POST",
         data: $('#OrderItemViewForm').serialize(),
-        url: "/catalogs/catalog_items/get_attribute_values/co_id:" ,
+        url: "/products/products/get_attribute_values/co_id:" ,
         dataType: "text",
         success:function(data){
         response(data, true)
@@ -23,7 +23,7 @@ $(function() {
         $("input[type=radio]").each(function(){
           if(!$(this).attr('disabled')) allDisabled = false;
         });
-        if($('.CatalogAttribute').length != 0 && !$('input[type=radio]:checked', '#OrderItemViewForm').val() && !allDisabled) {
+        if($('.ProductAttribute').length != 0 && !$('input[type=radio]:checked', '#OrderItemViewForm').val() && !allDisabled) {
             e.preventDefault();
             alert('Please choose options');
         }
@@ -46,7 +46,7 @@ $(function() {
             $.ajax({
                 type: "POST",
                 data: $('#OrderItemViewForm').serialize(),
-                url: "/catalogs/catalog_items/get_attribute_values/co_id:" +$(this).attr('value') ,
+                url: "/products/products/get_attribute_values/co_id:" +$(this).attr('value') ,
                 dataType: "text",
                 success:function(data){
                 response(data)
@@ -83,7 +83,7 @@ $(function() {
 
 
             // hides the fieldset if none of the options are displayed.
-            $(".catalogItemOptions").each(function(){
+            $(".productOptions").each(function(){
                 var allHidden = true;
                 $parent = $(this);
                 $parent.find("input").each(function(){
@@ -93,20 +93,20 @@ $(function() {
             });
 
 
-            if(response["CatalogItem"]) {
-                if(response["CatalogItem"]["stock"] != '' && response["CatalogItem"]["stock"] != "0") {
-                    $('#OrderItemCatalogItemId').val(response["CatalogItem"]["id"]);
-                    if (response["CatalogItem"]["stock"] < 10) {
-                        st = '<div> Only ' + response["CatalogItem"]["stock"] + ' left. </div>';
+            if(response["Product"]) {
+                if(response["Product"]["stock"] != '' && response["Product"]["stock"] != "0") {
+                    $('#OrderItemProductId').val(response["Product"]["id"]);
+                    if (response["Product"]["stock"] < 10) {
+                        st = '<div> Only ' + response["Product"]["stock"] + ' left. </div>';
                         $("#stock").html(st);
                     }
 
-                    $("#itemPrice").html(response["CatalogItem"]["price"]);
+                    $("#itemPrice").html(response["Product"]["price"]);
 
-                    var childItem = response["CatalogItem"]["id"];
+                    var childItem = response["Product"]["id"];
                     var childGallery = $("#childGallery" + childItem).html();
                     if (childGallery) {
-                        $(".catalogItemGallery").html(childGallery);
+                        $(".productGallery").html(childGallery);
                     }
                 }
             }

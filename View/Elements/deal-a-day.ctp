@@ -1,19 +1,19 @@
 <?php 
 // this should be at the top of every element created with format __ELEMENT_PLUGIN_ELEMENTNAME_instanceNumber.
 // it allows a database driven way of configuring elements, and having multiple instances of that configuration.
-if(!empty($instance) && defined('__ELEMENT_CATALOGS_DEALADAY_'.$instance)) {
-	extract(unserialize(constant('__ELEMENT_CATALOGS_DEALADAY_'.$instance)));
-} else if (defined('__ELEMENT_CATALOGS_DEALADAY')) {
-	extract(unserialize(__ELEMENT_CATALOGS_DEALADAY));
+if(!empty($instance) && defined('__ELEMENT_PRODUCTS_DEALADAY_'.$instance)) {
+	extract(unserialize(constant('__ELEMENT_PRODUCTS_DEALADAY_'.$instance)));
+} else if (defined('__ELEMENT_PRODUCTS_DEALADAY')) {
+	extract(unserialize(__ELEMENT_PRODUCTS_DEALADAY));
 }
 # setup defaults
-$dealItem = $this->requestAction('catalogs/catalog_items/deal_a_day');
+$dealItem = $this->requestAction('products/products/deal_a_day');
 $gallery = $dealItem;
-echo $this->Html->script('/catalogs/js/time.js');
+echo $this->Html->script('/products/js/time.js');
 
 if (!empty($dealItem)) {
-	$startDateTime = explode(' ', $dealItem['CatalogItem']['started']);
-	$endDateTime = explode(' ', $dealItem['CatalogItem']['ended']);
+	$startDateTime = explode(' ', $dealItem['Product']['started']);
+	$endDateTime = explode(' ', $dealItem['Product']['ended']);
 	#$starttime		=	explode(":", $startDateTime[1]);
 	$endtime		=	explode(":", $endDateTime[1]);
 	$stardate		=	explode("-", $startDateTime[0]);
@@ -40,56 +40,24 @@ if (!empty($dealItem)) {
 
 
 <div class="dealItem view">
-  <div class="dealItemBrandThumb"> <?php echo $this->element('thumb', array('plugin' => 'galleries', 'model' => 'CatalogItemBrand', 'foreignKey' => $dealItem['CatalogItemBrand']['id'], 'showDefault' => 'false', 'thumbSize' => 'small', 'thumbLink' => "/catalogs/catalog_item_brands/view/".$dealItem['CatalogItemBrand']['id'])); ?> </div>
+  <div class="dealItemBrandThumb"> <?php echo $this->element('thumb', array('plugin' => 'galleries', 'model' => 'ProductBrand', 'foreignKey' => $dealItem['ProductBrand']['id'], 'showDefault' => 'false', 'thumbSize' => 'small', 'thumbLink' => "/products/product_brands/view/".$dealItem['ProductBrand']['id'])); ?> </div>
   <h2>
-    <?php  echo $dealItem['CatalogItem']['name']; __(' by '); echo $this->Html->link($dealItem['CatalogItemBrand']['name'], array('controller' => 'catalog_item_brands', 'action' => 'view', $dealItem['CatalogItemBrand']['id'])); ?>
+    <?php  echo $dealItem['Product']['name']; __(' by '); echo $this->Html->link($dealItem['ProductBrand']['name'], array('controller' => 'product_brands', 'action' => 'view', $dealItem['ProductBrand']['id'])); ?>
   </h2>
-  <div class="dealItemGallery"> <?php echo $this->element('gallery', array('model' => 'CatalogItem', 'foreignKey' => $dealItem['CatalogItem']['id']), array('plugin' => 'galleries')); ?> </div>
+  <div class="dealItemGallery"> <?php echo $this->element('gallery', array('model' => 'Product', 'foreignKey' => $dealItem['Product']['id']), array('plugin' => 'galleries')); ?> </div>
   
   <div id="timer"><h1>Time Left</h1><div id="tzcd"><script>start();</script></div></div>
-  <div class="dealItemSummary"> <?php echo $dealItem['CatalogItem']['summary']; ?> </div>
-  <div class="dealItemDescription"> <?php echo $dealItem['CatalogItem']['description']; ?> </div>
+  <div class="dealItemSummary"> <?php echo $dealItem['Product']['summary']; ?> </div>
+  <div class="dealItemDescription"> <?php echo $dealItem['Product']['description']; ?> </div>
   
   
   <div class="actions">
     <div class="dealItemPrice">
-      <?php echo __('$ '); echo (!empty($dealItem['CatalogItemPrice'][0]['price']) ? $dealItem['CatalogItemPrice'][0]['price'] : $dealItem['CatalogItem']['price']); ?>
+      <?php echo __('$ '); echo (!empty($dealItem['ProductPrice'][0]['price']) ? $dealItem['ProductPrice'][0]['price'] : $dealItem['Product']['price']); ?>
     </div>
     
-    <div class="action dealItemCartText">
-      <?php /*if(!$no_stock): ?>
-      <?php if($stockAmount != 0): ?>
-      <?php if($itemInCart): printf("You have %d %s in your cart" , $itemInCart , $dealItem["CatalogItem"]["name"]); endif; ?>
-      <?php echo $this->Form->create('OrderItem' , array('url' => array('plugin' => 'orders', 'controller'=>'order_items' , 'action' => 'add')));?> <?php echo $this->Form->input('OrderItem.quantity' , array('label' => 'Add (Quantity)', 'value' => 1))?> <?php echo $this->Form->input('OrderItem.status' , array('type'=>'hidden' , 'value'=>'incart'))?> <?php echo $this->Form->input('OrderItem.catalog_item_id' , array('type'=>'hidden' , 'value'=>$dealItem["CatalogItem"]["id"]))?> <?php echo $this->Form->end(__('Add to Cart' , true)); */ ?>
-      <?php /* else: ?>
-      <p>The item is out of stock. Please come back later</p>
-      <?php endif; ?>
-      <?php else:?>
-      <?php if($itemInCart):?>
-      <?php echo $this->Html->link(__($this->Html->tag('span', 'view cart', array('class' => 'button')), true), array('plugin' => 'orders', 'controller'=>'order_items' , 'action'=>'cart'), array('id' => 'viewCart', 'class' => 'button', 'escape' => false));?> <?php printf("You have %d of %s in your cart" , $itemInCart , $dealItem["CatalogItem"]["name"])?>
-      <?php else: ?>
-      <?php echo __("This item is not in your cart."); ?>
-      <?php endif; */ ?>
-    </div>
-    <div class="action dealItemAddCart">
-    <?php /*
-	echo $this->Form->create('OrderItem', array('url' => array('plugin' => 'orders', 'controller'=>'order_items', 'action'=>'add')));
-	echo $this->Form->input('OrderItem.quantity' , array('type' => 'hidden', 'label' => 'Add (Quantity)', 'value' => 1)); 
-	echo $this->Form->hidden('OrderItem.status' , array('value'=>'incart'));
-	echo $this->Form->hidden('OrderItem.catalog_item_id' , array('value' => $dealItem['CatalogItem']['id']));
-	echo $this->Form->hidden('OrderItem.name' , array('value' => $dealItem['CatalogItem']['name']));
-	echo $this->Form->hidden('OrderItem.length' , array('value' => $dealItem['CatalogItem']['length']));
-	echo $this->Form->hidden('OrderItem.width' , array('value' => $dealItem['CatalogItem']['width']));
-	echo $this->Form->hidden('OrderItem.height' , array('value' => $dealItem['CatalogItem']['height']));
-	echo $this->Form->hidden('OrderItem.weight' , array('value' => $dealItem['CatalogItem']['weight']));
-	echo $this->Form->hidden('OrderItem.assignee_id' , array('value' => $this->Session->read('Auth.User.id')));
-
-	echo $this->Form->hidden('OrderItem.model' , array('value' => $dealItem['CatalogItem']['model']));
-	echo $this->Form->hidden('OrderItem.foreign_key' , array('value' => $dealItem['CatalogItem']['foreign_key']));
-	echo $this->Form->end(__('Add to Cart' , true));
-	*/ ?>
     <?php 
-	echo $this->Html->link('Yes! I Want One', array('plugin' => 'catalogs', 'controller' => 'catalog_items', 'action' => 'view', $dealItem['CatalogItem']['id']), array('id' => 'dealItemViewButton'));
+	echo $this->Html->link('Yes! I Want One', array('plugin' => 'products', 'controller' => 'products', 'action' => 'view', $dealItem['Product']['id']), array('id' => 'dealItemViewButton'));
 	?>
     </div>
     <?php /*endif;*/ ?>

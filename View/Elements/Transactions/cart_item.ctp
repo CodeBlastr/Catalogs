@@ -1,7 +1,7 @@
 <div>
 <?php
 echo $this->Html->link($transactionItem['name'],
-	'/catalogs/catalog_items/view/'.$transactionItem['foreign_key'],
+	'/prdocuts/products/view/'.$transactionItem['foreign_key'],
 	array('style' => 'text-decoration: underline;'),
 	'Are you sure you want to leave this page?'
 	);
@@ -9,18 +9,18 @@ echo $this->Html->link($transactionItem['name'],
 </div>
 <?php
 echo $this->element('thumb', array(
-	    'model' => 'CatalogItem',
+	    'model' => 'Product',
 	    'foreignKey' => $transactionItem['foreign_key'],
 	    'thumbSize' => 'small',
 	    'thumbWidth' => 75,
 	    'thumbHeight' => 75,
-	    'thumbLink' => '/catalogs/catalog_items/view/'.$transactionItem['foreign_key']
+	    'thumbLink' => '/products/products/view/'.$transactionItem['foreign_key']
 	    ),
 	array('plugin' => 'galleries')
 	);
 
-$minQty = !empty($catalogItem['CatalogItem']['cart_min']) ? $catalogItem['CatalogItem']['cart_min'] : 1;
-$maxQty = !empty($catalogItem['CatalogItem']['cart_max']) ? $catalogItem['CatalogItem']['cart_max'] : null;
+$minQty = !empty($product['Product']['cart_min']) ? $product['Product']['cart_min'] : 1;
+$maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_max'] : null;
 
 echo $this->Form->input("TransactionItem.{$i}.quantity", array(
     'label' => 'Qty.',
