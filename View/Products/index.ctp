@@ -11,7 +11,7 @@ $this->set('context_sort', array(
 		)),
 	)); 
 
-echo $this->element('context_sort');
+echo $this->Element('context_sort');
 
 if (!empty($products[0]['Category'][0])) {  ?>
 
@@ -30,7 +30,8 @@ if (!empty($products[0]['Category'][0])) {  ?>
 <?php
 }  // end category check
 
-echo $this->element('products'); 
+echo $this->Element('scaffolds/index', array('data' => $products));
+//echo $this->element('products'); 
 
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(

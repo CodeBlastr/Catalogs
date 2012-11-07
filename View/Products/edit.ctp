@@ -19,6 +19,12 @@
  */
  ?>
 <div class="productAdd form">
+    <div class="hero-unit pull-right">
+        <?php
+        echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $this->request->data['Product']['id']), array('plugin' => 'galleries'));
+        echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id'])); ?>
+    </div>
+
 	<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
     <fieldset>
     	<?php
@@ -27,7 +33,8 @@
 		echo $this->Form->input('Product.name', array('label' => 'Display name'));
 		echo $this->Form->input('Product.sku');
         echo $this->Form->input('Product.price', array('label' => 'Retail price <small><em>(ex. 0.00)</em></small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999'));
-        echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
+        echo $this->Form->input('Gallery.id');
+        echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Add Gallery Image'));
 		echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo Text <br /><small><em>Used to entice people to view more about this item.</em></small>'));
 		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
     </fieldset>

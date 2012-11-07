@@ -59,7 +59,7 @@ class Product extends ProductsAppModel {
 		'Gallery' => array(
 			'className' => 'Galleries.Gallery',
 			'foreignKey' => 'foreign_key',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => array('Gallery.model' => 'Product'),
 			'fields' => '',
 			'order' => ''
