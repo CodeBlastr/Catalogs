@@ -63,18 +63,22 @@ class ProductsController extends ProductsAppController {
  */
 	public function index() {
 		// setup paginate
-		$this->paginate['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $this->userRoleId;
-		$this->paginate['conditions']['OR'] = array(
-			array('Product.ended >' => date('Y-m-d h:i:s')),
-			array('Product.ended' => null),
-			array('Product.ended' => '0000-00-00 00:00:00')
-		);
-		$this->_namedParameterJoins();
+//		$this->paginate['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $this->userRoleId;
+//		$this->paginate['conditions']['OR'] = array(
+//			array('Product.ended >' => date('Y-m-d h:i:s')),
+//			array('Product.ended' => null),
+//			array('Product.ended' => '0000-00-00 00:00:00')
+//		);
+        
 		$this->paginate['conditions']['Product.parent_id'] = null;
-		$products = $this->paginate();
+		$this->paginate['fields'] = array('id', 'name', 'summary', 'price');
+        
 		// removes items and changes prices based on user role
-		$products = $this->Product->cleanItemsPrices($products, $this->userRoleId);
-		$this->set(compact('products'));
+		$this->set('products', $this->Product->cleanItemsPrices($this->paginate()));
+		$this->set('displayName', 'name');
+		$this->set('displayDescription', 'summary'); 
+		$this->set('showGallery', true);
+		$this->set('galleryForeignKey', 'id');
 	}
 
 /**
@@ -126,12 +130,6 @@ class ProductsController extends ProductsAppController {
 					'fields' => array(
 						'name',
 						'id')
-					),
-				'ProductStore' => array(
-					'fields' => array(
-						'name',
-						'id'
-						)
 					),
 				'ProductPrice' => array(
 					'conditions' => array(
@@ -224,75 +222,27 @@ class ProductsController extends ProductsAppController {
  * @return void
  */
 	public function edit($id = null) {
+		if (!empty($this->request->data)) {
+			try {
+                $this->Product->save($this->request->data);
+				$this->Session->setFlash(__('Product saved.', true));
+				$this->redirect(array('action' => 'edit', $this->Product->id));
+            } catch (Exception $e) {
+				$this->Session->setFlash(__('Product could not be saved.'));
+            }
+		}
 		$this->Product->id = $id;
 		if (!$this->Product->exists()) {
 			throw new NotFoundException(__('Invalid product'));
 		}
+        $this->Product->contain('Gallery');
+        $this->request->data = $this->Product->read(null, $id);
+        $this->set('productBrands', $this->Product->ProductBrand->find('list'));
+        $this->set('categories', $this->Product->Category->generateTreeList());
+		//$this->set('paymentOptions', $this->Product->paymentOptions());
 
-		if ($this->request->is('post') || $this->request->is('put')) {
-			try {
-				$this->Product->save($this->request->data);
-				$this->Session->setFlash(__('Item saved'));
-				$this->redirect(array('action' => 'edit', $this->Product->id), 'success');
-			} catch (Exception $e) {
-				$this->Session->setFlash($e->getMessage());
-			}
-		}
-
-		$product = $this->Product->find('first', array(
-			'conditions' => array(
-				'Product.id' => $id
-				),
-			'contain' => array(
-				'ProductStore',
-				'Category',
-				'ProductBrand',
-				'CategoryOption',
-				'ProductPrice',
-				)
-			));
-
-		$catOptions = array();
-
-		$this->set('paymentOptions', $this->Product->paymentOptions());
-
-		foreach($this->request->data['CategoryOption'] as $catOpt) {
-			if($catOpt['type'] == 'Option Type') {
-				$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
-			} else {
-				$catOptions[$catOpt['parent_id']] = $catOpt['id'];
-			}
-		}
-		$this->request->data['CategoryOption'] = $catOptions;
-
-		/* get webpages records
-		App::import('Model', 'Webpages.Webpage');
-		$this->Webpage = new Webpage();
-		$foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
-		$this->set(compact('foreignKeys'));*/
-
-		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
-		$productBrands = $this->Product->ProductBrand->find('list');
-		$this->set(compact('userRoles', 'productBrands'));
-
-		$this->set('productStores', $this->Product->ProductStore->find('list'));
-		$this->set('productBrands', $this->Product->ProductBrand->get_brands($this->request->data['ProductStore']['id'][0]));
-
-		$this->set('categories', $this->Product->Category->generateTreeList());
-
-		// NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
-		// and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
-		// this will be a problem for items in multiple categories.
-		if (!empty($this->request->data['Category'])) {
-			$this->set('options', $this->Product->Category->CategoryOption->find('threaded', array(
-				'conditions' => array(
-					'CategoryOption.category_id' => $this->request->data['Category'][0]['id']
-					),
-				'order' => 'CategoryOption.type'
-				)));
-		}
-
-		$this->request->data = $product;
+		$this->set('page_title_for_layout', __('Edit %s Product', $this->request->data['Product']['name']));
+		$this->set('title_for_layout', __('Edit Item Form'));
 	}
 
 
@@ -348,9 +298,6 @@ class ProductsController extends ProductsAppController {
 				)
 			));
 		$this->set(compact('product'));
-		#$productParentIds = $this->Product->find('list', array('conditions' => array('Product.parent_id' => null)));
-		#$this->set(compact('productParentIds'));
-		$this->set(compact('parentId'));
 	}
 
 
@@ -596,6 +543,90 @@ class ProductsController extends ProductsAppController {
     
     
     
+    
+    
+    
+    
+/**
+ * Edit method
+ *
+ * @access public
+ * @param string
+ * @return void
+	public function edit($id = null) {
+        
+		if ($this->request->is('post') || $this->request->is('put')) {
+			try {
+				$this->Product->save($this->request->data);
+				$this->Session->setFlash(__('Item saved'));
+				$this->redirect(array('action' => 'edit', $this->Product->id), 'success');
+			} catch (Exception $e) {
+				$this->Session->setFlash($e->getMessage());
+			}
+		}
+        
+		$this->Product->id = $id;
+		if (!$this->Product->exists()) {
+			throw new NotFoundException(__('Invalid product'));
+		}
+
+		$product = $this->Product->find('first', array(
+			'conditions' => array(
+				'Product.id' => $id
+				),
+			'contain' => array(
+				'ProductStore',
+				'Category',
+				'ProductBrand',
+				'CategoryOption',
+				'ProductPrice',
+				)
+			));
+
+		$catOptions = array();
+
+		$this->set('paymentOptions', $this->Product->paymentOptions());
+
+		foreach($this->request->data['CategoryOption'] as $catOpt) {
+			if($catOpt['type'] == 'Option Type') {
+				$catOptions[$catOpt['parent_id']][] = $catOpt['id'];
+			} else {
+				$catOptions[$catOpt['parent_id']] = $catOpt['id'];
+			}
+		}
+		$this->request->data['CategoryOption'] = $catOptions;
+
+		// get webpages records
+		//App::import('Model', 'Webpages.Webpage');
+		//$this->Webpage = new Webpage();
+		//$foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
+		//$this->set(compact('foreignKeys'));
+
+		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
+		$productBrands = $this->Product->ProductBrand->find('list');
+		$this->set(compact('userRoles', 'productBrands'));
+
+		$this->set('productStores', $this->Product->ProductStore->find('list'));
+		$this->set('productBrands', $this->Product->ProductBrand->get_brands($this->request->data['ProductStore']['id'][0]));
+
+		$this->set('categories', $this->Product->Category->generateTreeList());
+
+		// NOTE : Previously this said category_id => $this->request->data['Category'] --- but that is an array
+		// and was causing an error.  As a temporary fix I put the [0]['id'] thing on.  But I believe
+		// this will be a problem for items in multiple categories.
+		if (!empty($this->request->data['Category'])) {
+			$this->set('options', $this->Product->Category->CategoryOption->find('threaded', array(
+				'conditions' => array(
+					'CategoryOption.category_id' => $this->request->data['Category'][0]['id']
+					),
+				'order' => 'CategoryOption.type'
+				)));
+		}
+
+		$this->request->data = $product;
+	}
+ * 
+ */
     
     
     

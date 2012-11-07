@@ -27,11 +27,11 @@ class Product extends ProductsAppModel {
 
 	public $validate = array(
 		'name' => array('notempty'),
-	);
+        );
 
 	public $actsAs = array(
-		'Tree' => array('parent' => 'parent_id'),
-	);
+		'Tree' => array('parent' => 'parent_id'), 
+        );
 
 	public $order = '';
 
@@ -41,30 +41,30 @@ class Product extends ProductsAppModel {
 			'className' => 'Transactions.TransactionItem',
 			'foreignKey' => 'foreign_key_id',
 			'dependent' => false,
-		),
+            ),
 		'ProductPrice' => array(
 			'className' => 'Products.ProductPrice',
 			'foreignKey' => 'product_id',
 			'dependent' => true,
 			'order' => 'ProductPrice.user_role_id asc'
-		),
+            ),
 		'ProductChildren' => array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'dependent' => true,
-		),
-	);
+            ),
+        );
 
 	public $hasOne = array(
 		'Gallery' => array(
 			'className' => 'Galleries.Gallery',
 			'foreignKey' => 'foreign_key',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => array('Gallery.model' => 'Product'),
 			'fields' => '',
 			'order' => ''
-		)
-	);
+            )
+        );
 
 	//products association.
 	public $belongsTo = array(
@@ -73,26 +73,26 @@ class Product extends ProductsAppModel {
 			'foreignKey' => 'parent_id',
 			'counterCache' => 'children',
 			'counterScope' => array('Product.parent_id IS NOT NULL'),
-		),
+            ),
 		'ProductStore'=>array(
 			'className' => 'Products.ProductStore',
 			'foreignKey' => 'store_id',
-		),
+            ),
 		'ProductBrand' => array(
 			'className' => 'Products.ProductBrand',
 			'foreignKey' => 'product_brand_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
-		),
+            ),
 		'Owner' => array(
 			'className' => 'Users.User',
 			'foreignKey' => 'owner_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
-		),
-	);
+            ),
+        );
 
     public $hasAndBelongsToMany = array(
         'Category' => array(
@@ -102,15 +102,15 @@ class Product extends ProductsAppModel {
             'associationForeignKey' => 'category_id',
     		'conditions' => 'Categorized.model = "Product"',
     		// 'unique' => true,
-        ),
+            ),
         'CategoryOption' => array(
             'className' => 'Categories.CategoryOption',
        		'joinTable' => 'categorized_options',
             'foreignKey' => 'foreign_key',
             'associationForeignKey' => 'category_option_id',
     		//'unique' => true,
-        ),
-    );
+            ),
+        );
     
 	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -119,6 +119,17 @@ class Product extends ProductsAppModel {
 		$this->order = array($this->alias . '.' . 'price');
 	}
     
+/**
+ * Before Save method
+ * 
+ * @param type $options
+ * @return boolean
+ */
+    public function beforeSave($options) {
+        $this->Behaviors->attach('Galleries.Mediable'); // attaching the gallery behavior here, because the ProductParent was causing a problem making $Model->alias = 'ProductParent', in the behavior.
+		$this->data = $this->_cleanAddData($this->data);
+        return true;
+    }
     
 /**
  * 
@@ -134,7 +145,6 @@ class Product extends ProductsAppModel {
             // stop filtering the price if we use fields and price isn't included
             $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
         }
-        
 		return $queryData;
 	}
 
@@ -184,26 +194,10 @@ class Product extends ProductsAppModel {
  * @todo		The manual items that come after saveAll should be verified and roll back the item if its not updated correctly.
  * @todo		This function should use the throw exception syntax, and the controller should catch.
  */
-	public function save($data) {
-		$data = $this->_cleanAddData($data);
-		return parent::save($data);
+	//public function save($data = null, $params = array()) {
+	//	return parent::save($data, $params);
         
         
-//          Need to put this into a behavior...
-//          
-//			$data['Product']['id'] = $this->id ;
-//			$data['Gallery']['model'] = 'Product';
-//			$data['Gallery']['foreign_key'] = $this->id;
-//			$imageSaved = false;
-//
-//			if (isset($data['GalleryImage'])){
-//				if ($data['GalleryImage']['filename']['error'] == 0 && $this->Gallery->GalleryImage->add($data, 'filename')) {
-//					$imageSaved = true;
-//				}
-//			}
-            
-            
-            
 //          This needs to be in a behavior too
 //			if (isset($data['Product']['id']) || $imageSaved) {
 //				// this is how the categories data should look when coming in.
@@ -222,7 +216,7 @@ class Product extends ProductsAppModel {
 //			} else {
 //				$this->delete($this->id);
 //			}
-	}
+	//}
     
     
 
@@ -259,27 +253,28 @@ class Product extends ProductsAppModel {
  */
 	public function cleanItemsPrices($products) {
 		$i = 0;
-		# get the price for the logged in user
+		// get the price for the logged in user
+        $productPriceCount = 0;
 		foreach ($products as $product) {
-			# this is to check for single CI.
-			if (isset($product['Product']['id']) && !empty($product['Product']['id'])) :
+			// this is to check for single product.
+			if (isset($product['Product']['id']) && !empty($product['Product']['id'])) {
 				unset($productPriceCount);
-				# count the prices to see if the price matrix was used at all
+				// count the prices to see if the price matrix was used at all
 				$productPriceCount = $this->ProductPrice->find('count', array('conditions' => array(
 					'ProductPrice.product_id' => $product['Product']['id'],
 					)));
-				# remove the default price if matrix was used
+				// remove the default price if matrix was used
 				if ($productPriceCount > 0) {
 					unset($products[$i]['Product']['price']);
 				}
 				$products[$i] = $this->cleanItemPrice($product);
 
-				# remove the product all together if the price matrix was used, and price is 0 for this user's role
+				// remove the product all together if the price matrix was used, and price is 0 for this user's role
 				if (empty($products[$i]['Product']['price'])) {
 					unset($products[$i]);
 				}
 				$i++;
-			endif;
+            }
 		}
 		return $products;
 	}
@@ -295,7 +290,7 @@ class Product extends ProductsAppModel {
 	public function cleanItemPrice($product) {
 		if (!empty($product['ProductPrice'][0])) {
 			foreach ($product['ProductPrice'] as $price) {
-				# set the price in the original products to user role price
+				// set the price in the original products to user role price
 				$product['Product']['price'] = ZuhaInflector::pricify($price['price']);
 			}
 		}
