@@ -16,6 +16,7 @@ class ProductTestCase extends CakeTestCase {
         'app.Condition',
         'plugin.Contacts.Contact',
         'plugin.Galleries.Gallery',
+        'plugin.Galleries.GalleryImage',
         'plugin.Products.Product',
         'plugin.Products.ProductBrand',
         'plugin.Products.ProductPrice',
@@ -101,11 +102,12 @@ class ProductTestCase extends CakeTestCase {
                     'error' => (int) 0,
                     'size' => (int) 6628
                 )
-            ),
-            'Category' => array(
-                'Category' => ''
             )
         );
+        debug($this->Product->Gallery->find('all'));
+        debug($this->Product->save($testData));
+        debug($this->Product->Gallery->find('all'));
+        break;
       
       
       

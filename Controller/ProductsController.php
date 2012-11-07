@@ -233,11 +233,6 @@ class ProductsController extends ProductsAppController {
  * @return void
  */
 	public function edit($id = null) {
-		$this->Product->id = $id;
-		if (!$this->Product->exists()) {
-			throw new NotFoundException(__('Invalid product'));
-		}
-
 		if ($this->request->is('post') || $this->request->is('put')) {
 			try {
 				$this->Product->save($this->request->data);
@@ -246,6 +241,11 @@ class ProductsController extends ProductsAppController {
 			} catch (Exception $e) {
 				$this->Session->setFlash($e->getMessage());
 			}
+		}
+        
+		$this->Product->id = $id;
+		if (!$this->Product->exists()) {
+			throw new NotFoundException(__('Invalid product'));
 		}
 
 		$product = $this->Product->find('first', array(
@@ -357,9 +357,6 @@ class ProductsController extends ProductsAppController {
 				)
 			));
 		$this->set(compact('product'));
-		#$productParentIds = $this->Product->find('list', array('conditions' => array('Product.parent_id' => null)));
-		#$this->set(compact('productParentIds'));
-		$this->set(compact('parentId'));
 	}
 
 
