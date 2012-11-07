@@ -17,6 +17,9 @@
  * @since         Zuha(tm) v 0.0.1
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
+
+class ProductPricesController extends ProductsAppController {
+
 	public $name = 'ProductPrices';
 	public $helpers = array('Html', 'Form');
 	public $uses = 'Products.ProductPrice';
