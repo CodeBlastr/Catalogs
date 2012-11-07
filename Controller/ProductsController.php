@@ -188,15 +188,6 @@ class ProductsController extends ProductsAppController {
 
 		//Set product view vars
 		$this->set(compact('attributeData', 'product'));
-
-		//check if the item is already inCart
-
-		$this->set('itemInCart', $this->Product->TransactionItem->find('count', array(
-			'conditions' => array(
-				'TransactionItem.customer_id' => $this->Auth->user('id'),
-				'TransactionItem.status' => 'incart',
-				'TransactionItem.foreign_key' => $id,)
-			)));
 	}
 
 
