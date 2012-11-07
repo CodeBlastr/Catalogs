@@ -25,10 +25,10 @@
 		<div class="span3">
 			<h5>Store</h5>
 			<ul>
-				<li><?php echo $this->Html->link('Add an Item', array('plugin' => 'products', 'controller' => 'products' , 'action'=>'add'));?></li>
-				<li><?php echo $this->Html->link('Add a Virtual Webpage Item', array('plugin' => 'products', 'controller' => 'products' , 'action'=>'add_virtual'));?></li>
-				<li><?php echo $this->Html->link('List All Items', array('plugin' => 'products', 'controller' => 'products' , 'action' => 'index'));?></li>
-				<li><?php echo $this->Html->link('List Out Of Stock Items', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index', 'filter' => 'stockItem:0'));?></li>
+				<li><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products' , 'action'=>'add'));?></li>
+				<li><?php echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products' , 'action'=>'add_virtual'));?></li>
+				<li><?php echo $this->Html->link('All Products', array('plugin' => 'products', 'controller' => 'products' , 'action' => 'index'));?></li>
+				<li><?php echo $this->Html->link('Out Of Stock Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index', 'filter' => 'stockItem:0'));?></li>
 			</ul>
 		</div>
 		<div class="span3">

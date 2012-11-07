@@ -22,6 +22,8 @@ App::uses('ProductsAppModel', 'Products.Model');
 class Product extends ProductsAppModel {
 
 	public $name = 'Product';
+    
+    public $filterPrice = true;
 
 	public $validate = array(
 		'name' => array('notempty'),
@@ -66,15 +68,15 @@ class Product extends ProductsAppModel {
 
 	//products association.
 	public $belongsTo = array(
-		'ProductStore'=>array(
-			'className' => 'Products.Product',
-			'foreignKey' => 'store_id',
-		),
 		'ProductParent'=>array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'counterCache' => 'children',
 			'counterScope' => array('Product.parent_id IS NOT NULL'),
+		),
+		'ProductStore'=>array(
+			'className' => 'Products.ProductStore',
+			'foreignKey' => 'store_id',
 		),
 		'ProductBrand' => array(
 			'className' => 'Products.ProductBrand',
@@ -116,19 +118,32 @@ class Product extends ProductsAppModel {
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 		$this->order = array($this->alias . '.' . 'price');
 	}
-
+    
+    
+/**
+ * 
+ * @param array $queryData
+ * @return array
+ */
 	public function beforeFind($queryData) {
-		$this->filterPrice = true;
 		// always limit products by the user role if the price matrix is used
-		$userRoleId = CakeSession::read('Auth.User.user_role_id');
-		$queryData['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $userRoleId;
+        if (class_exists('CakeSession')) {
+            $userRoleId = CakeSession::read('Auth.User.user_role_id');
+            $queryData['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $userRoleId;
 
-		// stop filtering the price if we use fields and price isn't included
-		$this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
-
+            // stop filtering the price if we use fields and price isn't included
+            $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
+        }
+        
 		return $queryData;
 	}
 
+/**
+ * 
+ * @param array $results
+ * @param int $primary
+ * @return array
+ */
 	public function afterFind($results, $primary) {
 		// only play with prices if the find is not list type (which doesn't need prices)
 		if (!empty($this->filterPrice)) {
@@ -169,53 +184,47 @@ class Product extends ProductsAppModel {
  * @todo		The manual items that come after saveAll should be verified and roll back the item if its not updated correctly.
  * @todo		This function should use the throw exception syntax, and the controller should catch.
  */
-	public function add($data) {
+	public function save($data) {
 		$data = $this->_cleanAddData($data);
-		$ret = false;
-
-		// remove some information for saveAll, because we need to deal with it manually
-		$itemData = array('Product' => $data['Product']);
-
-		if (isset($data['ProductPrice'])) {
-			# why is this here?  save HABTM does this for you ... RK - 7/18/2011
-			$this->ProductPrice->deleteAll(array('product_id' => $itemData['Product']['id']));
-			#$itemData['ProductPrice'] = $data['ProductPrice'];
-		}
-		if ($this->save($itemData)) {
-			$data['Product']['id'] = $this->id ;
-			$data['Gallery']['model'] = 'Product';
-			$data['Gallery']['foreign_key'] = $this->id;
-			$imageSaved = false;
-
-			if (isset($data['GalleryImage'])){
-				if ($data['GalleryImage']['filename']['error'] == 0 && $this->Gallery->GalleryImage->add($data, 'filename')) {
-					$imageSaved = true;
-				}
-			}
-			if (isset($data['Product']['id']) || $imageSaved) {
-				# this is how the categories data should look when coming in.
-				if (isset($data['Category']['Category'][0])) {
-					$categorized = array('Product' => array('id' => array($this->id)));
-					foreach ($data['Category']['Category'] as $catId) {
-						$categorized['Category']['id'][] = $catId;
-					}
-					$this->Category->categorized($categorized, 'Product');
-				}
-
-				if(isset($data['CategoryOption'])) {
-					$this->CategoryOption->categorized_option($data, 'Product');
-				}
-				$ret = true;
-			} else {
-				$this->delete($this->id);
-			}
-		} else {
-			$errors = $this->validationErrors;
-			debug($errors);
-			throw new Exception(__d('products', 'Error: ...'));
-		}
-		return $ret;
+		return parent::save($data);
+        
+        
+//          Need to put this into a behavior...
+//          
+//			$data['Product']['id'] = $this->id ;
+//			$data['Gallery']['model'] = 'Product';
+//			$data['Gallery']['foreign_key'] = $this->id;
+//			$imageSaved = false;
+//
+//			if (isset($data['GalleryImage'])){
+//				if ($data['GalleryImage']['filename']['error'] == 0 && $this->Gallery->GalleryImage->add($data, 'filename')) {
+//					$imageSaved = true;
+//				}
+//			}
+            
+            
+            
+//          This needs to be in a behavior too
+//			if (isset($data['Product']['id']) || $imageSaved) {
+//				// this is how the categories data should look when coming in.
+//				if (isset($data['Category']['Category'][0])) {
+//					$categorized = array('Product' => array('id' => array($this->id)));
+//					foreach ($data['Category']['Category'] as $catId) {
+//						$categorized['Category']['id'][] = $catId;
+//					}
+//					$this->Category->categorized($categorized, 'Product');
+//				}
+//
+//				if(isset($data['CategoryOption'])) {
+//					$this->CategoryOption->categorized_option($data, 'Product');
+//				}
+//				$ret = true;
+//			} else {
+//				$this->delete($this->id);
+//			}
 	}
+    
+    
 
 /**
  * Cleans data for adding
@@ -236,7 +245,6 @@ class Product extends ProductsAppModel {
 		if (empty($data['Product']['sku'])) {
 			$data['Product']['sku'] = rand(10000, 99000); // generate random sku if none exists
 		}
-
 		return $data;
 	}
 

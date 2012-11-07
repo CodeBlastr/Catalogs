@@ -44,7 +44,6 @@ class ProductsController extends ProductsAppController {
 	public $uses = 'Products.Product';
 	
 
-
 /**
  * Ecommerce dashboard.
  *
@@ -54,6 +53,7 @@ class ProductsController extends ProductsAppController {
 		$this->set('itemStatuses', ClassRegistry::init('Transactions.TransactionItem')->statuses());
 		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
 	}
+    
 
 /**
  * Index method.
@@ -62,7 +62,7 @@ class ProductsController extends ProductsAppController {
  * @return void
  */
 	public function index() {
-		# setup paginate
+		// setup paginate
 		$this->paginate['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $this->userRoleId;
 		$this->paginate['conditions']['OR'] = array(
 			array('Product.ended >' => date('Y-m-d h:i:s')),
@@ -72,7 +72,7 @@ class ProductsController extends ProductsAppController {
 		$this->_namedParameterJoins();
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		$products = $this->paginate();
-		# removes items and changes prices based on user role
+		// removes items and changes prices based on user role
 		$products = $this->Product->cleanItemsPrices($products, $this->userRoleId);
 		$this->set(compact('products'));
 	}
@@ -87,7 +87,7 @@ class ProductsController extends ProductsAppController {
  * @return void
  */
 	protected function _namedParameterJoins() {
-		# category id named
+		// category id named
 		if (!empty($this->request->params['named']['category'])) {
 			$categoryId = $this->request->params['named']['category'];
 			$this->paginate['joins'] = array(array(
@@ -203,139 +203,28 @@ class ProductsController extends ProductsAppController {
 /**
  * Add method
  *
- * Users can add products belonging to stores and brands.
+ * Users can add products belonging to brands.
  */
-	public function add($productBrandId = null) {
-
+	public function add() {
 		if (!empty($this->request->data)) {
-			// Why wuould product store id ever be an array (there should be a comment about this here)
-			if(isset($this->request->data['ProductStore']) && is_array($this->request->data['ProductStore']['id'])) {
-				 $this->request->data['ProductStore']['id'] = $this->request->data['ProductStore']['id'][0];
-			}
-
-			if ($this->Product->add($this->request->data, $this->Auth->user('id'))) {
+			try {
+                $this->Product->save($this->request->data);
 				$this->Session->setFlash(__('Product saved.', true));
 				$this->redirect(array('action' => 'edit', $this->Product->id));
-			} else {
-				$this->Session->setFlash(__('Product could not be saved.', true));
-			}
+            } catch (Exception $e) {
+				$this->Session->setFlash(__('Product could not be saved.'));
+            }
 		}
+        
+        $this->set('productBrands', $this->Product->ProductBrand->find('list'));
+        $this->set('categories', $this->Product->Category->generateTreeList());
+		//$this->set('paymentOptions', $this->Product->paymentOptions());
 
-		// get webpages records
-		App::import('Model', 'Webpages.Webpage');
-        $this->Webpage = new Webpage();
-        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
-
-
-		$productParentIds = $this->Product->generateTreeList();
-		$productBrands = $this->Product->ProductBrand->find('list');
-		$productStores = $this->Product->ProductStore->find('list');
-		$categories = $this->Product->Category->generateTreeList();
-
-		$this->set('paymentOptions', $this->Product->paymentOptions());
-
-		$categoryElement = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
-		if(isset($this->request->params['named']['productStore'])) :
-			$categoryElement['parentId'] = $this->request->params['named']['productStore'];
-		endif;
-		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
-		$this->set(compact('productBrandId', 'productBrands', 'productStores', 'categories', 'categoryElement', 'userRoles', 'productParentIds', 'foreignKeys'));
-
-		$categories = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
-		if(isset($this->request->params['named']['productStore'])) :
-			$categories['parentId'] = $this->request->params['named']['productStore'];
-		endif;
-
-		$this->set('page_title_for_layout', __('Create Product'));
+		$this->set('page_title_for_layout', __('Create a Product'));
 		$this->set('title_for_layout', __('Add Item Form'));
 	}
 
-
-
-	public function add_virtual($productBrandId = null) {
-
-          App::import('Model', 'Webpages.Webpage');
-          $this->Webpage = new Webpage();
-
-          if (!empty($this->request->data)) {
-
-
-            /**
-             *from Webpages::add()
-             */
-            try {
-              $this->request->data['Webpages']['id'] = $uuid;
-
-              $this->Webpage->add($this->request->data);
-              $this->Session->setFlash(__('Webpage Saved successfully', true));
-              #$this->redirect(array('action' => 'index'));
-
-              // set the foreign_key of the virtual Product to the ID of the Webpage that we just created.
-              $this->request->data['Product']['foreign_key'] = $this->Webpage->getLastInsertID();
-
-              // Why would product store id ever be an array (there should be a comment about this here)
-              if(isset($this->request->data['ProductStore']) && is_array($this->request->data['ProductStore']['id'])) {
-                  $this->request->data['ProductStore']['id'] = $this->request->data['ProductStore']['id'][0];
-              }
-
-              // Handle payment type (I think this should be in the model)
-              if(!empty($this->request->data['Product']['payment_type'])) {
-                  $this->request->data['Product']['payment_type'] = implode(',', $this->request->data['Product']['payment_type']);
-              }
-
-              if ($this->Product->add($this->request->data, $this->Auth->user('id'))) {
-                  $this->Session->setFlash(__('Product saved.', true));
-                  #$this->redirect(array('action' => 'edit', $this->Product->id));
-                  $this->redirect(array('action' => 'index'));#
-              } else {
-                  $this->Session->setFlash(__('Product could not be saved.', true));
-              }
-
-
-
-            } catch (Exception $e) {
-              $this->Session->setFlash($e->getMessage());
-            }
-
-		}
-
-		// get webpages records
-        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
-
-
-		$productParentIds = $this->Product->generateTreeList();
-		$productBrands = $this->Product->ProductBrand->find('list');
-		$productStores = $this->Product->ProductStore->find('list');
-		$categories = $this->Product->Category->generateTreeList();
-
-		$this->set('paymentOptions', $this->Product->paymentOptions());
-
-		$categoryElement = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
-		if(isset($this->request->params['named']['productStore'])) {
-			$categoryElement['parentId'] = $this->request->params['named']['productStore'];
-        }
-		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
-		$this->set(compact('productBrandId', 'productBrands', 'productStores', 'categories', 'categoryElement', 'userRoles', 'productParentIds', 'foreignKeys'));
-		$categories = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
-		if(isset($this->request->params['named']['productStore'])) :
-			$categories['parentId'] = $this->request->params['named']['productStore'];
-		endif;
-
-		$this->set('page_title_for_layout', __('Products'));
-		$this->set('title_for_layout', __('Add Product Form'));
-
-
-        /**
-         *from Webpages::add()
-         */
-        // required to have per page permissions
-		$this->request->data['Alias']['name'] = !empty($this->request->params['named']['alias']) ? $this->request->params['named']['alias'] : null;
-		$this->UserRole = ClassRegistry::init('Users.UserRole');
-		$userRoles = $this->UserRole->find('list');
-		$types = $this->Webpage->types();
-    	$this->set(compact('userRoles', 'types'));
-	}
-
+    
 /**
  * Edit method
  *
@@ -351,7 +240,7 @@ class ProductsController extends ProductsAppController {
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			try {
-				$this->Product->add($this->request->data);
+				$this->Product->save($this->request->data);
 				$this->Session->setFlash(__('Item saved'));
 				$this->redirect(array('action' => 'edit', $this->Product->id), 'success');
 			} catch (Exception $e) {
@@ -385,11 +274,11 @@ class ProductsController extends ProductsAppController {
 		}
 		$this->request->data['CategoryOption'] = $catOptions;
 
-		// get webpages records
+		/* get webpages records
 		App::import('Model', 'Webpages.Webpage');
 		$this->Webpage = new Webpage();
 		$foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
-		$this->set(compact('foreignKeys'));
+		$this->set(compact('foreignKeys'));*/
 
 		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
 		$productBrands = $this->Product->ProductBrand->find('list');
@@ -449,7 +338,7 @@ class ProductsController extends ProductsAppController {
 			$data['CategoryOption'] = $this->request->data['CategoryOption'];
 
 			//create new CI
-			if ($this->Product->add($data, $this->Auth->user('id'))) {
+			if ($this->Product->save($data, $this->Auth->user('id'))) {
 				$this->redirect(array('action' => 'edit', $this->request->data['Product']['parent_id']));
 			} else {
 				$this->Session->setFlash(__('New attribute save failed.', true));
@@ -700,5 +589,181 @@ class ProductsController extends ProductsAppController {
 
 		echo json_encode($data);
 	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+/**
+ * Add method
+ *
+ * Users can add products belonging to brands.
+ * @todo we might need some of the things here for use in a new function that we call something like "add_child", which will allow us to create products with attributes.
+ * 
+ * 
+ * 
+	public function add($productBrandId = null) {
+
+		if (!empty($this->request->data)) {
+            debug($this->request->data);
+            break;
+			// Why wuould product store id ever be an array (there should be a comment about this here)
+			if(isset($this->request->data['ProductStore']) && is_array($this->request->data['ProductStore']['id'])) {
+				 $this->request->data['ProductStore']['id'] = $this->request->data['ProductStore']['id'][0];
+			}
+
+			if ($this->Product->save($this->request->data, $this->Auth->user('id'))) {
+				$this->Session->setFlash(__('Product saved.', true));
+				$this->redirect(array('action' => 'edit', $this->Product->id));
+			} else {
+				$this->Session->setFlash(__('Product could not be saved.', true));
+			}
+		}
+
+	
+
+		$productParentIds = $this->Product->generateTreeList();
+		$productBrands = $this->Product->ProductBrand->find('list');
+		$productStores = $this->Product->ProductStore->find('list');
+		$categories = $this->Product->Category->generateTreeList();
+
+		$this->set('paymentOptions', $this->Product->paymentOptions());
+
+		$categoryElement = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
+        
+		if(isset($this->request->params['named']['productStore'])) {
+			$categoryElement['parentId'] = $this->request->params['named']['productStore'];
+        }
+        
+		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
+		$this->set(compact('productBrandId', 'productBrands', 'productStores', 'categories', 'categoryElement', 'userRoles', 'productParentIds', 'foreignKeys'));
+
+		$categories = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
+		if(isset($this->request->params['named']['productStore'])) {
+			$categories['parentId'] = $this->request->params['named']['productStore'];
+        }
+
+		$this->set('page_title_for_layout', __('Create a Product'));
+		$this->set('title_for_layout', __('Add Item Form'));
+	}
+*/
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+/**
+ * Virtual Product, Pulled until ready to implement better.
+ *
+	public function add_virtual($productBrandId = null) {
+
+          App::import('Model', 'Webpages.Webpage');
+          $this->Webpage = new Webpage();
+
+          if (!empty($this->request->data)) {
+
+            try {
+              $this->request->data['Webpages']['id'] = $uuid;
+
+              $this->Webpage->add($this->request->data);
+              $this->Session->setFlash(__('Webpage Saved successfully', true));
+              #$this->redirect(array('action' => 'index'));
+
+              // set the foreign_key of the virtual Product to the ID of the Webpage that we just created.
+              $this->request->data['Product']['foreign_key'] = $this->Webpage->getLastInsertID();
+
+              // Why would product store id ever be an array (there should be a comment about this here)
+              if(isset($this->request->data['ProductStore']) && is_array($this->request->data['ProductStore']['id'])) {
+                  $this->request->data['ProductStore']['id'] = $this->request->data['ProductStore']['id'][0];
+              }
+
+              // Handle payment type (I think this should be in the model)
+              if(!empty($this->request->data['Product']['payment_type'])) {
+                  $this->request->data['Product']['payment_type'] = implode(',', $this->request->data['Product']['payment_type']);
+              }
+
+              if ($this->Product->save($this->request->data, $this->Auth->user('id'))) {
+                  $this->Session->setFlash(__('Product saved.', true));
+                  #$this->redirect(array('action' => 'edit', $this->Product->id));
+                  $this->redirect(array('action' => 'index'));#
+              } else {
+                  $this->Session->setFlash(__('Product could not be saved.', true));
+              }
+
+
+
+            } catch (Exception $e) {
+              $this->Session->setFlash($e->getMessage());
+            }
+
+		}
+
+		// get webpages records
+        $foreignKeys = $this->Webpage->find('list', array('conditions' => array('Webpage.type' => 'content')));
+
+
+		$productParentIds = $this->Product->generateTreeList();
+		$productBrands = $this->Product->ProductBrand->find('list');
+		$productStores = $this->Product->ProductStore->find('list');
+		$categories = $this->Product->Category->generateTreeList();
+
+		$this->set('paymentOptions', $this->Product->paymentOptions());
+
+		$categoryElement = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
+		if(isset($this->request->params['named']['productStore'])) {
+			$categoryElement['parentId'] = $this->request->params['named']['productStore'];
+        }
+		$userRoles = $this->Product->ProductPrice->UserRole->find('list');
+		$this->set(compact('productBrandId', 'productBrands', 'productStores', 'categories', 'categoryElement', 'userRoles', 'productParentIds', 'foreignKeys'));
+		$categories = array('plugin' => 'categories', 'parent' => 'ProductStore', 'parents' => $productStores);
+		if(isset($this->request->params['named']['productStore'])) :
+			$categories['parentId'] = $this->request->params['named']['productStore'];
+		endif;
+
+		$this->set('page_title_for_layout', __('Products'));
+		$this->set('title_for_layout', __('Add Product Form'));
+
+        // required to have per page permissions
+		$this->request->data['Alias']['name'] = !empty($this->request->params['named']['alias']) ? $this->request->params['named']['alias'] : null;
+		$this->UserRole = ClassRegistry::init('Users.UserRole');
+		$userRoles = $this->UserRole->find('list');
+		$types = $this->Webpage->types();
+    	$this->set(compact('userRoles', 'types'));
+	}
+ * 
+ */
 
 }
