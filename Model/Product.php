@@ -30,7 +30,8 @@ class Product extends ProductsAppModel {
         );
 
 	public $actsAs = array(
-		'Tree' => array('parent' => 'parent_id'), 
+		'Tree' => array('parent' => 'parent_id'),
+        'Categories.Categorizable' => array('modelAlias' => 'Product'),
         );
 
 	public $order = '';

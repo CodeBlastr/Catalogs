@@ -15,6 +15,7 @@ class ProductTestCase extends CakeTestCase {
         'app.Alias',
         'app.Condition',
         'plugin.Contacts.Contact',
+        'plugin.Categories.Category',
         'plugin.Categories.Categorized',
         'plugin.Categories.CategorizedOption',
         'plugin.Galleries.Gallery',
@@ -34,6 +35,7 @@ class ProductTestCase extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Product = ClassRegistry::init('Products.Product');
+		$this->Category = ClassRegistry::init('Categories.Category');
 	}
 
 /**
@@ -71,44 +73,37 @@ class ProductTestCase extends CakeTestCase {
                 'shipping_charge' => ''
                 )
             );
-
+        $this->Category->save(array('name' => 'something'));
+        debug($this->Category->find('all'));
         $this->Product->save($testData);
         $result = $this->Product->find();
         $this->assertEqual($result['Product']['id'], $this->Product->id);  // make sure the item was added
         $this->assertTrue(!empty($result['Product']['sku']));  // the sku should be filled automatically when it's empty
         
-//        $testData = array(
-//            'Product' => array(
-//                'is_public' => '1',
-//                'name' => 'Lorem ipsum',
-//                'sku' => '',
-//                'price' => '93.00',
-//                'summary' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-//                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis. Integer quis consectetur purus. Donec sollicitudin metus et nunc bibendum et malesuada ligula elementum. Nulla leo nisi, imperdiet vitae aliquam eleifend, accumsan eu justo. ',
-//                'product_brand_id' => '',
-//                'stock' => '',
-//                'cost' => '',
-//                'cart_min' => '',
-//                'cart_max' => '',
-//                'shipping_type' => '',
-//                'shipping_charge' => ''
-//                ),
-//            'GalleryImage' => array(
-//                'dir' => '',
-//                'mimetype' => '',
-//                'filesize' => '',
-//                'filename' => array(
-//                    'name' => 'thumb5.jpg',
-//                    'type' => 'image/jpeg',
-//                    'tmp_name' => '/Applications/XAMPP/xamppfiles/temp/phpaNwZO7',
-//                    'error' => (int) 0,
-//                    'size' => (int) 6628
-//                )
-//            )
-//        );
-//        debug($this->Product->save($testData));
-//        debug($this->Product->Gallery->find('all')); // can't test file uploads apparently
-//        break;
+        $testData = array(
+            'Product' => array(
+                'is_public' => '1',
+                'name' => 'Lorem ipsum',
+                'sku' => '',
+                'price' => '93.00',
+                'summary' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis. Integer quis consectetur purus. Donec sollicitudin metus et nunc bibendum et malesuada ligula elementum. Nulla leo nisi, imperdiet vitae aliquam eleifend, accumsan eu justo. ',
+                'product_brand_id' => '',
+                'stock' => '',
+                'cost' => '',
+                'cart_min' => '',
+                'cart_max' => '',
+                'shipping_type' => '',
+                'shipping_charge' => ''
+                ),
+            'Category' => array(
+                'Category' => 'category-1',
+                ),
+            );
+        debug($this->Product->save($testData));
+        $this->Product->contain('Category');
+        debug($this->Product->find('all')); // can't test file uploads apparently
+        break;
 	}
     
 /**
