@@ -19,18 +19,22 @@ echo $this->element('thumb', array(
 	array('plugin' => 'galleries')
 	);
 
-$minQty = !empty($product['Product']['cart_min']) ? $product['Product']['cart_min'] : 1;
+$minQty = !empty($product['Product']['cart_min']) ? $product['Product']['cart_min'] : 0;
 $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_max'] : null;
 
 echo $this->Form->input("TransactionItem.{$i}.quantity", array(
     'label' => 'Qty.',
+	'class' => 'TransactionItemCartQty',
     'div' => array('style' => 'display:inline-block'),
     'value' => $transactionItem['quantity'],
     'min' => $minQty, 'max' => $maxQty,
     'size' => 1
     ));
+
+$transactionItemCartPrice = $transactionItem['price'] * $transactionItem['quantity'];
 ?>
 
-<div style="display: inline-block; float: right; font-weight: bold; padding: 22px 0;" id="">
-    $<?php echo number_format($transactionItem['price'], 2); ?>
+<div class="TransactionItemCartPrice">
+    $<span class="floatPrice"><?php echo number_format($transactionItemCartPrice, 2); ?></span>
+	<span class="priceOfOne"><?php echo number_format($transactionItem['price'], 2) ?></span>
 </div>
