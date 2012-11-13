@@ -1,4 +1,5 @@
 <?php
+App::uses('ProductsAppModel', 'Products.Model');
 /**
  * Product Price Model
  *
