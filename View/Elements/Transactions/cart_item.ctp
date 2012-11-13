@@ -1,7 +1,7 @@
 <div>
 <?php
 echo $this->Html->link($transactionItem['name'],
-	'/prdocuts/products/view/'.$transactionItem['foreign_key'],
+	'/products/products/view/'.$transactionItem['foreign_key'],
 	array('style' => 'text-decoration: underline;'),
 	'Are you sure you want to leave this page?'
 	);
