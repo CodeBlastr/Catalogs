@@ -31,7 +31,6 @@ class Product extends ProductsAppModel {
 
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
-        'Categories.Categorizable' => array('modelAlias' => 'Product'),
         );
 
 	public $order = '';
@@ -94,30 +93,31 @@ class Product extends ProductsAppModel {
 			'order' => ''
             ),
         );
-
-    public $hasAndBelongsToMany = array(
-        'Category' => array(
-            'className' => 'Categories.Category',
-       		'joinTable' => 'categorized',
-            'foreignKey' => 'foreign_key',
-            'associationForeignKey' => 'category_id',
-    		'conditions' => 'Categorized.model = "Product"',
-    		// 'unique' => true,
-            ),
-        'CategoryOption' => array(
-            'className' => 'Categories.CategoryOption',
-       		'joinTable' => 'categorized_options',
-            'foreignKey' => 'foreign_key',
-            'associationForeignKey' => 'category_option_id',
-    		//'unique' => true,
-            ),
-        );
     
 	public function __construct($id = null, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 		$this->order = array($this->alias . '.' . 'price');
+		
+		if (in_array('Categories', CakePlugin::loaded())) {
+			$this->hasAndBelongsToMany['Category'] = array(
+	            'className' => 'Categories.Category',
+	       		'joinTable' => 'categorized',
+	            'foreignKey' => 'foreign_key',
+	            'associationForeignKey' => 'category_id',
+	    		'conditions' => 'Categorized.model = "Product"',
+	    		// 'unique' => true,
+	            );
+			$this->hasMany['CategoryOption'] = array(
+	            'className' => 'Categories.CategoryOption',
+	       		'joinTable' => 'categorized_options',
+	            'foreignKey' => 'foreign_key',
+	            'associationForeignKey' => 'category_option_id',
+	    		//'unique' => true,
+	            );
+			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
+		}
 	}
     
 /**

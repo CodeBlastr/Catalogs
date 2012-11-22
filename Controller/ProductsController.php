@@ -206,7 +206,9 @@ class ProductsController extends ProductsAppController {
 		}
         
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
-        $this->set('categories', $this->Product->Category->generateTreeList());
+		if (in_array('Categories', CakePlugin::loaded())) {
+        	$this->set('categories', $this->Product->Category->generateTreeList());
+		}
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
 
 		$this->set('page_title_for_layout', __('Create a Product'));
@@ -223,12 +225,9 @@ class ProductsController extends ProductsAppController {
  */
 	public function edit($id = null) {
 		if (!empty($this->request->data)) {
-			try {
-                $this->Product->save($this->request->data);
+			if ($this->Product->save($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.', true));
-				$this->redirect(array('action' => 'edit', $this->Product->id));
-            } catch (Exception $e) {
-				$this->Session->setFlash(__('Product could not be saved.'));
+				$this->redirect(array('action' => 'view', $this->Product->id));
             }
 		}
 		$this->Product->id = $id;
