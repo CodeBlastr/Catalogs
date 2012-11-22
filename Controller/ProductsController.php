@@ -72,7 +72,7 @@ class ProductsController extends ProductsAppController {
         
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		$this->paginate['fields'] = array('id', 'name', 'summary', 'price');
-        
+
 		// removes items and changes prices based on user role
 		$this->set('products', $this->Product->cleanItemsPrices($this->paginate()));
 		$this->set('displayName', 'name');
