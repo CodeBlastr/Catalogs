@@ -111,7 +111,23 @@ class ProductTestCase extends CakeTestCase {
  * @return void
  */
 	public function testCleanItemPrice() {
-
+		$price = array(
+			'Product' => array(
+				'id' => '50b00085-a8bc-498d-93fa-17f345a3a949',
+				'parent_id' => null,
+				'lft' => '3',
+				'rght' => '4',
+				'sku' => '76628',
+				'name' => 'Townhouse',
+				'summary' => 'If you don\'t see this today, it will be gone tomorrow.',
+				'description' => '<p>Lorem ipsum dolor at tincidunt id, dapibus vitae sem. Pellentesque eget odio ut quam bibendum placerat eget consectetur sem.</p>',
+				'price' => '1400',
+				'!location' => 'Geneva',
+				'!bedrooms' => '3'
+				)
+			);
+		$result = $this->Product->cleanItemPrice($price);
+		$this->assertEqual(strpos($result['Product']['price'], ','), false); // there should not be commas in the price return from the model (it doesn't work in forms)
 	}
 /**
  * testPaymentOptions method

@@ -299,12 +299,12 @@ class Product extends ProductsAppModel {
 		if (!empty($product['ProductPrice'][0])) {
 			foreach ($product['ProductPrice'] as $price) {
 				// set the price in the original products to user role price
-				$product['Product']['price'] = ZuhaInflector::pricify($price['price']);
+				$product['Product']['price'] = $price['price'];
 			}
 		}
 
 		if (!empty($product['Product']['price'])) {
-			$product['Product']['price'] = ZuhaInflector::pricify($product['Product']['price']);
+			$product['Product']['price'] = $product['Product']['price'];
 		}
 
 		unset($product['ProductPrice']); // its not needed now
