@@ -31,6 +31,7 @@ class Product extends ProductsAppModel {
 
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
+		'Metable'
         );
 
 	public $order = '';
@@ -95,10 +96,6 @@ class Product extends ProductsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
-
-		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
-		$this->order = array($this->alias . '.' . 'price');
 		
 		if (in_array('Categories', CakePlugin::loaded())) {
 			$this->hasAndBelongsToMany['Category'] = array(
@@ -118,6 +115,11 @@ class Product extends ProductsAppModel {
 	            );
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
+
+		parent::__construct($id, $table, $ds); // this order is imortant
+		
+		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
+		$this->order = array($this->alias . '.' . 'price');
 	}
     
 /**
