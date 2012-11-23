@@ -38,18 +38,13 @@ class Product extends ProductsAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
-		'TransactionItem' => array(
-			'className' => 'Transactions.TransactionItem',
-			'foreignKey' => 'foreign_key_id',
-			'dependent' => false,
-            ),
 		'ProductPrice' => array(
 			'className' => 'Products.ProductPrice',
 			'foreignKey' => 'product_id',
 			'dependent' => true,
 			'order' => 'ProductPrice.user_role_id asc'
             ),
-		'ProductChildren' => array(
+		'ProductChild' => array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'dependent' => true,
@@ -69,11 +64,11 @@ class Product extends ProductsAppModel {
 
 	//products association.
 	public $belongsTo = array(
-		'ProductParent'=>array(
+		'Parent'=>array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'counterCache' => 'children',
-			'counterScope' => array('Product.parent_id IS NOT NULL'),
+			'counterScope' => array('Product.parent_id NOT' => null),
             ),
 		'ProductStore'=>array(
 			'className' => 'Products.ProductStore',
@@ -96,6 +91,16 @@ class Product extends ProductsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
+		// this does not seem like it should be here
+		// and what is foreign_key_id... should just be foreign_key
+		//if (in_array('Transactions', CakePlugin::loaded())) {
+		//	$this->hasMany['TransactionItem'] = array(
+		//		'className' => 'Transactions.TransactionItem',
+		//		'foreignKey' => 'foreign_key_id',
+		//		'dependent' => false,
+	    //		// 'unique' => true,
+	    //        );
+		//}
 		
 		if (in_array('Categories', CakePlugin::loaded())) {
 			$this->hasAndBelongsToMany['Category'] = array(

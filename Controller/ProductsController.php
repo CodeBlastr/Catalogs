@@ -136,7 +136,7 @@ class ProductsController extends ProductsAppController {
 						'ProductPrice.user_role_id' => $this->userRoleId,
 						),
 					),
-				'ProductChildren',
+				'ProductChild',
 				),
 			));
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
@@ -291,7 +291,7 @@ class ProductsController extends ProductsAppController {
 				'Product.id' => $parentId,
 				),
 			'contain' => array(
-				'ProductChildren' => array(
+				'ProductChild' => array(
 					'CategoryOption',
 					),
 				)

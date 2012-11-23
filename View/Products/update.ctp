@@ -9,7 +9,7 @@
       <th>Action</th>
     <tr>
       <?php
-	foreach($product['ProductChildren'] as $child) : ?>
+	foreach($product['ProductChild'] as $child) : ?>
       <?php #debug($child); ?>
     <tr>
       <?php
@@ -33,9 +33,6 @@
     <?php
 	echo $this->Form->hidden('Product.parent_id', array('value' => $product['Product']['id']));
 	echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Will the selected attribute(s) use different pictures than the ' . $product['Product']['name'], 'after' => ' You can add additional images after save.'));
-    echo $this->Form->input('GalleryImage.dir', array('type' => 'hidden'));
-    echo $this->Form->input('GalleryImage.mimetype', array('type' => 'hidden'));
-    echo $this->Form->input('GalleryImage.filesize', array('type' => 'hidden'));
     echo $this->Form->input('price', array('label' => 'Will the selected attribute(s) change the price?', 'after' => ' (Leave blank to use ' . $product['Product']['name'] . '\'s price)'));
     echo $this->Form->input('sku', array('label' => 'Will this use a new SKU?', 'after' => ' (Leave blank to use current sku: ' . $product['Product']['sku'] ));
     ?>

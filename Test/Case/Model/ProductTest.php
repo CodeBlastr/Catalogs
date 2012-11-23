@@ -13,7 +13,7 @@ class ProductTestCase extends CakeTestCase {
  */
 	public $fixtures = array(
         'app.Alias',
-        'app.Condition',
+        'app.Meta',
         'plugin.Contacts.Contact',
         'plugin.Categories.Category',
         'plugin.Categories.Categorized',
@@ -35,7 +35,6 @@ class ProductTestCase extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Product = ClassRegistry::init('Products.Product');
-		$this->Category = ClassRegistry::init('Categories.Category');
 	}
 
 /**
@@ -45,7 +44,6 @@ class ProductTestCase extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Product);
-
 		parent::tearDown();
 	}
 
@@ -63,47 +61,14 @@ class ProductTestCase extends CakeTestCase {
                 'sku' => '',
                 'price' => '93.00',
                 'summary' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis. Integer quis consectetur purus. Donec sollicitudin metus et nunc bibendum et malesuada ligula elementum. Nulla leo nisi, imperdiet vitae aliquam eleifend, accumsan eu justo. ',
-                'product_brand_id' => '',
-                'stock' => '',
-                'cost' => '',
-                'cart_min' => '',
-                'cart_max' => '',
-                'shipping_type' => '',
-                'shipping_charge' => ''
+                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis.',
                 )
             );
-        $this->Category->save(array('name' => 'something'));
-        debug($this->Category->find('all'));
+      
         $this->Product->save($testData);
-        $result = $this->Product->find();
+        $result = $this->Product->findById($this->Product->id);
         $this->assertEqual($result['Product']['id'], $this->Product->id);  // make sure the item was added
         $this->assertTrue(!empty($result['Product']['sku']));  // the sku should be filled automatically when it's empty
-        
-        $testData = array(
-            'Product' => array(
-                'is_public' => '1',
-                'name' => 'Lorem ipsum',
-                'sku' => '',
-                'price' => '93.00',
-                'summary' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis. Integer quis consectetur purus. Donec sollicitudin metus et nunc bibendum et malesuada ligula elementum. Nulla leo nisi, imperdiet vitae aliquam eleifend, accumsan eu justo. ',
-                'product_brand_id' => '',
-                'stock' => '',
-                'cost' => '',
-                'cart_min' => '',
-                'cart_max' => '',
-                'shipping_type' => '',
-                'shipping_charge' => ''
-                ),
-            'Category' => array(
-                'Category' => 'category-1',
-                ),
-            );
-        debug($this->Product->save($testData));
-        $this->Product->contain('Category');
-        debug($this->Product->find('all')); // can't test file uploads apparently
-        break;
 	}
     
 /**
@@ -118,38 +83,17 @@ class ProductTestCase extends CakeTestCase {
                 'sku' => '',
                 'price' => '93.00',
                 'summary' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis. Integer quis consectetur purus. Donec sollicitudin metus et nunc bibendum et malesuada ligula elementum. Nulla leo nisi, imperdiet vitae aliquam eleifend, accumsan eu justo. ',
-                'product_brand_id' => '',
-                'stock' => '',
-                'cost' => '',
-                'cart_min' => '',
-                'cart_max' => '',
-                'shipping_type' => '',
-                'shipping_charge' => ''
+                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium est sed risus malesuada mollis.',
                 ),
             );
+		$this->Product->create();
         $this->Product->save($testData);
-        $result = $this->Product->find('first', array('conditions' => array('Product.id' => $this->Product->id)));
-        
+		$id = $this->Product->id;
+        $result = $this->Product->find('first', array('conditions' => array('Product.id' => $id)));
         $this->assertTrue(!empty($result)); // product was created
-        
-        $this->Product->Gallery->save(array(
-           'Gallery' => array(
-               'id' => '509ad808-262c-4b2c-8238-b89f124e0d46',
-               'model' => 'Product',
-               'foreign_key' => $this->Product->id
-               )
-            ));
-        $result = $this->Product->Gallery->find('first', array('conditions' => array('Gallery.id' => '509ad808-262c-4b2c-8238-b89f124e0d46')));
-        $this->assertTrue(!empty($result)); // gallery was created
-        
-        $this->Product->delete($this->Product->id);
-        
+       	$this->Product->delete($id);
         $result = $this->Product->find('first', array('conditions' => array('Product.id' => $this->Product->id)));
-        $this->assertEqual($result, false); // product should be gone
-        
-        $result = $this->Product->Gallery->find('first', array('conditions' => array('Gallery.id' => '509ad808-262c-4b2c-8238-b89f124e0d46')));
-        $this->assertEqual($result, false); // gallery should be deleted too
+        $this->assertTrue(empty($result)); // product should be gone
     }
     
     
