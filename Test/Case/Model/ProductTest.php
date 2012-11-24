@@ -53,7 +53,6 @@ class ProductTestCase extends CakeTestCase {
  * @return void
  */
 	public function testSave() {
-        
         $testData = array(
             'Product' => array(
                 'is_public' => '1',
@@ -69,6 +68,31 @@ class ProductTestCase extends CakeTestCase {
         $result = $this->Product->findById($this->Product->id);
         $this->assertEqual($result['Product']['id'], $this->Product->id);  // make sure the item was added
         $this->assertTrue(!empty($result['Product']['sku']));  // the sku should be filled automatically when it's empty
+	}
+/**
+ * testSaveWithMeta method
+ *
+ * @return void
+ */
+    public function testSaveWithMeta() {
+		$product = array(
+			'Product' => array(
+				'id' => '50b00085-a8bc-498d-93fa-17f345a3a949',
+				'parent_id' => null,
+				'lft' => '3',
+				'rght' => '4',
+				'sku' => '76628',
+				'name' => 'Townhouse',
+				'summary' => 'If you don\'t see this today, it will be gone tomorrow.',
+				'description' => '<p>Lorem ipsum dolor at tincidunt id, dapibus vitae sem. Pellentesque eget odio ut quam bibendum placerat eget consectetur sem.</p>',
+				'price' => '1400',
+				'!location' => 'Geneva',
+				'!bedrooms' => '3'
+				)
+			);
+        $this->Product->save($product);
+        $result = $this->Product->findById($this->Product->id);
+        $this->assertEqual($result['Product']['!location'], $product['Product']['!location']);
 	}
     
 /**
@@ -91,7 +115,12 @@ class ProductTestCase extends CakeTestCase {
 		$id = $this->Product->id;
         $result = $this->Product->find('first', array('conditions' => array('Product.id' => $id)));
         $this->assertTrue(!empty($result)); // product was created
-       	$this->Product->delete($id);
+        try {
+           $this->Product->delete($id);            
+        } catch (PdoException $e) {
+            debug($e->getMessage());
+            break;
+        }
         $result = $this->Product->find('first', array('conditions' => array('Product.id' => $this->Product->id)));
         $this->assertTrue(empty($result)); // product should be gone
     }
