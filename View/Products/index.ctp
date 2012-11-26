@@ -29,9 +29,8 @@ if (!empty($products[0]['Category'][0])) {  ?>
 
 <?php
 }  // end category check
-
-echo $this->Element('scaffolds/index', array('data' => $products));
-//echo $this->element('products'); 
+//echo $this->Element('scaffolds/index', array('data' => $products));
+echo $this->element('products'); 
 
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
