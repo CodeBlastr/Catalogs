@@ -73,6 +73,43 @@
     </fieldset>
 	<?php } ?>
 
+    <fieldset>
+        <legend class="toggleClick"><?php echo __('Automated Recurring Billing (ARB) Settings');?></legend>
+        <?php
+            			$arbSettingsValues = array(
+				array(
+					'name' => 'PaymentAmount',
+					'desc' => 'The amount of the Recurring Payment.',
+					),
+				array(
+					'name' => 'FirstPaymentAmount',
+					'desc' => 'A First Payment of a different dollar amount or off the desired frequency may be set up for Recurring Payment.',
+					),
+				array(
+					'name' => 'FirstPaymentDate',
+					'desc' => 'The date that the optional First Payment should process.<br />YYYY-MM-DD',
+					),
+				array(
+					'name' => 'ExecutionFrequencyType',
+					'desc' => 'The frequency to execute the schedule.'
+								.'<br />"Daily", "Weekly", "BiWeekly", "FirstofMonth", "SpecificDayofMonth", "LastofMonth", "Quarterly", "SemiAnnually", "Annually"',
+					),
+				array(
+					'name' => 'ExecutionFrequencyParameter',
+					'desc' => 'The execution frequency parameter specifies the day of month for a SpecificDayOfMonth frequency or specifies day of week for Weekly or BiWeekly schedule.<br />It is required when ExecutionFrequncyType is SpecificDayofMonth, Weekly or BiWeekly.'
+								.'<br />"Sunday" ... "Saturday"',
+					),
+			);
+			
+			foreach($arbSettingsValues as $arbSetting) {
+				echo $this->Form->input('Product.arb_settings.'.$arbSetting['name'], array(
+					'value' => '',
+					'label' => preg_replace('/(?<!\ )[A-Z]/', ' $0', $arbSetting['name']) . '<br /><small><em>'.$arbSetting['desc'].'</em></small>'
+					));
+			}
+        ?>
+    </fieldset>
+	
 	<?php
     echo $this->Form->end('Submit');
 	?>
