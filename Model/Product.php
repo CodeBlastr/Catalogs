@@ -237,11 +237,11 @@ class Product extends ProductsAppModel {
  */
  	protected function _cleanAddData($data) {
 		if (!empty($data['Product']['arb_settings'])) {
-			$data['Product']['arb_settings'] = serialize(parse_ini_string($this->request->data['Product']['arb_settings']));
+			$data['Product']['arb_settings'] = serialize($this->data['Product']['arb_settings']);
 		}
 
 		if(!empty($data['Product']['payment_type'])) {
-			$data['Product']['payment_type'] = implode(',', $this->request->data['Product']['payment_type']);
+			$data['Product']['payment_type'] = implode(',', $this->data['Product']['payment_type']);
 		}
 
 		if (empty($data['Product']['sku'])) {
