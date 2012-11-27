@@ -99,6 +99,14 @@
 					'desc' => 'The date that the optional First Payment should process.<br />YYYY-MM-DD',
 					),
 				array(
+					'name' => 'StartDate',
+					'desc' => 'The number of days after purchase to start the Recurring Payment.',
+					),
+				array(
+					'name' => 'EndDate',
+					'desc' => 'The number of days after purchase to end the Recurring Payment.  If empty, the schedule will run indefinitely.',
+					),
+				array(
 					'name' => 'ExecutionFrequencyType',
 					'desc' => 'The frequency to execute the schedule.'
 								.'<br />"Daily", "Weekly", "BiWeekly", "FirstofMonth", "SpecificDayofMonth", "LastofMonth", "Quarterly", "SemiAnnually", "Annually"',

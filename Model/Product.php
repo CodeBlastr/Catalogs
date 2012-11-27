@@ -236,7 +236,20 @@ class Product extends ProductsAppModel {
  * @return array
  */
  	protected function _cleanAddData($data) {
+		
 		if (!empty($data['Product']['arb_settings'])) {
+			// format StartDate
+			if(empty($this->data['Product']['arb_settings']['StartDate'])) {
+				$this->data['Product']['arb_settings']['StartDate'] = 0;
+			}
+			$this->data['Product']['arb_settings']['StartDate'] = date('Y-m-d', strtotime(date('Y-m-d') . ' + '.$this->data['Product']['arb_settings']['StartDate'].' days'));
+			
+			// format EndDate
+			if(!empty($this->data['Product']['arb_settings']['EndDate'])) {
+				$this->data['Product']['arb_settings']['EndDate'] = date('Y-m-d', strtotime(date('Y-m-d') . ' + '.$this->data['Product']['arb_settings']['EndDate'].' days'));
+			}
+			
+			// serialize the data
 			$data['Product']['arb_settings'] = serialize($this->data['Product']['arb_settings']);
 		}
 
@@ -245,8 +258,10 @@ class Product extends ProductsAppModel {
 		}
 
 		if (empty($data['Product']['sku'])) {
-			$data['Product']['sku'] = rand(10000, 99000); // generate random sku if none exists
+			// generate random sku if none exists
+			$data['Product']['sku'] = rand(10000, 99000);
 		}
+		
 		return $data;
 	}
 
