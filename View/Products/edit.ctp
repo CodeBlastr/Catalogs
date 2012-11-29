@@ -96,7 +96,7 @@
 					),
 				array(
 					'name' => 'FirstPaymentDate',
-					'desc' => 'The date that the optional First Payment should process.<br />YYYY-MM-DD',
+					'desc' => 'The number of days after purchase that the optional First Payment should process.',
 					),
 				array(
 					'name' => 'StartDate',
@@ -125,11 +125,7 @@
 					'label' => preg_replace('/(?<!\ )[A-Z]/', ' $0', $arbSetting['name']) . '<br /><small><em>'.$arbSetting['desc'].'</em></small>'
 					));
 			}
-//			
-//            echo $this->Form->input('Product.arb_settings', array(
-//				'value' => unserialize($this->request->data['Product']['arb_settings']),
-//				'label' => __d('products', 'ARB Settings') . '<br /><small><em>Key="Value"</em></small>'
-//				));
+
         ?>
     </fieldset>
 	

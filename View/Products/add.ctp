@@ -87,7 +87,7 @@
 					),
 				array(
 					'name' => 'FirstPaymentDate',
-					'desc' => 'The date that the optional First Payment should process.<br />YYYY-MM-DD',
+					'desc' => 'The number of days after purchase that the optional First Payment should process.',
 					),
 				array(
 					'name' => 'StartDate',
