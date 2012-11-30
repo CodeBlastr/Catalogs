@@ -32,7 +32,7 @@
 		echo $this->Form->input('Product.is_public', array('default' => 1, 'type' => 'hidden'));
 		echo $this->Form->input('Product.name', array('label' => 'Display Name'));
 		echo $this->Form->input('Product.sku', array('label' => 'SKU'));
-        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em><br />If using ARB, this will be the first payment.</small>', 'step' => '.01', 'min' => '0', 'max' => '99999999999', 'between'=>'<span class="add-on">$</span>', 'div'=>array('class'=>'input-prepend') ));
+        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em><br />If using ARB, this will be the immediate payment.  Use 0 for free trial peroids.</small>', 'step' => '.01', 'min' => '0', 'max' => '99999999999', 'between'=>'<span class="add-on">$</span>', 'div'=>array('class'=>'input-prepend') ));
         //echo $this->Form->input('Gallery.id');
         //echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Add Gallery Image'));
 		echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo Text <br /><small><em>Used to entice people to view more about this item.</em></small>'));

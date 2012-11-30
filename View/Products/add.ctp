@@ -25,7 +25,7 @@
 		echo $this->Form->input('Product.is_public', array('default' => 1, 'type' => 'hidden'));
 		echo $this->Form->input('Product.name', array('label' => 'Display Name'));
 		echo $this->Form->input('Product.sku', array('label' => 'SKU'));
-        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0.00)</em><br />If using ARB, this will be the first payment.</small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999'));
+        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0.00)</em><br />If using ARB, this will be the immediate payment.  Use 0 for free trial peroids.</small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999'));
         echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
 		echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo Text <br /><small><em>Used to entice people to view more about this item.</em></small>'));
 		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
