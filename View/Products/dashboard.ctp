@@ -1,3 +1,4 @@
+<?php echo $this->Html->script('https://www.google.com/jsapi', array('inline' => false)); ?>
 <?php echo $this->Html->script('plugins/jquery.masonry.min', array('inline' => false)); ?>
 
 <div class="masonry products dashboard">
@@ -17,7 +18,120 @@
         	<li><?php echo $this->Html->link('List In Cart Items', array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'index', 'filter' => 'status:incart')); ?></li>
     	</ul>
     </div>
+    <div class="masonryBox dashboardBox">
+                        <h3 class="title">Stats</h3>
 
+    <ul class="nav nav-tabs" id="myTab">
+        <li><a href="#today" data-toggle="tab">Today</a></li>
+        <li><a href="#thisWeek" data-toggle="tab">This Week</a></li>
+        <li><a href="#thisMonth" data-toggle="tab">This Month</a></li>
+        <li><a href="#thisYear" data-toggle="tab">This Year</a></li>
+        <li><a href="#allTime" data-toggle="tab">All Time</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade" id="today">
+            <div>
+                <?php
+                echo
+                '<div class="alert alert-success">'
+                . '<h1>' . $statsSalesToday['count'] . '</h1><b>Orders Today</b>'
+                . '<h1>$' . $statsSalesToday['value'] . '</h1><b>Total Value</b>'
+                . '</div>';
+                ?>
+                <script type="text/javascript">
+		google.load("visualization", "1", {packages:["corechart"]});
+		google.setOnLoadCallback(drawOrdersTodayChart);
+			 
+		function drawOrdersTodayChart() {
+			// Create and populate the data table.
+			var data = google.visualization.arrayToDataTable([
+			['x', 'Orders'],
+			<?php
+                        $hour = array_fill(0, 24, 0);
+			foreach ($statsSalesToday as $order) {
+                            if($order['Transaction']) {
+                                $hourKey = date('H', strtotime($order['Transaction']['created']));
+                                $hour[$hourKey]++;
+                            }
+                        }
+                        $i = 0;
+                        while ($i < 24) {
+                        ?>
+				['<?= $i ?>', <?= $hour[$i] ? $hour[$i] : 0 ?>],
+			<?php
+                            ++$i;
+                        }
+                        ?>
+			]);
+					
+			// Create and draw the visualization.
+			new google.visualization.LineChart(document.getElementById('orders_today')).
+				draw(data, {
+					curveType: "none",
+					width: 254, height: 200,
+					legend: {position: 'none'},
+					chartArea: {width: '100%', height: '80%'}
+					}
+				);
+			$(".masonry").masonry("reload"); // reload the layout
+		}
+		</script>
+                <div id="orders_today"></div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="thisWeek">
+            <div>
+                <?php
+                echo
+                '<div class="alert alert-success">'
+                . '<h1>' . $statsSalesThisWeek['count'] . '</h1><b>Orders This Week</b>'
+                . '<h1>$' . $statsSalesThisWeek['value'] . '</h1><b>Total Value</b>'
+                . '</div>';
+                ?>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="thisMonth">
+            <div>
+                <?php
+                echo
+                '<div class="alert alert-success">'
+                . '<h1>' . $statsSalesThisMonth['count'] . '</h1><b>Orders This Month</b>'
+                . '<h1>$' . $statsSalesThisMonth['value'] . '</h1><b>Total Value</b>'
+                . '</div>';
+                ?>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="thisYear">
+            <div>
+                <?php
+                echo
+                '<div class="alert alert-success">'
+                . '<h1>' . $statsSalesThisYear['count'] . '</h1><b>Orders This Year</b>'
+                . '<h1>$' . $statsSalesThisYear['value'] . '</h1><b>Total Value</b>'
+                . '</div>';
+                ?>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="allTime">
+            <div>
+                <?php
+                echo
+                '<div class="alert alert-success">'
+                . '<h1>' . $statsSalesAllTime['count'] . '</h1><b>Orders All Time</b>'
+                . '<h1>$' . $statsSalesAllTime['value'] . '</h1><b>Total Value</b>'
+                . '</div>';
+                ?>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    $().ready(function(){
+        $('#myTab a:first').tab('show');
+      //$(".masonry").masonry("reload"); // reload the layout  
+    });
+    </script>
+    
 </div>
 
     <div class="products row dashboardBox">
