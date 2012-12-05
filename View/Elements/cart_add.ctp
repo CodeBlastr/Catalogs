@@ -43,7 +43,7 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 	# NOTE : This children check is temporary.  The assumption is that if it has children the stock is probably not zero, but instead we need to make an afterSave function or some other callback, which updates the parent stock so that it is equal to the sum of all the children stocks.
 	} else if(
             ( $product['Product']['stock'] > 0 || $product['Product']['stock'] === NULL )
-            || !empty($product['ProductChildren'][0])
+            || !empty($product['ProductChild'][0])
             ) {
       ?>
     	<div class="action itemAddCart productAddCart">

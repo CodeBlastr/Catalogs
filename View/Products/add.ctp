@@ -23,9 +23,9 @@
     <fieldset>
     	<?php
 		echo $this->Form->input('Product.is_public', array('default' => 1, 'type' => 'hidden'));
-		echo $this->Form->input('Product.name', array('label' => 'Display name'));
-		echo $this->Form->input('Product.sku');
-        echo $this->Form->input('Product.price', array('label' => 'Retail price <small><em>(ex. 0.00)</em></small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999'));
+		echo $this->Form->input('Product.name', array('label' => 'Display Name'));
+		echo $this->Form->input('Product.sku', array('label' => 'SKU'));
+        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0.00)</em><br />If using ARB, this will be the immediate payment.  Use 0 for free trial peroids.</small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999'));
         echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
 		echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo Text <br /><small><em>Used to entice people to view more about this item.</em></small>'));
 		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
@@ -55,7 +55,7 @@
 		echo $this->Form->radio('Product.shipping_type', $radioOptions, array('class' => 'shipping_type' , 'default' => ''));
 	 	?>
 	 	<div id='ShippingPrice'>
-	 		<?php echo $this->Form->input('Product.shipping_charge');?>
+	 		<?php echo $this->Form->input('Product.shipping_charge', array('between'=>'<span class="add-on">$</span>', 'div'=>array('class'=>'input-prepend')));?>
 		</div>
     </fieldset>
 
@@ -73,6 +73,51 @@
     </fieldset>
 	<?php } ?>
 
+    <fieldset>
+        <legend class="toggleClick"><?php echo __('Automated Recurring Billing (ARB) Settings');?></legend>
+        <?php
+			$arbSettingsValues = array(
+				array(
+					'name' => 'PaymentAmount',
+					'desc' => 'The amount of the Recurring Payment.',
+					),
+				array(
+					'name' => 'FirstPaymentAmount',
+					'desc' => 'A First Payment of a different dollar amount or off the desired frequency may be set up for Recurring Payment.',
+					),
+				array(
+					'name' => 'FirstPaymentDate',
+					'desc' => 'The number of days after purchase that the optional First Payment should process.',
+					),
+				array(
+					'name' => 'StartDate',
+					'desc' => 'The number of days after purchase to start the Recurring Payment.',
+					),
+				array(
+					'name' => 'EndDate',
+					'desc' => 'The number of days after purchase to end the Recurring Payment.  If empty, the schedule will run indefinitely.',
+					),
+				array(
+					'name' => 'ExecutionFrequencyType',
+					'desc' => 'The frequency to execute the schedule.'
+								.'<br />"Daily", "Weekly", "BiWeekly", "FirstofMonth", "SpecificDayofMonth", "LastofMonth", "Quarterly", "SemiAnnually", "Annually"',
+					),
+				array(
+					'name' => 'ExecutionFrequencyParameter',
+					'desc' => 'The execution frequency parameter specifies the day of month for a SpecificDayOfMonth frequency or specifies day of week for Weekly or BiWeekly schedule.<br />It is required when ExecutionFrequncyType is SpecificDayofMonth, Weekly or BiWeekly.'
+								.'<br />"Sunday" ... "Saturday"',
+					),
+			);
+			
+			foreach($arbSettingsValues as $arbSetting) {
+				echo $this->Form->input('Product.arb_settings.'.$arbSetting['name'], array(
+					'value' => '',
+					'label' => preg_replace('/(?<!\ )[A-Z]/', ' $0', $arbSetting['name']) . '<br /><small><em>'.$arbSetting['desc'].'</em></small>'
+					));
+			}
+        ?>
+    </fieldset>
+	
 	<?php
     echo $this->Form->end('Submit');
 	?>

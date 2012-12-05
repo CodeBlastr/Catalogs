@@ -49,6 +49,11 @@ class ProductsController extends ProductsAppController {
  *
  */
 	public function dashboard(){
+		$this->set('statsSalesToday', ClassRegistry::init('Transactions.Transaction')->salesStats('today'));
+		$this->set('statsSalesThisWeek', ClassRegistry::init('Transactions.Transaction')->salesStats('thisWeek'));
+		$this->set('statsSalesThisMonth', ClassRegistry::init('Transactions.Transaction')->salesStats('thisMonth'));
+		$this->set('statsSalesThisYear', ClassRegistry::init('Transactions.Transaction')->salesStats('thisYear'));
+		$this->set('statsSalesAllTime', ClassRegistry::init('Transactions.Transaction')->salesStats('allTime'));
 		$this->set('transactionStatuses', ClassRegistry::init('Transactions.Transaction')->statuses());
 		$this->set('itemStatuses', ClassRegistry::init('Transactions.TransactionItem')->statuses());
 		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
@@ -136,7 +141,7 @@ class ProductsController extends ProductsAppController {
 						'ProductPrice.user_role_id' => $this->userRoleId,
 						),
 					),
-				'ProductChildren',
+				'ProductChild',
 				),
 			));
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
@@ -292,7 +297,7 @@ class ProductsController extends ProductsAppController {
 				'Product.id' => $parentId,
 				),
 			'contain' => array(
-				'ProductChildren' => array(
+				'ProductChild' => array(
 					'CategoryOption',
 					),
 				)

@@ -9,7 +9,7 @@
   <div class="itemGallery productGallery"> <?php echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $product['Product']['id']), array('plugin' => 'galleries')); ?> </div>
 
   <!-- Start child images -->
-  <?php if (!empty($product['ProductChildren'][0])) : foreach ($product['ProductChildren'] as $child) : ?><div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $child['id']), array('plugin' => 'galleries')); ?></div><?php endforeach; endif; ?>
+  <?php if (!empty($product['ProductChild'][0])) : foreach ($product['ProductChild'] as $child) : ?><div class="childrenGalleries hide" id="childGallery<?php echo $child['id']; ?>"><?php echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $child['id']), array('plugin' => 'galleries')); ?></div><?php endforeach; endif; ?>
   <!-- End child images -->
 
   <div class="itemSummary productSummary">

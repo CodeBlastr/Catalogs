@@ -31,24 +31,26 @@ class Product extends ProductsAppModel {
 
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
+		'Metable'
         );
 
 	public $order = '';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
-		'TransactionItem' => array(
-			'className' => 'Transactions.TransactionItem',
-			'foreignKey' => 'foreign_key',
-			'dependent' => false,
-            ),
+        // This was a conflict, that we are not sure if it should be here or not.  12/5/2012 RK
+		//'TransactionItem' => array(
+		//	'className' => 'Transactions.TransactionItem',
+		//	'foreignKey' => 'foreign_key',
+		//	'dependent' => false,
+        //   ),
 		'ProductPrice' => array(
 			'className' => 'Products.ProductPrice',
 			'foreignKey' => 'product_id',
 			'dependent' => true,
 			'order' => 'ProductPrice.user_role_id asc'
             ),
-		'ProductChildren' => array(
+		'ProductChild' => array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'dependent' => true,
@@ -68,11 +70,11 @@ class Product extends ProductsAppModel {
 
 	//products association.
 	public $belongsTo = array(
-		'ProductParent'=>array(
+		'Parent'=>array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'counterCache' => 'children',
-			'counterScope' => array('Product.parent_id IS NOT NULL'),
+			'counterScope' => array('Product.parent_id NOT' => null),
             ),
 		'ProductStore'=>array(
 			'className' => 'Products.ProductStore',
@@ -95,10 +97,16 @@ class Product extends ProductsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
-
-		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
-		$this->order = array($this->alias . '.' . 'price');
+		// this does not seem like it should be here
+		// and what is foreign_key_id... should just be foreign_key
+		//if (in_array('Transactions', CakePlugin::loaded())) {
+		//	$this->hasMany['TransactionItem'] = array(
+		//		'className' => 'Transactions.TransactionItem',
+		//		'foreignKey' => 'foreign_key_id',
+		//		'dependent' => false,
+	    //		// 'unique' => true,
+	    //        );
+		//}
 		
 		if (in_array('Categories', CakePlugin::loaded())) {
 			$this->hasAndBelongsToMany['Category'] = array(
@@ -118,6 +126,11 @@ class Product extends ProductsAppModel {
 	            );
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
+
+		parent::__construct($id, $table, $ds); // this order is imortant
+		
+		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
+		$this->order = array($this->alias . '.' . 'price');
 	}
     
 /**
@@ -229,17 +242,21 @@ class Product extends ProductsAppModel {
  * @return array
  */
  	protected function _cleanAddData($data) {
+		
 		if (!empty($data['Product']['arb_settings'])) {
-			$data['Product']['arb_settings'] = serialize(parse_ini_string($this->request->data['Product']['arb_settings']));
+			// serialize the data
+			$data['Product']['arb_settings'] = serialize($this->data['Product']['arb_settings']);
 		}
 
 		if(!empty($data['Product']['payment_type'])) {
-			$data['Product']['payment_type'] = implode(',', $this->request->data['Product']['payment_type']);
+			$data['Product']['payment_type'] = implode(',', $this->data['Product']['payment_type']);
 		}
 
 		if (empty($data['Product']['sku'])) {
-			$data['Product']['sku'] = rand(10000, 99000); // generate random sku if none exists
+			// generate random sku if none exists
+			$data['Product']['sku'] = rand(10000, 99000);
 		}
+		
 		return $data;
 	}
 
@@ -292,12 +309,12 @@ class Product extends ProductsAppModel {
 		if (!empty($product['ProductPrice'][0])) {
 			foreach ($product['ProductPrice'] as $price) {
 				// set the price in the original products to user role price
-				$product['Product']['price'] = ZuhaInflector::pricify($price['price']);
+				$product['Product']['price'] = $price['price'];
 			}
 		}
 
 		if (!empty($product['Product']['price'])) {
-			$product['Product']['price'] = ZuhaInflector::pricify($product['Product']['price']);
+			$product['Product']['price'] = $product['Product']['price'];
 		}
 
 		unset($product['ProductPrice']); // its not needed now
@@ -338,6 +355,7 @@ class Product extends ProductsAppModel {
 		'shipping_type',
 		'shipping_charge',
 		'payment_type',
+		'arb_settings',
 		'is_virtual'
 	    );
 	    
