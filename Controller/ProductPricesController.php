@@ -1,4 +1,5 @@
 <?php
+App::uses('ProductsAppController', 'Products.Controller');    
 /**
  * Product Prices Controller
  *

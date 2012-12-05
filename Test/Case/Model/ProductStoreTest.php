@@ -40,6 +40,6 @@ class ProductStoreTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdd() {
-
+      
 	}
 }

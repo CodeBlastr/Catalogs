@@ -39,7 +39,7 @@ class Product extends ProductsAppModel {
 	public $hasMany = array(
 		'TransactionItem' => array(
 			'className' => 'Transactions.TransactionItem',
-			'foreignKey' => 'foreign_key_id',
+			'foreignKey' => 'foreign_key',
 			'dependent' => false,
             ),
 		'ProductPrice' => array(
@@ -109,8 +109,8 @@ class Product extends ProductsAppModel {
 	    		'conditions' => 'Categorized.model = "Product"',
 	    		// 'unique' => true,
 	            );
-			$this->hasMany['CategoryOption'] = array(
-	            'className' => 'Categories.CategoryOption',
+			$this->hasMany['CategorizedOption'] = array(
+	            'className' => 'Categories.CategorizedOption',
 	       		'joinTable' => 'categorized_options',
 	            'foreignKey' => 'foreign_key',
 	            'associationForeignKey' => 'category_option_id',

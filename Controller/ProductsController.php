@@ -120,7 +120,7 @@ class ProductsController extends ProductsAppController {
 		if (!$this->Product->exists()) {
 			throw new NotFoundException(__('Invalid product'));
 		}
-
+              
 		$product = $this->Product->find('first' , array(
 			'conditions' => array(
 				'Product.id' => $id
@@ -140,7 +140,7 @@ class ProductsController extends ProductsAppController {
 				),
 			));
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
-
+           
 		$this->request->data = $this->Product->find('first', array(
 			'conditions' => array(
 				'Product.id' => $id
@@ -148,11 +148,12 @@ class ProductsController extends ProductsAppController {
 			'recursive' => 2,
 			'contain' => array(
 				'ProductStore.id',
-				'Category.id',
+				
 				'ProductBrand',
 				'ProductPrice'
 				)
 			));
+            
 		// remodifying data to bring support for controls
 		$this->request->data['ProductStore']['id'] = array('0' => $this->request->data['ProductStore']['id']);
 		$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
@@ -171,8 +172,8 @@ class ProductsController extends ProductsAppController {
 			'order' => 'CategoryOption.type',
 			));
 //debug($catOptions);die();
-		$this->set('options', $catOptions);
-
+		$this->set('options', $catOptions);         
+        /* 
 		$attributeData = $this->Product->find('all', array(
 			'conditions' => array(
 				'Product.parent_id' => $id
@@ -183,7 +184,7 @@ class ProductsController extends ProductsAppController {
 			'recursive' => 1,
 			//'group' => 'CategoryOption.parent_id'
 			));
-
+               */  
 		//Set product view vars
 		$this->set(compact('attributeData', 'product'));
 	}

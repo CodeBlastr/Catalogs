@@ -15,7 +15,23 @@ $productPaymentType = !empty($productPaymentType) ? $productPaymentType : $produ
 $minQty = !empty($product['Product']['cart_min']) ? $product['Product']['cart_min'] : 1;
 $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_max'] : null;
 ?>
+<script>
+  function checkcartinteger()    {
+     
+    var numbers = /^[0-9]+$/;
+      if(document.getElementById("TransactionItemQuantity").value.match(numbers))  
+      { 
+           return true;
+      }
+      else  
+      {  
+      alert('Please enter only numeric in quantity'); 
+      document.getElementById("TransactionItemQuantity").focus();  
+      return false;
+      }    
+  }
 
+</script>
 <div class="actions">
 	<div class="action itemCartText productCartText">
 	<?php
@@ -36,8 +52,8 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 			<div class="action itemAddCart productAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'products', 'action' => 'products', 'action' => 'view', $productId)); ?> </div>
 		<?php
 		} else {
-			echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add')));
-			echo $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
+			echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add'),'onsubmit'=>'return checkcartinteger();'));
+			echo $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty,'onkeypress'=>'javascript:checkcartinteger();'));
 			//echo $this->Form->hidden('TransactionItem.parent_id' , array('value' => $productId));
 			echo $this->Form->hidden('TransactionItem.model' , array('value' => 'Product'));
 			echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productId));

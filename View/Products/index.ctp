@@ -32,7 +32,7 @@ if (!empty($products[0]['Category'][0])) {  ?>
 
 echo $this->Element('scaffolds/index', array('data' => $products));
 //echo $this->element('products'); 
-
+  
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
 	array(
