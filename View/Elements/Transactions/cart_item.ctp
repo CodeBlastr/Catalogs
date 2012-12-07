@@ -28,10 +28,11 @@ echo $this->Form->input("TransactionItem.{$i}.quantity", array(
     'div' => array('style' => 'display:inline-block'),
     'value' => $transactionItem['quantity'],
     'min' => $minQty, 'max' => $maxQty,
-    'size' => 1
+    'size' => 1,
+    'after' => __(' %s', $this->Html->link('x', array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'delete', $transactionItem['id']), array('title' => 'Remove from cart')))
     ));
 
-$transactionItemCartPrice = $transactionItem['price'] * $transactionItem['quantity'];
+$transactionItemCartPrice = $transactionItem['price'] * $transactionItem['quantity']; 
 ?>
 
 <div class="TransactionItemCartPrice">
