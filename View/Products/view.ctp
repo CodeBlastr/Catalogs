@@ -1,8 +1,7 @@
- <?php
-# @todo Add the behavior dynamically, and show these links if the behavior is loaded for this view.
-# echo $this->Favorites->toggleFavorite('favorite', $product['Product']['id']);
-# echo $this->Favorites->toggleFavorite('watch', $product['Product']['id']); .
-?>
+<?php
+// @todo Add the behavior dynamically, and show these links if the behavior is loaded for this view.
+//echo $this->Favorites->toggleFavorite('favorite', $product['Product']['id']);
+// echo $this->Favorites->toggleFavorite('watch', $product['Product']['id']); ?>
 
 <div class="product view">
   <h2><?php  echo $product['Product']['name']; echo !empty($product['ProductBrand']['name']) ? ' by ' . $this->Html->link($product['ProductBrand']['name'], array('controller' => 'product_brands', 'action' => 'view', $product['ProductBrand']['id'])) : ''; ?></h2>
@@ -22,7 +21,7 @@
       <?php } ?>
   </div>
 
-  <div class="itemPrice productPrice"> <?php echo __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($product['ProductPrice'][0]['price']) ? $product['ProductPrice'][0]['price'] : $product['Product']['price']); ?></span> </div>
+  <div class="itemPrice productPrice"> <?php echo __('Price: $'); ?><span id="itemPrice"><?php echo (!empty($product['ProductPrice'][0]['price']) ? ZuhaInflector::pricify($product['ProductPrice'][0]['price']) : ZuhaInflector::pricify($product['Product']['price'])); ?></span> </div>
 
   <?php echo $this->Element('cart_add', array('product' => $product), array('plugin' => 'products')); ?>
 </div>

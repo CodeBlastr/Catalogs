@@ -1,4 +1,4 @@
-<?php
+    <?php
 App::uses('ProductsAppController', 'Products.Controller');
 /**
  * Products Controller
@@ -199,16 +199,15 @@ class ProductsController extends ProductsAppController {
  * Add method
  *
  * Users can add products belonging to brands.
+ * 
+ * @param string $type [empty = default, arb, virtual, virtual_arb]
  */
-	public function add() {
+	public function add($type = '') {
 		if (!empty($this->request->data)) {
-			try {
-                $this->Product->save($this->request->data);
-				$this->Session->setFlash(__('Product saved.', true));
+			if ($this->Product->save($this->request->data)) {
+				$this->Session->setFlash(__('Product saved.'));
 				$this->redirect(array('action' => 'edit', $this->Product->id));
-            } catch (Exception $e) {
-				$this->Session->setFlash(__('Product could not be saved.'));
-            }
+            } 
 		}
         
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
