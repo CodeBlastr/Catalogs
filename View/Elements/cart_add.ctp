@@ -35,12 +35,12 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 <div class="actions">
 	<div class="action itemCartText productCartText">
 	<?php
-	# don't show add to cart button for items with options on the index page
+	// don't show add to cart button for items with options on the index page
     if($this->params->action == 'index' && ($product['Product']['children'] === null || $product['Product']['children'] > 0)) { ?>
 		<div class="action itemAddCart productAddCart itemAddCartHasOptions"> <?php echo $this->Html->link('View', array('plugin' => 'products', 'action' => 'products', 'action' => 'view', $productId), array('class' => 'button')); ?> </div>
 <?php
-	# show items that have stock else don't
-	# NOTE : This children check is temporary.  The assumption is that if it has children the stock is probably not zero, but instead we need to make an afterSave function or some other callback, which updates the parent stock so that it is equal to the sum of all the children stocks.
+	// show items that have stock else don't
+	// NOTE : This children check is temporary.  The assumption is that if it has children the stock is probably not zero, but instead we need to make an afterSave function or some other callback, which updates the parent stock so that it is equal to the sum of all the children stocks.
 	} else if(
             ( $product['Product']['stock'] > 0 || $product['Product']['stock'] === NULL )
             || !empty($product['ProductChild'][0])
@@ -53,7 +53,12 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 		<?php
 		} else {
 			echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add'),'onsubmit'=>'return checkcartinteger();'));
-			echo $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty,'onkeypress'=>'javascript:checkcartinteger();'));
+			if((int)$maxQty === 1) {
+				// if the max allowable quantity of this item is only one, hide the TransactionItem.quantity input
+				echo $this->Form->hidden('TransactionItem.quantity' , array('value' => 1, 'min' => $minQty, 'max' => $maxQty));
+			} else {
+				echo $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty,'onkeypress'=>'javascript:checkcartinteger();'));
+			}
 			//echo $this->Form->hidden('TransactionItem.parent_id' , array('value' => $productId));
 			echo $this->Form->hidden('TransactionItem.model' , array('value' => 'Product'));
 			echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productId));
