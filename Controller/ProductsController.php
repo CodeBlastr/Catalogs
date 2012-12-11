@@ -1,4 +1,4 @@
-    <?php
+<?php
 App::uses('ProductsAppController', 'Products.Controller');
 /**
  * Products Controller
@@ -58,7 +58,6 @@ class ProductsController extends ProductsAppController {
 		$this->set('itemStatuses', ClassRegistry::init('Transactions.TransactionItem')->statuses());
 		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
 	}
-    
 
 /**
  * Index method.
