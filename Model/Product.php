@@ -56,6 +56,16 @@ class Product extends ProductsAppModel {
 			'dependent' => true,
             ),
         );
+        
+    public $hasAndBelongsToMany = array(
+        'Option' => array(
+            'className' => 'Products.Option',
+       		'joinTable' => 'products_product_options',
+            'foreignKey' => 'product_id',
+            'associationForeignKey' => 'option_id',
+    		//'unique' => true,
+	        ),
+        );
 
 	public $hasOne = array(
 		'Gallery' => array(
@@ -116,13 +126,6 @@ class Product extends ProductsAppModel {
 	            'associationForeignKey' => 'category_id',
 	    		'conditions' => 'Categorized.model = "Product"',
 	    		// 'unique' => true,
-	            );
-			$this->hasMany['CategorizedOption'] = array(
-	            'className' => 'Categories.CategorizedOption',
-	       		'joinTable' => 'categorized_options',
-	            'foreignKey' => 'foreign_key',
-	            'associationForeignKey' => 'category_option_id',
-	    		//'unique' => true,
 	            );
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
@@ -337,37 +340,34 @@ class Product extends ProductsAppModel {
 	}
 
 	
-	/**
-	 * This trims an object, formats it's values if you need to, and returns the data to be merged with the Transaction data.
-	 * @param string $key
-	 * @return array The necessary fields to add a Transaction Item
-	 */
+/**
+ * This trims an object, formats it's values if you need to, and returns the data to be merged with the Transaction data.
+ * 
+ * @param string $key
+ * @return array The necessary fields to add a Transaction Item
+ */
 	public function mapTransactionItem($key) {
 	    
 	    $itemData = $this->find('first', array('conditions' => array('id' => $key)));
 	    
 	    $fieldsToCopyDirectly = array(
-		'name',
-		'weight',
-		'height',
-		'width',
-		'length',
-		'shipping_type',
-		'shipping_charge',
-		'payment_type',
-		'arb_settings',
-		'is_virtual'
-	    );
+    		'name',
+    		'weight',
+    		'height',
+    		'width',
+    		'length',
+    		'shipping_type',
+    		'shipping_charge',
+    		'payment_type',
+    		'arb_settings',
+    		'is_virtual'
+	        );
 	    
 	    foreach($itemData['Product'] as $k => $v) {
-		if(in_array($k, $fieldsToCopyDirectly)) {
-		    $return['TransactionItem'][$k] = $v;
-		}
+    		if(in_array($k, $fieldsToCopyDirectly)) {
+    		    $return['TransactionItem'][$k] = $v;
+    		}
 	    }
-	    
-	    //$itemData['TransactionItem'] = $itemData['Product'];
-	    
-	    //unset($itemData['Product']);
 	    return $return;
 	}
 	
