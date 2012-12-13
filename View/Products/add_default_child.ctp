@@ -9,7 +9,12 @@
             foreach ($select['Children'] as $option) {
                 $options[$option['id']] = $option['name'];
             }
-            echo $this->Form->input('Option.Option.' . $i, array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('add new', '#', array('class' => 'newOption', 'data-target' => '#Option'.$i.'Name'))), 'type' => 'select', 'options' => $options));
+            if (!empty($options)) {
+                echo $this->Form->input('Option.Option.' . $i, array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('add new', '#', array('class' => 'newOption', 'data-target' => '#Option'.$i.'Name'))), 'type' => 'select', 'options' => $options));
+            } else {
+                echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'empty' => '-- Optional --', 'value' => $select['id']));
+                echo $this->Form->input('Option.'. $i .'.name', array('label' => $select['name'], 'value' => false));
+            }
             
             echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'empty' => '-- Optional --', 'value' => $select['id']));
             echo $this->Form->input('Option.'. $i .'.name', array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('cancel', '#', array('class' => 'cancelOption', 'data-target' => '#OptionOption'.$i))), 'value' => false));
@@ -36,16 +41,18 @@
 		echo $this->Form->input('Product.length', array('label' => 'Length (50-119 inches)')); ?>
     </fieldset>
     <?php echo $this->Form->end('Submit'); ?>
-
-    <script type="text/javascript">
-        $('.cancelOption').parent().parent().parent().hide();
-        $('.newOption, .cancelOption').click(function(e){
-            e.preventDefault();
-            $(this).parent().parent().parent().hide();
-            $($(this).attr('data-target')).parent().show();
-        });
-    </script>
 </div>
+
+
+
+<script type="text/javascript">
+    $('.cancelOption').parent().parent().parent().hide();
+    $('.newOption, .cancelOption').click(function(e){
+        e.preventDefault();
+        $(this).parent().parent().parent().hide();
+        $($(this).attr('data-target')).parent().show();
+    });
+</script>
 
 <?php
 // set the contextual menu items

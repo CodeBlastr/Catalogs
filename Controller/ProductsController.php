@@ -223,6 +223,7 @@ class ProductsController extends ProductsAppController {
 		}
 		$this->set('page_title_for_layout', __('Create a Product'));
 		$this->set('title_for_layout', __('Add Product Form'));
+        $this->layout = 'default';
         $this->render('add_default');
         return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
     }
@@ -233,6 +234,7 @@ class ProductsController extends ProductsAppController {
         unset($this->request->data['Product']['sku']);
     	$this->set('page_title_for_layout', __('Create a %s Variant', $this->request->data['Product']['name']));
 		$this->set('title_for_layout', __('Add Product Variant Form'));
+        $this->layout = false;
         $this->render('add_default_child');
     }
 
@@ -265,7 +267,7 @@ class ProductsController extends ProductsAppController {
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
         $this->set('categories', $this->Product->Category->generateTreeList());
         $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.id', '{n}.name'));
-        $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('Option.parent_id' => ''))), $existingOptions));
+        $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('OR' => array(array('Option.parent_id' => ''), array('Option.parent_id' => null))))), $existingOptions));
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
 
 		$this->set('page_title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));

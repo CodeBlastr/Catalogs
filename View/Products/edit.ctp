@@ -19,31 +19,37 @@
  */
  ?>
 
-<div class="hero-unit pull-right span3">
+<div class="hero-unit pull-left first span3">
+    <div class="modal hide fade" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Add Variant of <?php echo $this->request->data['Product']['name']; ?></h3>
+        </div>
+        <div class="modal-body"></div>
+    </div>​
     <?php
     echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $this->request->data['Product']['id']), array('plugin' => 'galleries'));
     echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id'])); 
     // list of variants (think about moving to the controller, or an element for reuse)
+    echo !empty($existingOptions) ? __('<hr /><h5>Variants %s</h5>', $this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']), array('class' => 'btn btn-mini', 'data-toggle' => 'modal', 'data-target' => '#variantModal'))) : null;
     if (!empty($this->request->data['Children'])) {
-        echo __('<hr /><h5>Variants</h5>');
-        echo __('<ul>');
         foreach ($this->request->data['Children'] as $child) {
             if (!empty($child['Option'])) {
                 foreach ($child['Option'] as $variant) {
                     $variants[$child['id']][] = $variant['name'];  
                     unset($variant);
                 } 
-                echo __('<li>%s</li>', $this->Html->link(implode(', ', $variants[key($variants)]), array('action' => 'edit', key($variants), '1')));
+                echo __('<p>%s %s %s</p>', $this->Html->link(__('edit'), array('action' => 'edit', key($variants), '1'), array('class' => 'btn btn-primary btn-mini')), $this->Html->link(__('delete'), array('action' => 'delete', key($variants)), array('class' => 'btn btn-danger btn-mini'),  'Are you sure?'), $this->Html->link(implode(', ', $variants[key($variants)]), array('action' => 'edit', key($variants), '1')));
                 unset($variants);
             }
         }
-        echo __('</ul>');
-    }
-    echo !empty($existingOptions) ? __('<hr /><h5>Available Variant Types %s</h5><p>%s</p>', $this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']), array('class' => 'btn btn-mini')), implode(', ', $existingOptions)) : null;
-    echo !empty($options) ? __('<hr /><h5>Add Variant Type</h5>%s %s %s %s', $this->Form->create('Product'), $this->Form->input('Product.id'), $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)), $this->Form->end('Add Available Variant Type')) : null; ?>
+    } 
+    echo !empty($existingOptions) ? __('<hr /><h5>Available Variant Types</h5><p>%s</p>', implode(', ', $existingOptions)) : null;
+    $addVariantForm = $this->Form->create('Options', array('url' => array('controller' => 'products', 'action' => 'categories'))) . $this->Form->input('Option.name', array('label' => false)) . $this->Form->end('Submit');
+    echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s %s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#OptionName')), $this->Form->create('Product'), $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); ?>
 </div>
 
-<div class="productAdd form span7 pull-left">
+<div class="productAdd form span7 pull-left last">
 	<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
     <fieldset>
     	<?php
@@ -104,43 +110,40 @@
 	<?php
     echo $this->Form->end('Submit');
 	?>
-
-    <script type="text/javascript">
-        $('#addCat').click(function(e){
-        	e.preventDefault();
-        	$('#anotherCategory').show();
-        });
-        
-        $('#priceID').click(function(e){
-        	e.preventDefault();
-        	action = '<?php echo $this->Html->url(array('plugin' => 'products',
-        					'controller'=>'product_prices', 'action'=>'add', 'admin'=>true))?>';
-        	$("#ProductAddForm").attr("action" , action);
-        	$("#ProductAddForm").submit();
-        });
-        function rem($id) {
-        	$('#div'+$id).remove();
-        }
-        
-        $(document).ready( function(){
-        	if($('input.shipping_type:checked').val() == 'FIXEDSHIPPING') {
-        		$('#ShippingPrice').show();
-        	} else {
-        		$('#ShippingPrice').hide();
-        	}
-        });
-        
-        var shipTypeValue = null;
-        $('input.shipping_type').click(function(e){
-        	shipTypeValue = ($('input.shipping_type:checked').val());
-        	if(shipTypeValue == 'FIXEDSHIPPING') {
-        		$('#ProductShippingCharge').parent().show();
-        	} else {
-        		$('#ProductShippingCharge').parent().hide();
-        	}
-        });
-    </script>
 </div>
+
+<script type="text/javascript">
+
+    $(document).ready( function(){
+        if($('input.shipping_type:checked').val() == 'FIXEDSHIPPING') {
+            $('#ShippingPrice').show();
+        } else {
+            $('#ShippingPrice').hide();
+        }
+    });
+
+    var shipTypeValue = null;
+    $('input.shipping_type').click(function(e){
+        shipTypeValue = ($('input.shipping_type:checked').val());
+        if(shipTypeValue == 'FIXEDSHIPPING') {
+            $('#ProductShippingCharge').parent().show();
+        } else {
+            $('#ProductShippingCharge').parent().hide();
+        }
+
+    });
+
+    $('.cancelOptionType').parent().parent().hide();
+    $('.cancelOptionType').parent().parent().next().hide();
+    $('.newOptionType, .cancelOptionType').click(function(e){
+        e.preventDefault();
+        $(this).parent().parent().hide();
+        $(this).parent().parent().next().hide();
+        $($(this).attr('data-target')).parent().parent().show();
+        $($(this).attr('data-target')).parent().parent().prev().show();
+    });
+
+</script>
 
 
 
@@ -157,6 +160,7 @@ $this->set('context_menu', array('menus' => array(
     	'heading' => 'Products',
 		'items' => array(
 			$this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
+            $this->Html->link(__('View'), array('controller' => 'products', 'action' => 'view', $this->request->data['Product']['id'])),
 			$this->Html->link(__('Delete'), array('controller' => 'products', 'action' => 'delete', $this->request->data['Product']['id']), array(), 'Are you sure? (cannot be undone)'),
     		)
 		),
