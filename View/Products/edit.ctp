@@ -23,15 +23,27 @@
     <?php
     echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $this->request->data['Product']['id']), array('plugin' => 'galleries'));
     echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id'])); 
-    echo $this->Form->create('Product'); 
-    echo $this->Form->input('Product.id'); 
-    //echo $this->Form->input('Option.0.product_id', array('type' => 'hidden', 'value' => $this->request->data['Product']['id']));
-    echo $this->Form->input('Option'); 
-    echo $this->Form->end('Add Variant Type'); ?>
+    // list of variants (think about moving to the controller, or an element for reuse)
+    if (!empty($this->request->data['Children'])) {
+        echo __('<hr /><h5>Variants</h5>');
+        echo __('<ul>');
+        foreach ($this->request->data['Children'] as $child) {
+            if (!empty($child['Option'])) {
+                foreach ($child['Option'] as $variant) {
+                    $variants[$child['id']][] = $variant['name'];  
+                    unset($variant);
+                } 
+                echo __('<li>%s</li>', $this->Html->link(implode(', ', $variants[key($variants)]), array('action' => 'edit', key($variants), '1')));
+                unset($variants);
+            }
+        }
+        echo __('</ul>');
+    }
+    echo !empty($existingOptions) ? __('<hr /><h5>Available Variant Types %s</h5><p>%s</p>', $this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']), array('class' => 'btn btn-mini')), implode(', ', $existingOptions)) : null;
+    echo !empty($options) ? __('<hr /><h5>Add Variant Type</h5>%s %s %s %s', $this->Form->create('Product'), $this->Form->input('Product.id'), $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)), $this->Form->end('Add Available Variant Type')) : null; ?>
 </div>
 
 <div class="productAdd form span7 pull-left">
-
 	<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
     <fieldset>
     	<?php
@@ -145,7 +157,7 @@ $this->set('context_menu', array('menus' => array(
     	'heading' => 'Products',
 		'items' => array(
 			$this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
-    		$this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id'])),
-			)
+			$this->Html->link(__('Delete'), array('controller' => 'products', 'action' => 'delete', $this->request->data['Product']['id']), array(), 'Are you sure? (cannot be undone)'),
+    		)
 		),
 	))); ?>

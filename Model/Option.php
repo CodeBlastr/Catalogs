@@ -46,7 +46,7 @@ class Option extends ProductsAppModel {
 		'ProductsOption' => array(
 			'className' => 'Products.ProductsOption',
 			'foreignKey' => 'option_id',
-			'dependent' => false
+			'dependent' => true
 			),
 		'Children' => array(
 			'className' => 'Products.Option',

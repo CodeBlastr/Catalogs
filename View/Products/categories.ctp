@@ -20,11 +20,11 @@
     <div class="span6 pull-left">
         <?php
         echo $this->Tree->generate($options, array(
-            'model' => 'Option', 
-			'alias' => 'item_text', 
+            'model' => 'Option',
+			'alias' => 'item_text',
 			'class' => 'optionsList', 
-			'id' => 'optionsList', 
-			'element' => 'Options/item', 
+			'id' => 'optionsList',
+			'element' => 'Options/item',
 			'elementPlugin' => 'products'));
 
         echo $this->Form->create('Options');

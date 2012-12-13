@@ -141,7 +141,7 @@ class ProductsController extends ProductsAppController {
 						'ProductPrice.user_role_id' => $this->userRoleId,
 						),
 					),
-				'ProductChild',
+				'Children',
 				),
 			));
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
@@ -216,7 +216,7 @@ class ProductsController extends ProductsAppController {
     
     protected function _addDefault($parentId = null) {
     	if (!empty($this->request->data)) {
-			if ($this->Product->save($this->request->data)) {
+			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'));
 				$this->redirect(array('action' => 'edit', $this->Product->id));
             } 
@@ -227,8 +227,9 @@ class ProductsController extends ProductsAppController {
         return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
     }
     
+    
     protected function _addDefaultChild($parentId) {
-        $this->request->data = $this->Product->find('first', array('conditions' => array('Product.id' => $parentId)));
+        $this->request->data = $this->Product->find('first', array('conditions' => array('Product.id' => $parentId), 'contain' => array('Option' => 'Children')));
         unset($this->request->data['Product']['sku']);
     	$this->set('page_title_for_layout', __('Create a %s Variant', $this->request->data['Product']['name']));
 		$this->set('title_for_layout', __('Add Product Variant Form'));
@@ -241,12 +242,16 @@ class ProductsController extends ProductsAppController {
  *
  * @access public
  * @param string
- * @return void
+ * @param type $id
+ * @throws NotFoundException
  */
-	public function edit($id = null) {
+	public function edit($id = null, $child = false) {
+        if (!empty($child)) {
+            return $this->_editChild($id);
+        }
 		if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
-				$this->Session->setFlash(__('Product saved.', true));
+				$this->Session->setFlash(__('Product saved.'));
 				$this->redirect(array('action' => 'view', $this->Product->id));
             }
 		}
@@ -254,16 +259,45 @@ class ProductsController extends ProductsAppController {
 		if (!$this->Product->exists()) {
 			throw new NotFoundException(__('Invalid product'));
 		}
-        $this->Product->contain('Gallery');
+        $this->Product->contain(array('Gallery', 'Option', 'Parent', 'Children' => 'Option'));
         $this->request->data = $this->Product->read(null, $id);
+        !empty($this->request->data['Parent']['id']) ?  $this->redirect(array($this->request->data['Parent']['id'])) : null; // redirect to parent
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
         $this->set('categories', $this->Product->Category->generateTreeList());
-        $this->set('options', $this->Product->Option->find('list', array('conditions' => array('Option.parent_id' => ''))));
+        $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.id', '{n}.name'));
+        $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('Option.parent_id' => ''))), $existingOptions));
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
 
-		$this->set('page_title_for_layout', __('Edit %s Product', $this->request->data['Product']['name']));
-		$this->set('title_for_layout', __('Edit Item Form'));
+		$this->set('page_title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
+		$this->set('title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
 	}
+    
+/**
+ * 
+ * @param type $id
+ * @throws NotFoundException
+ */
+    protected function _editChild($id) {
+		if (!empty($this->request->data)) {
+			if ($this->Product->saveAll($this->request->data)) {
+				$this->Session->setFlash(__('Product saved.'));
+				$this->redirect(array('action' => 'view', $this->Product->id));
+            }
+		}
+		$this->Product->id = $id;
+		if (!$this->Product->exists()) {
+			throw new NotFoundException(__('Invalid product'));
+		}
+        $this->Product->contain(array('Gallery', 'Option', 'Parent'));
+        $this->request->data = $this->Product->read(null, $id);
+       
+        $this->set('productBrands', $this->Product->ProductBrand->find('list'));
+        $this->set('existingOptions', null);
+        $this->set('options', null);
+
+		$this->set('page_title_for_layout', __('Edit %s <small>a variant of %s</small>', $this->request->data['Product']['name'], $this->request->data['Parent']['name']));
+		$this->set('title_for_layout', __('Edit %s <small>a variant of %s</small>', $this->request->data['Product']['name'], $this->request->data['Parent']['name']));        
+    }
 
 
 /**
@@ -314,7 +348,7 @@ class ProductsController extends ProductsAppController {
 				'Product.id' => $parentId,
 				),
 			'contain' => array(
-				'ProductChild' => array(
+				'Children' => array(
 					'CategoryOption',
 					),
 				)
@@ -400,15 +434,16 @@ class ProductsController extends ProductsAppController {
 
 
 	public function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Item', true));
-			$this->redirect(array('action' => 'index'));
+		$this->Product->id = $id;
+		if (!$this->Product->exists()) {
+			throw new NotFoundException(__('Invalid product'));
 		}
 		if ($this->Product->delete($id)) {
-			$this->Session->setFlash(__('Item deleted', true));
+			$this->Session->setFlash(__('Item deleted'));
 			$this->redirect(array('action' => 'index'));
 		}
 	}
+    
     
     public function categories() {
         if (!empty($this->request->data['Option'])) {

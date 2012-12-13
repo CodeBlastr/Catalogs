@@ -50,7 +50,7 @@ class Product extends ProductsAppModel {
 			'dependent' => true,
 			'order' => 'ProductPrice.user_role_id asc'
             ),
-		'ProductChild' => array(
+		'Children' => array(
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'dependent' => true,
@@ -144,7 +144,8 @@ class Product extends ProductsAppModel {
  */
     public function beforeSave($options) {
         $this->Behaviors->attach('Galleries.Mediable'); // attaching the gallery behavior here, because the ProductParent was causing a problem making $Model->alias = 'ProductParent', in the behavior.
-		$this->data = $this->_cleanAddData($this->data);
+		$this->data = $this->_newOptions($this->data);
+        $this->data = $this->_cleanAddData($this->data);
         return true;
     }
     
@@ -187,8 +188,8 @@ class Product extends ProductsAppModel {
 
 		$i = 0;
 		foreach ($results as $result) {
-			$i = $i + 1;
-			if(!empty($result['Product']['arb_settings'])) {
+			$i = $i++;
+			if(!empty($result['Product']) && !empty($result['Product']['arb_settings'])) {
 				// set arb back to input values
 				$arbSettingsArray = unserialize($result['Product']['arb_settings']);
 				$arbSettingsString = '';
@@ -198,7 +199,6 @@ class Product extends ProductsAppModel {
 				$results[$i]['Product']['arb_settings'] = $arbSettingsString ;
 			}
 		}
-
 		return $results;
 	}
 
@@ -245,7 +245,6 @@ class Product extends ProductsAppModel {
  * @return array
  */
  	protected function _cleanAddData($data) {
-		
 		if (!empty($data['Product']['arb_settings'])) {
 			// serialize the data
 			$data['Product']['arb_settings'] = serialize($this->data['Product']['arb_settings']);
@@ -255,13 +254,47 @@ class Product extends ProductsAppModel {
 			$data['Product']['payment_type'] = implode(',', $this->data['Product']['payment_type']);
 		}
 
-		if (empty($data['Product']['sku'])) {
+		if (!empty($data['Product']['name']) && empty($data['Product']['sku'])) {
 			// generate random sku if none exists
 			$data['Product']['sku'] = rand(10000, 99000);
 		}
-		
+        
+        if (!empty($data['Option']['Option'][0]) && !empty($data['Product']['id'])) {
+            // need to manually add existing options so they aren't auto-deleted
+            $existingOptions = Set::extract('/ProductsOption/option_id', $this->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => $data['Product']['id']), 'callbacks' => false)));
+            $data['Option']['Option'] = array_merge($data['Option']['Option'], $existingOptions);
+        }
+        
+        if (empty($data['GalleryImage']['filename']['name'])) {
+            unset($data['GalleryImage']);
+        }
 		return $data;
 	}
+    
+/**
+ * 
+ */
+    protected function _newOptions($data) {
+        $output = !empty($data['Option']['Option']) ? array('Option' => array('Option' => $data['Option']['Option'])) : array();
+        unset($data['Option']['Option']);
+        if (!empty($data['Option'])) {
+            $i = 0;
+            foreach ($data['Option'] as $option) {
+                if (!empty($option['name'])) {
+                    $this->Option->create();
+                    if ($this->Option->save(array('Option' => $data['Option'][$i]))) {
+                        $data['Option']['Option'][] = $this->Option->id;
+                        unset($output['Option']['Option'][$i]);
+                    }
+                }
+                unset($data['Option'][$i]);
+                $i++;
+            }
+        }
+        $data = array_merge_recursive($data, $output);
+        
+        return $data;
+    }
 
 /**
  * Cleans products

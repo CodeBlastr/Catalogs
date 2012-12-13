@@ -9,7 +9,7 @@
       <th>Action</th>
     <tr>
       <?php
-	foreach($product['ProductChild'] as $child) : ?>
+	foreach($product['Children'] as $child) : ?>
       <?php #debug($child); ?>
     <tr>
       <?php

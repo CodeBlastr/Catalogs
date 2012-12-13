@@ -2,8 +2,22 @@
     <?php echo $this->Form->create('Product', array('type' => 'file')); ?>
     <fieldset>
     	<?php
+		echo $this->Form->input('Product.parent_id', array('type' => 'hidden', 'value' => $this->request->data['Product']['id']));
 		echo $this->Form->input('Product.name', array('label' => 'Display Name'));
-        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999')); 
+        $i = 0; 
+        foreach ($this->request->data['Option'] as $select) {
+            foreach ($select['Children'] as $option) {
+                $options[$option['id']] = $option['name'];
+            }
+            echo $this->Form->input('Option.Option.' . $i, array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('add new', '#', array('class' => 'newOption', 'data-target' => '#Option'.$i.'Name'))), 'type' => 'select', 'options' => $options));
+            
+            echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'empty' => '-- Optional --', 'value' => $select['id']));
+            echo $this->Form->input('Option.'. $i .'.name', array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('cancel', '#', array('class' => 'cancelOption', 'data-target' => '#OptionOption'.$i))), 'value' => false));
+            
+            unset($options); 
+            $i++;
+        }
+        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999'));
         echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
 		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
     </fieldset>
@@ -21,45 +35,15 @@
 		echo $this->Form->input('Product.width', array('label' => 'Width (50-119 inches)'));
 		echo $this->Form->input('Product.length', array('label' => 'Length (50-119 inches)')); ?>
     </fieldset>
-    <?php
-    echo $this->Form->end('Submit'); ?>
+    <?php echo $this->Form->end('Submit'); ?>
 
     <script type="text/javascript">
-    
-    $('#addCat').click(function(e){
-    	e.preventDefault();
-    	$('#anotherCategory').show();
-    });
-    
-    $('#priceID').click(function(e){
-    	e.preventDefault();
-    	action = '<?php echo $this->Html->url(array('plugin' => 'products',
-    					'controller'=>'product_prices', 'action'=>'add', 'admin'=>true))?>';
-    	$("#ProductAddForm").attr("action" , action);
-    	$("#ProductAddForm").submit();
-    });
-    function rem($id) {
-    	$('#div'+$id).remove();
-    }
-    
-    $(document).ready( function(){
-    	if($('input.shipping_type:checked').val() == 'FIXEDSHIPPING') {
-    		$('#ShippingPrice').show();
-    	} else {
-    		$('#ShippingPrice').hide();
-    	}
-    });
-    
-    var shipTypeValue = null;
-    $('input.shipping_type').click(function(e){
-    	shipTypeValue = ($('input.shipping_type:checked').val());
-    	if(shipTypeValue == 'FIXEDSHIPPING') {
-    		$('#ShippingPrice').show();
-    	} else {
-    		$('#ShippingPrice').hide();
-    	}
-    });
-    
+        $('.cancelOption').parent().parent().parent().hide();
+        $('.newOption, .cancelOption').click(function(e){
+            e.preventDefault();
+            $(this).parent().parent().parent().hide();
+            $($(this).attr('data-target')).parent().show();
+        });
     </script>
 </div>
 
