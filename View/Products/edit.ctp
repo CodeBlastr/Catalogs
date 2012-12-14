@@ -51,7 +51,8 @@
         }
     }
     $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '')) . $this->Form->end('Submit');
-    if (count($existingOptions) < 3) {
+    
+    if (count($existingOptions) < 3 && empty($this->request->data['Product']['parent_id'])) {
         echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
     } ?>
 </div>
@@ -97,7 +98,7 @@
 	 	echo $this->Form->input('Product.shipping_charge'); ?>
     </fieldset>
     
-    <?php if (in_array('Categories', CakePlugin::loaded())) { ?>
+    <?php if (empty($this->request->data['Product']['parent_id']) && in_array('Categories', CakePlugin::loaded())) { ?>
 	<fieldset>
  		<legend class="toggleClick"><?php echo __d('products', 'Does this product belong to a category?');?></legend>
 		<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => __('Choose categories (%s)', $this->Html->link('edit', array('action' => 'categories'))))); ?>

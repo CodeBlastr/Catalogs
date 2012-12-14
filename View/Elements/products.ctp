@@ -19,9 +19,11 @@
             <div class="indexCell itemPrice productPrice" id="productPrice<?php echo $product['Product']['id']; ?>"> 
                 <?php echo __('$'); ?><?php echo (!empty($product['ProductPrice'][0]['price']) ? $product['ProductPrice'][0]['price'] : $product['Product']['price']); ?> 
             </div>
+            <?php if (empty($product['Option'])) { ?>
             <div class="indexCell itemAction productAction" id="productAction<?php echo $product['Product']['id']; ?>"> 
                 <?php echo $this->Element('cart_add', array('product' => $product), array('plugin' => 'products')); ?> 
             </div>
+            <?php } ?>
         </div>
     <?php
     } ?>

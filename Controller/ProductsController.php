@@ -74,6 +74,7 @@ class ProductsController extends ProductsAppController {
 //			array('Product.ended' => '0000-00-00 00:00:00')
 //		);
         
+        $this->paginate['contain'][] = 'Option';
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		$this->paginate['fields'] = array('id', 'name', 'summary', 'price');
 
@@ -142,56 +143,21 @@ class ProductsController extends ProductsAppController {
 						),
 					),
 				'Children',
+                'Parent'
 				),
 			));
+        
+        !empty($product['Parent']['id']) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
+        
+        $productsOptions = $this->Product->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => Set::extract('/id', $product['Children'])), 'contain' => 'Option', 'order' => array('Option.parent_id', 'Option.name')));
+        $options = array();
+        if (!empty($productsOptions)) {
+            foreach ($productsOptions as $productsOption) {
+                $options[$productsOption['ProductsOption']['product_id']][$productsOption['Option']['id']] = $productsOption['Option']['name']; 
+            }
+        }
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
-           
-		$this->request->data = $this->Product->find('first', array(
-			'conditions' => array(
-				'Product.id' => $id
-				),
-			'recursive' => 2,
-			'contain' => array(
-				'ProductStore.id',
-				
-				'ProductBrand',
-				'ProductPrice'
-				)
-			));
-            
-		// remodifying data to bring support for controls
-		$this->request->data['ProductStore']['id'] = array('0' => $this->request->data['ProductStore']['id']);
-		$this->request->data['Category'] = Set::extract('/Category/id', $this->request->data);
-		$catOptions = array();
-
-		$catOptions = $this->Product->Category->CategoryOption->find('threaded', array(
-			'conditions' => array(
-				'CategoryOption.category_id' => $this->request->data['Category'],
-				),
-			'fields' => array(
-                'CategoryOption.id',
-                'CategoryOption.parent_id',
-				'CategoryOption.name',
-				'CategoryOption.type',
-				),
-			'order' => 'CategoryOption.type',
-			));
-        //debug($catOptions);die();
-		$this->set('options', $catOptions);         
-        /* 
-		$attributeData = $this->Product->find('all', array(
-			'conditions' => array(
-				'Product.parent_id' => $id
-				),
-			'fields' => array(
-				'Product.id'
-				),
-			'recursive' => 1,
-			//'group' => 'CategoryOption.parent_id'
-			));
-               */  
-		//Set product view vars
-		$this->set(compact('attributeData', 'product'));
+		$this->set(compact('product', 'options'));
 	}
 
 
@@ -261,8 +227,25 @@ class ProductsController extends ProductsAppController {
 		if (!$this->Product->exists()) {
 			throw new NotFoundException(__('Invalid product'));
 		}
-        $this->Product->contain(array('Gallery', 'Option', 'Parent', 'Children' => 'Option'));
-        $this->request->data = $this->Product->read(null, $id);
+        
+        $this->request->data = $this->Product->find('first', array(
+            'conditions' => array(
+                'Product.id' => $id
+                ),
+            'contain' => array(
+                'Option',
+                'Gallery',
+                'Parent',
+                'Children' => array(
+                    'Option' => array(
+                        'order' => array(
+                            'Option.parent_id' => 'ASC',
+                            'Option.name' => 'ASC',
+                            )
+                        ),
+                    ),
+                ),
+            ));
         !empty($this->request->data['Parent']['id']) ?  $this->redirect(array($this->request->data['Parent']['id'])) : null; // redirect to parent
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
         $this->set('categories', $this->Product->Category->generateTreeList());
