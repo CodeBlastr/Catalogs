@@ -63,7 +63,7 @@ class Product extends ProductsAppModel {
        		'joinTable' => 'products_product_options',
             'foreignKey' => 'product_id',
             'associationForeignKey' => 'option_id',
-    		//'unique' => true,
+    		//'unique' => false,
 	        ),
         );
 
@@ -292,7 +292,6 @@ class Product extends ProductsAppModel {
             }
         }
         $data = array_merge_recursive($data, $output);
-        
         return $data;
     }
 
@@ -403,5 +402,38 @@ class Product extends ProductsAppModel {
 	    }
 	    return $return;
 	}
+    
+/**
+ * Delete Children by Option Type
+ * 
+ * Find all children of this id, which have the option id and delete them
+ * 
+ * @param string $id
+ * @param string $optionId
+ * @throw Exception
+ * @return bool
+ */
+    public function deleteChildByOptionType($id, $optionId) {
+        $childIds = Set::extract('/Option/ProductsProductOption/product_id', Set::extract('/Option', $this->Children->find('all', array(
+            'conditions' => array(
+                'Children.parent_id' => $id
+                ),
+            'contain' => array(
+                'Option' => array(
+                    'conditions' => array(
+                        'Option.parent_id' => $optionId
+                        )
+                    )
+                )
+            ))));
+        if (!empty($childIds)) {
+            if ($this->Option->ProductsOption->deleteAll(array('ProductsOption.option_id' => $optionId, 'ProductsOption.product_id' => $id)) && $this->deleteAll(array('Product.id' => $childIds))) {
+                return true;
+            } else {
+                throw new Exception(__('Child deletes failed'));
+            }
+        }
+        return true;
+    }
 	
 }

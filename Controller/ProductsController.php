@@ -266,7 +266,7 @@ class ProductsController extends ProductsAppController {
         !empty($this->request->data['Parent']['id']) ?  $this->redirect(array($this->request->data['Parent']['id'])) : null; // redirect to parent
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
         $this->set('categories', $this->Product->Category->generateTreeList());
-        $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.id', '{n}.name'));
+        $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.ProductsProductOption.option_id', '{n}.name'));
         $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('OR' => array(array('Option.parent_id' => ''), array('Option.parent_id' => null))))), $existingOptions));
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
 
@@ -435,15 +435,22 @@ class ProductsController extends ProductsAppController {
 	}
 
 
-	public function delete($id = null) {
+	public function delete($id = null, $optionId = null) {
 		$this->Product->id = $id;
 		if (!$this->Product->exists()) {
 			throw new NotFoundException(__('Invalid product'));
 		}
-		if ($this->Product->delete($id)) {
-			$this->Session->setFlash(__('Item deleted'));
-			$this->redirect(array('action' => 'index'));
-		}
+        if (!empty($optionId)) {
+            if ($this->Product->deleteChildByOptionType($id, $optionId)) {
+               $this->Session->setFlash(__('Option deleted'));
+            }
+        	$this->redirect($this->referer());
+        } else {
+    		if ($this->Product->delete($id)) {
+    			$this->Session->setFlash(__('Item deleted'));
+    		}
+        	$this->redirect(array('action' => 'index'));
+        }
 	}
     
     

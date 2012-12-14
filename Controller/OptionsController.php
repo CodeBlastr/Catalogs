@@ -52,7 +52,7 @@ class OptionsController extends ProductsAppController {
 		}
 		if ($this->Option->delete($id)) {
 			$this->Session->setFlash(__('Option deleted'));
-			$this->redirect($this->referer());
 		}
+    	$this->redirect($this->referer());
 	}
 }

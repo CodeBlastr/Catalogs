@@ -11,13 +11,13 @@
             }
             if (!empty($options)) {
                 echo $this->Form->input('Option.Option.' . $i, array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('add new', '#', array('class' => 'newOption', 'data-target' => '#Option'.$i.'Name'))), 'type' => 'select', 'options' => $options));
+                $optionLabel = __('%s <small>(%s)</small>', $select['name'], $this->Html->link('cancel', '#', array('class' => 'cancelOption', 'data-target' => '#OptionOption'.$i)));
             } else {
-                echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'empty' => '-- Optional --', 'value' => $select['id']));
-                echo $this->Form->input('Option.'. $i .'.name', array('label' => $select['name'], 'value' => false));
+                $optionLabel = $select['name'];
             }
             
-            echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'empty' => '-- Optional --', 'value' => $select['id']));
-            echo $this->Form->input('Option.'. $i .'.name', array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('cancel', '#', array('class' => 'cancelOption', 'data-target' => '#OptionOption'.$i))), 'value' => false));
+            echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'value' => $select['id']));
+            echo $this->Form->input('Option.'. $i .'.name', array('label' => $optionLabel, 'value' => false));
             
             unset($options); 
             $i++;
