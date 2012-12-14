@@ -35,7 +35,15 @@ class OptionsController extends ProductsAppController {
  * @var string
  */
 	public $uses = 'Products.Option';
-	
+    
+    public function add() {
+        if (!empty($this->request->data['Option'])) {
+            if ($this->Option->save($this->request->data)) {
+                $this->Session->setFlash(__('Option saved'));
+            }
+        }
+        $this->redirect($this->referer());
+    }
 
 	public function delete($id = null) {
 		$this->Option->id = $id;
