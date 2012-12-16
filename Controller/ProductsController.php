@@ -142,11 +142,13 @@ class ProductsController extends ProductsAppController {
 						'ProductPrice.user_role_id' => $this->userRoleId,
 						),
 					),
-				'Children',
+				'Children' => array(
+                    'Gallery'
+                    ),
+                'Gallery',
                 'Parent'
 				),
 			));
-        
         !empty($product['Parent']['id']) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
         
         $productsOptions = $this->Product->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => Set::extract('/id', $product['Children'])), 'contain' => 'Option', 'order' => array('Option.parent_id', 'Option.name')));

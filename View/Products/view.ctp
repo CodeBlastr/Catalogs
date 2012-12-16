@@ -2,16 +2,13 @@
 if (!empty($product['Children'])) {
     echo __('<div class="children">');
     foreach ($product['Children'] as $child) {
-        echo $this->Element('product', array('product' => array('Product' => $child)), array('plugin' => 'products'));
+        echo $this->Element('product', array('product' => array('Product' => $child, 'Gallery' => $child['Gallery'])), array('plugin' => 'products'));
     }
     echo __('</div>');
 } else {
     echo $this->Element('product', array('product' => $product), array('plugin' => 'products'));
 }
 ?>
-
-
-
 
 <script type="text/javascript">
     $(function() {
@@ -25,8 +22,6 @@ if (!empty($product['Children'])) {
         });
     });
 </script>
-
-
 
 <?php
 // set the contextual menu items

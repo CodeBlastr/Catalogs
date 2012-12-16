@@ -199,6 +199,17 @@ class Product extends ProductsAppModel {
 				$results[$i]['Product']['arb_settings'] = $arbSettingsString ;
 			}
 		}
+        
+        $i = 0;
+        if (!empty($results['Children'])) {
+            foreach ($results['Children'] as $child) {
+                if (empty($child['Gallery'])) {
+                    $results['Children'][$i]['Gallery'] = $results['Gallery'];
+                }
+                $i++;
+            }
+        }
+        
 		return $results;
 	}
 
