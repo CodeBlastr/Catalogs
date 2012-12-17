@@ -508,16 +508,6 @@ class ProductsController extends ProductsAppController {
 		}
 	}
 
-/**
- *
- */
-	public function buy(){
-		$ret = $this->Product->TransactionItem->addToCart($this->request->data, $this->Auth->user("id"));
-		if ($ret['state']) {
-			$this->redirect(array('plugin'=>'transactions','controller'=>'transactions' , 'action'=>'checkout'));
-		}
-	}
-
 
 /**
  * get attribute values according to selected options
