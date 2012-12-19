@@ -1,6 +1,6 @@
 <?php
 // set the contextual sorting items
-$this->set('context_sort', array(
+$this->set('contextSort', array(
     'type' => 'select',
     'sorter' => array(array(
             'heading' => '',
@@ -10,8 +10,6 @@ $this->set('context_sort', array(
             )
     )),
 ));
-
-echo $this->Element('context_sort');
 
 echo $this->element('products');
 

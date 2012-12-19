@@ -30,11 +30,13 @@ $this->set('context_menu', array('menus' => array(
 		'heading' => 'Products',
 		'items' => array(
 			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard')),
+			$this->Html->link(__('Cart'), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'cart')),
 			)
 		),
 	array(
 		'heading' => 'Product',
 		'items' => array(
+			$this->Html->link(__d('products', 'List'), array('action' => 'index')),
 			$this->Html->link(__d('products', 'Edit'), array('action' => 'edit', $product['Product']['id'])),
 			$this->Html->link(__d('products', 'Delete'), array('action' => 'delete', $product['Product']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $product['Product']['id'])),
 			),

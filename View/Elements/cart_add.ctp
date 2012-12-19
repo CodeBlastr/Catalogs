@@ -21,10 +21,10 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 		echo __('<div class="action itemAddCart productAddCart itemAddCartHasOptions">%s</div>',  $this->Html->link('View', array('plugin' => 'products', 'action' => 'products', 'action' => 'view', $productId), array('class' => 'button')));
 	} else {
     	echo '<div class="action itemAddCart productAddCart">';
-		echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add')));
+		echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add'), 'class' => 'form-inline'));
 		// if the max allowable quantity of this item is only one, hide the TransactionItem.quantity input
 		echo $this->Element('Options/select', array('product' => $product), array('plugin' => 'products'));
-		echo (int)$maxQty === 1 ? $this->Form->hidden('TransactionItem.quantity' , array('value' => 1, 'min' => $minQty, 'max' => $maxQty)) : $this->Form->input('TransactionItem.quantity' , array('label' => ' Quantity ', 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
+		echo (int)$maxQty === 1 ? $this->Form->hidden('TransactionItem.quantity' , array('class' => 'span1', 'label' => false, 'value' => 1, 'min' => $minQty, 'max' => $maxQty)) : $this->Form->input('TransactionItem.quantity' , array('class' => 'span1', 'label' => false, 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
 		echo $this->Form->hidden('TransactionItem.model' , array('value' => 'Product'));
 		echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productId));
 		echo $this->Form->hidden('TransactionItem.price' , array('value' => $productPrice));
