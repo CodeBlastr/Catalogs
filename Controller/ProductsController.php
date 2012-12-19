@@ -49,14 +49,16 @@ class ProductsController extends ProductsAppController {
  *
  */
 	public function dashboard(){
-		$this->set('statsSalesToday', ClassRegistry::init('Transactions.Transaction')->salesStats('today'));
-		$this->set('statsSalesThisWeek', ClassRegistry::init('Transactions.Transaction')->salesStats('thisWeek'));
-		$this->set('statsSalesThisMonth', ClassRegistry::init('Transactions.Transaction')->salesStats('thisMonth'));
-		$this->set('statsSalesThisYear', ClassRegistry::init('Transactions.Transaction')->salesStats('thisYear'));
-		$this->set('statsSalesAllTime', ClassRegistry::init('Transactions.Transaction')->salesStats('allTime'));
-		$this->set('transactionStatuses', ClassRegistry::init('Transactions.Transaction')->statuses());
-		$this->set('itemStatuses', ClassRegistry::init('Transactions.TransactionItem')->statuses());
-		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
+                $Transaction = ClassRegistry::init('Transactions.Transaction');
+                $TransactionItem = ClassRegistry::init('Transactions.TransactionItem');
+		$this->set('statsSalesToday', $Transaction->salesStats('today'));
+		$this->set('statsSalesThisWeek', $Transaction->salesStats('thisWeek'));
+		$this->set('statsSalesThisMonth', $Transaction->salesStats('thisMonth'));
+		$this->set('statsSalesThisYear', $Transaction->salesStats('thisYear'));
+		$this->set('statsSalesAllTime', $Transaction->salesStats('allTime'));
+		$this->set('transactionStatuses', $Transaction->statuses());
+		$this->set('itemStatuses', $TransactionItem->statuses());
+		$this->set('page_title_for_layout', __('eCommerce Dashboard'));
 	}
 
 /**
