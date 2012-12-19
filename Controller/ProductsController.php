@@ -49,8 +49,8 @@ class ProductsController extends ProductsAppController {
  *
  */
 	public function dashboard(){
-                $Transaction = ClassRegistry::init('Transactions.Transaction');
-                $TransactionItem = ClassRegistry::init('Transactions.TransactionItem');
+        $Transaction = ClassRegistry::init('Transactions.Transaction');
+        $TransactionItem = ClassRegistry::init('Transactions.TransactionItem');
 		$this->set('statsSalesToday', $Transaction->salesStats('today'));
 		$this->set('statsSalesThisWeek', $Transaction->salesStats('thisWeek'));
 		$this->set('statsSalesThisMonth', $Transaction->salesStats('thisMonth'));
@@ -75,13 +75,11 @@ class ProductsController extends ProductsAppController {
 //			array('Product.ended' => null),
 //			array('Product.ended' => '0000-00-00 00:00:00')
 //		);
-        
         $this->paginate['contain'][] = 'Option';
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		$this->paginate['fields'] = array('id', 'name', 'summary', 'price');
 
-		// removes items and changes prices based on user role
-		$this->set('products', $this->Product->cleanItemsPrices($this->paginate()));
+		$this->set('products', $this->paginate());
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', 'summary'); 
 		$this->set('showGallery', true);
@@ -123,7 +121,7 @@ class ProductsController extends ProductsAppController {
  * 
  * @todo make this more isolated and modular (its calling multiple related models from other plugins)
  */
-	public function view($id = null) {
+	public function view($id = null, $child = false) {
 		$this->Product->id = $id;
 		if (!$this->Product->exists()) {
 			throw new NotFoundException(__('Invalid product'));
@@ -151,7 +149,7 @@ class ProductsController extends ProductsAppController {
                 'Parent'
 				),
 			));
-        !empty($product['Parent']['id']) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
+        !empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
         
         $productsOptions = $this->Product->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => Set::extract('/id', $product['Children'])), 'contain' => 'Option', 'order' => array('Option.parent_id', 'Option.name')));
         $options = array();
@@ -162,7 +160,12 @@ class ProductsController extends ProductsAppController {
         }
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
 		$this->set(compact('product', 'options'));
+        return $product;
 	}
+    
+    protected function _viewChild($parentId) {
+        
+    }
 
 
 /**

@@ -20,26 +20,30 @@
  ?>
 
 
-<div class="span3" id="productNav">
-    <ul class="nav nav-list bs-docs-sidenav affix">
-        <li class="active"><a href="#productDetails"><i class="icon-chevron-right"></i> Product Information</a></li>
-        <li><a href="#optionalDetails"><i class="icon-chevron-right"></i> Optional Details</a></li>
-        <li><a href="#productImages"><i class="icon-chevron-right"></i> Product Images</a></li>
-        <li><a href="#productVariants"><i class="icon-chevron-right"></i> Product Variants</a></li>
-        <li><a href="#shippingDetails"><i class="icon-chevron-right"></i> Shipping Details</a></li>
-        <li><a href="#productCategorization"><i class="icon-chevron-right"></i> Categorization</a></li>
-        <li>
+<div class="span3 bs-docs-sidebar" id="productNav">
+    <ul class="nav-list bs-docs-sidenav affix">
+        <li><a class="tab-trigger" data-target="#productDetails"><i class="icon-chevron-right"></i> Product Information</a></li>
+        <li><a class="tab-trigger" data-target="#optionalDetails"><i class="icon-chevron-right"></i> Optional Details</a></li>
+        <li><a class="tab-trigger" data-target="#productImages"><i class="icon-chevron-right"></i> Product Images</a></li>
+        <li><a class="tab-trigger" data-target="#productVariants"><i class="icon-chevron-right"></i> Product Variants</a></li>
+        <li><a class="tab-trigger" data-target="#shippingDetails"><i class="icon-chevron-right"></i> Shipping Details</a></li>
+        <li><a class="tab-trigger" data-target="#productCategorization"><i class="icon-chevron-right"></i> Categorization</a></li>
+        <li><a data-target="#GalleryEditForm">Quick Image Add</a>
         <?php
         echo $this->Form->create('Gallery', array('url' => '/galleries/galleries/edit', 'enctype' => 'multipart/form-data'));
-        echo $this->Form->input('GalleryImage.filename', array('label' => 'Choose image', 'type' => 'file'));
+        echo $this->Form->input('GalleryImage.filename', array('label' => false, 'type' => 'file'));
 	    echo $this->Form->input('Gallery.model', array('type' => 'hidden', 'value' => 'Product'));
     	echo $this->Form->input('Gallery.foreign_key', array('type' => 'hidden', 'value' => $this->request->data['Product']['id']));
-    	echo $this->Form->end('Upload');
-        
-        $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '')) . $this->Form->end('Submit');
+    	echo $this->Form->end('Upload');?>
+        </li>
+        <li><a data-target="#optionForm">Add Variant Group</a>
+        <?php
+        $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '', 'placeholder' => 'Group Name (eg. Sizes)', 'class' => 'span2')) . $this->Form->end('Submit');
 
         if (count($existingOptions) < 3 && empty($this->request->data['Product']['parent_id'])) {
-            echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
+            echo '<div id="optionForms">';
+            echo !empty($options) ? __('<small class="pull-right">%s</small> %s', $this->Html->link('new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('class' => 'span2', 'label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Attribute to Product')) . __('<small class="pull-right">%s</small> %s', $this->Html->link('cancel', '', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
+            echo '</div>';
         }?>
         </li>
     </ul>
@@ -147,26 +151,29 @@
 <script type="text/javascript">
 $(function() {
     $(document).ready( function(){
-        
         // animation 
         var offset = $('#productNav').offset().top;
-        $('#productNav a').click(function(e) {
+        $('#productNav a.tab-trigger').click(function(e) {
             e.preventDefault();
             var wait = $('legend.toggleClick').siblings().length;
             var i = 1;
             var me = $(this);
             $('legend.toggleClick').siblings().hide('fast', function() {
                 if(i == wait) {
-                    var navTo = $(me.attr('href')).offset().top;
+                    var navTo = $(me.attr('data-target')).offset().top;
                     $('#productNav a').parent().removeClass('active');
                     me.parent().addClass('active');
                     $('html, body').animate({ scrollTop: navTo - offset }, 800, function() {
-                        $('legend.toggleClick', me.attr('href')).siblings().show('slow');
+                        $('legend.toggleClick', me.attr('data-target')).siblings().show('slow');
                     });
                 }
                 ++i;
             });
         });
+        // side nav clean up
+        $('#GalleryEditForm, #optionForms').css('padding', '8px').hide();
+        $('#productNav a[data-target="#productDetails"]').parent().addClass('active');
+        $('body').css('padding-bottom', '800px');
         
         
         if($('input.shipping_type:checked').val() == 'FIXEDSHIPPING') {
@@ -186,12 +193,12 @@ $(function() {
 
         });
 
-        $('.cancelOptionType').parent().parent().hide();
-        $('.cancelOptionType').parent().parent().next().hide();
+        $('.cancelOptionType').parent().hide();
+        $('.cancelOptionType').parent().next().hide();
         $('.newOptionType, .cancelOptionType').click(function(e){
             e.preventDefault();
-            $(this).parent().parent().hide();
-            $(this).parent().parent().next().hide();
+            $(this).parent().hide();
+            $(this).parent().next().hide();
             $($(this).attr('data-target')).parent().parent().show();
             $($(this).attr('data-target')).parent().parent().prev().show();
         });

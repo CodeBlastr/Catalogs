@@ -1,4 +1,6 @@
 <?php 
+$product = $this->requestAction('/products/products/view/' . $transactionItem['foreign_key'] . '/1');
+$foreignKey = !empty($product['Gallery']['id']) ? $transactionItem['foreign_key'] : $product['Parent']['id'];
 
 echo __('<h5>%s</h5>', $this->Html->link($transactionItem['name'], '/products/products/view/'.$transactionItem['foreign_key'], null, __('Are you sure you want to leave this page?')));
 
@@ -7,7 +9,7 @@ echo '<table class="table table-hover"><tr><td class="span1">';
 echo $this->element('thumb', 
     array(
 	    'model' => 'Product',
-	    'foreignKey' => $transactionItem['foreign_key'],
+	    'foreignKey' => $foreignKey,
 	    'thumbSize' => 'small',
 	    'thumbWidth' => 24,
 	    'thumbHeight' => 24,

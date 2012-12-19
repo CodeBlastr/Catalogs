@@ -27,6 +27,7 @@ class Product extends ProductsAppModel {
 
 	public $validate = array(
 		'name' => array('notempty'),
+		'price' => array('notempty'),
         );
 
 	public $actsAs = array(
@@ -208,8 +209,7 @@ class Product extends ProductsAppModel {
                 }
                 $i++;
             }
-        }
-        
+        }        
 		return $results;
 	}
 
