@@ -22,12 +22,26 @@
 
 <div class="span3" id="productNav">
     <ul class="nav nav-list bs-docs-sidenav affix">
-      <li class="active"><a href="#productDetails"><i class="icon-chevron-right"></i> Product Information</a></li>
-      <li><a href="#optionalDetails"><i class="icon-chevron-right"></i> Optional Details</a></li>
-      <li><a href="#productImages"><i class="icon-chevron-right"></i> Product Images</a></li>
-      <li><a href="#productVariants"><i class="icon-chevron-right"></i> Product Variants</a></li>
-      <li><a href="#shippingDetails"><i class="icon-chevron-right"></i> Shipping Details</a></li>
-      <li><a href="#productCategorization"><i class="icon-chevron-right"></i> Categorization</a></li>
+        <li class="active"><a href="#productDetails"><i class="icon-chevron-right"></i> Product Information</a></li>
+        <li><a href="#optionalDetails"><i class="icon-chevron-right"></i> Optional Details</a></li>
+        <li><a href="#productImages"><i class="icon-chevron-right"></i> Product Images</a></li>
+        <li><a href="#productVariants"><i class="icon-chevron-right"></i> Product Variants</a></li>
+        <li><a href="#shippingDetails"><i class="icon-chevron-right"></i> Shipping Details</a></li>
+        <li><a href="#productCategorization"><i class="icon-chevron-right"></i> Categorization</a></li>
+        <li>
+        <?php
+        echo $this->Form->create('Gallery', array('url' => '/galleries/galleries/edit', 'enctype' => 'multipart/form-data'));
+        echo $this->Form->input('GalleryImage.filename', array('label' => 'Choose image', 'type' => 'file'));
+	    echo $this->Form->input('Gallery.model', array('type' => 'hidden', 'value' => 'Product'));
+    	echo $this->Form->input('Gallery.foreign_key', array('type' => 'hidden', 'value' => $this->request->data['Product']['id']));
+    	echo $this->Form->end('Upload');
+        
+        $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '')) . $this->Form->end('Submit');
+
+        if (count($existingOptions) < 3 && empty($this->request->data['Product']['parent_id'])) {
+            echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
+        }?>
+        </li>
     </ul>
 </div>
 
@@ -90,11 +104,6 @@
                 echo __('<p>%s %s</p>', $this->Html->link('delete', array('action' => 'delete', $this->request->data['Product']['id'], $key), array('class' => 'btn btn-mini btn-primary'), 'Are you sure? This will delete related variant products!'), $value);
             }
         }
-        //$addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '')) . $this->Form->end('Submit');
-
-        //if (count($existingOptions) < 3 && empty($this->request->data['Product']['parent_id'])) {
-        //    echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
-        //}
         ?>
     </fieldset>
 	<fieldset id="shippingDetails">

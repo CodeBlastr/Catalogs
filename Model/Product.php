@@ -443,6 +443,12 @@ class Product extends ProductsAppModel {
             } else {
                 throw new Exception(__('Child deletes failed'));
             }
+        } else if (!empty($optionId)) {
+            if ($this->Option->ProductsOption->deleteAll(array('ProductsOption.option_id' => $optionId, 'ProductsOption.product_id' => $id))) {
+                return true;
+            } else {
+                throw new Exception(__('Option delete failed'));
+            }
         }
         return true;
     }
