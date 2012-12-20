@@ -1,6 +1,6 @@
 <?php
 
-echo __('%s %s', $data['Option']['name'], $this->Html->link('Delete', array('controller' => 'options', 'action' => 'delete', $data['Option']['id']), array('class' => 'btn btn-danger btn-mini', 'title' => 'Delete'), 'Are you sure?'));
+echo __('%s %s', $data['Option']['name'], $this->Html->link('<i class="icon-trash"></i>', array('controller' => 'options', 'action' => 'delete', $data['Option']['id']), array('title' => 'Delete', 'escape' => false), 'Are you sure?'));
 
 /*$class = $this->request->params['controller'] == 'webpage_menus'  && $this->request->params['action'] == 'view' ? $param['class'] = 'showClick' : '';
 

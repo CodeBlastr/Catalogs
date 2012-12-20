@@ -1,5 +1,6 @@
 <div class="products categories row">
     <div class="span6 pull-left">
+        <h3>Categories</h3>
         <?php 
         echo $this->Tree->generate($categories, array(
             'model' => 'Category', 
@@ -18,6 +19,7 @@
         echo $this->Form->end('Submit'); ?>
     </div>
     <div class="span6 pull-left">
+        <h3>Options / Variations</h3>
         <?php
         echo $this->Tree->generate($options, array(
             'model' => 'Option',

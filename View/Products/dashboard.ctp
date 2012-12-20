@@ -131,7 +131,7 @@
             <?php /* foreach ($itemStatuses as $key => $status) { ?>
               <li><?php echo $this->Html->link($status . ' Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:'.$key)); ?></li>
               <?php } */ ?>
-            <li><?php echo $this->Html->link('List In Cart Items', array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'index', 'filter' => 'status:incart')); ?></li>
+            <li><?php echo $this->Html->link('List In Cart Items', array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open')); ?></li>
         </ul>
     </div>
 
@@ -142,36 +142,35 @@
     <div class="span3">
         <h5>Store</h5>
         <ul>
-            <li><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></li>
-            <li><?php echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add_virtual')); ?></li>
             <li><?php echo $this->Html->link('All Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index')); ?></li>
-            <li><?php echo $this->Html->link('Out Of Stock Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index', 'filter' => 'stockItem:0')); ?></li>
+            <li><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></li>
+            <?php //<li> echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add_virtual')); </li>?>
+            <li><?php echo $this->Html->link('Out Of Stock Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index', 'filter' => 'stock:0')); ?></li>
         </ul>
     </div>
     <div class="span3">
         <h5>Brands</h5>
         <ul>
-            <li><?php echo $this->Html->link('Add a Brand', array('plugin' => 'products', 'controller' => 'product_brands', 'action' => 'add')); ?></li>
             <li><?php echo $this->Html->link('List All Brands', array('plugin' => 'products', 'controller' => 'product_brands', 'action' => 'index')); ?></li>
+            <li><?php echo $this->Html->link('Add a Brand', array('plugin' => 'products', 'controller' => 'product_brands', 'action' => 'add')); ?></li>
         </ul>
     </div>
     <div class="span3">
         <h5>Attributes</h5>
         <ul>
-            <li><?php echo $this->Html->link('Product Attributes', array('plugin' => 'categories', 'controller' => 'category_options', 'action' => 'index')); ?></li>
+            <li><?php echo $this->Html->link('Product Variations', array('plugin' => 'products', 'controller' => 'products', 'action' => 'categories')); ?></li>
         </ul>
         <h5>Categories</h5>
         <ul>
-            <li><?php echo $this->Html->link('Add a Category', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'add', 'model' => 'ProductStore')); ?></li>
-            <li><?php echo $this->Html->link('List All Categories', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')); ?></li>
+            <li><?php echo $this->Html->link('List All Categories', array('plugin' => 'products', 'controller' => 'products', 'action' => 'categories')); ?></li>
         </ul>
     </div>
     <div class="span2">
         <h5>Settings</h5>
         <ul>
             <li><?php echo $this->Html->link('List All', array('plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Orders')); ?></li>
-            <li><?php echo $this->Html->link('Transaction Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:ORDER_ITEM_STATUS')); ?></li>
-            <li><?php echo $this->Html->link('Item Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:ORDER_TRANSACTION_STATUS')); ?></li>
+            <li><?php echo $this->Html->link('Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
+            <li><?php echo $this->Html->link('Item Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:TRANSACTIONS_STATUS')); ?></li>
         </ul>
     </div>
 </div>
@@ -193,10 +192,17 @@ $this->set('forms_search', array(
 	));
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
+    array(
+		'heading' => 'Products',
+		'items' => array(
+			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard'), array('class' => 'active')),
+			)
+		),
         array(
             'heading' => 'Products',
             'items' => array(
-                $this->Html->link(__('Add', true), array('controller' => 'products', 'action' => 'add')),
+                $this->Html->link(__('List Products'), array('controller' => 'products', 'action' => 'index')),
+                $this->Html->link(__('List Transactions'), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index')),
             )
         ),
         ))); ?>
