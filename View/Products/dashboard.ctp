@@ -41,7 +41,7 @@
                                         $i = 0;
                                         while ($i < 24) {
                                             ?>
-                                                                                    ['<?= $i ?>', <?= $hour[$i] ? $hour[$i] : 0 ?>],
+                                ['<?php echo $i ?>', <?php echo $hour[$i] ? $hour[$i] : 0 ?>],
                                             <?php
                                             ++$i;
                                         }
