@@ -169,6 +169,7 @@
         <h5>Settings</h5>
         <ul>
             <li><?php echo $this->Html->link('List All', array('plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Orders')); ?></li>
+            <li><?php echo $this->Html->link('Tax Rates', array('plugin' => 'transactions', 'controller' => 'transaction_taxes', 'action' => 'index')); ?></li>
             <li><?php echo $this->Html->link('Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
             <li><?php echo $this->Html->link('Item Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:TRANSACTIONS_STATUS')); ?></li>
         </ul>
