@@ -34,14 +34,14 @@
                                         $hour = array_fill(0, 24, 0);
                                         foreach ($statsSalesToday as $order) {
                                             if ($order['Transaction']) {
-                                                $hourKey = date('H', strtotime($order['Transaction']['created']));
+                                                $hourKey = (int) date('H', strtotime($order['Transaction']['created']));
                                                 $hour[$hourKey]++;
                                             }
                                         }
                                         $i = 0;
                                         while ($i < 24) {
                                             ?>
-                                                                                    ['<?= $i ?>', <?= $hour[$i] ? $hour[$i] : 0 ?>],
+                                                                                    ['<?php echo $i ?>', <?php echo $hour[$i] ? $hour[$i] : 0 ?>],
                                             <?php
                                             ++$i;
                                         }
