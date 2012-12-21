@@ -8,10 +8,16 @@
 
 <?php 
 $this->set('context_menu', array('menus' => array(
+    array(
+		'heading' => 'Products',
+		'items' => array(
+			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard')),
+			)
+		),
 	array(
 		'heading' => 'Manufacturers',
 		'items' => array(
-			$this->Html->link(__('List Brands', true), array('controller' => 'product_brands', 'action' => 'index')),
+			$this->Html->link(__('List', true), array('controller' => 'product_brands', 'action' => 'index')),
 			)
 		),
 	))); ?>
