@@ -1,6 +1,6 @@
 
 
-<div class="product view media" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
+<div class="product view media row-fluid" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
 
     <div class="itemGallery productGallery pull-left media-object"> 
         <?php echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $product['Gallery']['foreign_key']), array('plugin' => 'galleries')); ?>
@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <div class="well well-large pull-right last span4">
+    <div class="well well-large last span4">
         <?php echo $this->Element('cart_add', array('product' => $product), array('plugin' => 'products')); ?>
     </div>
 </div>

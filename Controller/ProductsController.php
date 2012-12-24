@@ -59,6 +59,7 @@ class ProductsController extends ProductsAppController {
 		$this->set('transactionStatuses', $Transaction->statuses());
 		$this->set('itemStatuses', $TransactionItem->statuses());
 		$this->set('page_title_for_layout', __('eCommerce Dashboard'));
+        $this->layout = 'default';
 	}
 
 /**
@@ -77,7 +78,7 @@ class ProductsController extends ProductsAppController {
 //		);
         $this->paginate['contain'][] = 'Option';
 		$this->paginate['conditions']['Product.parent_id'] = null;
-		$this->paginate['fields'] = array('id', 'name', 'summary', 'price');
+		//$this->paginate['fields'] = array('id', 'name', 'summary', 'price', 'is_buyable'); // removed for cnpynatn products index
 
 		$this->set('products', $this->paginate());
 		$this->set('displayName', 'name');

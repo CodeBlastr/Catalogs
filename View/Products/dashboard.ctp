@@ -1,10 +1,10 @@
-<?php echo $this->Html->script('https://www.google.com/jsapi', array('inline' => false)); ?>
+<?php echo $this->Html->script('http://code.highcharts.com/highcharts.js', array('inline' => false)); ?>
+<?php echo $this->Html->script('http://code.highcharts.com/modules/exporting.js', array('inline' => false)); ?>
 <?php //echo $this->Html->script('plugins/jquery.masonry.min', array('inline' => false));  ?>
 
 <div class="masonry products dashboard">
     <div class="masonryBox dashboardBox span8 pull-left">
         <h3 class="title">Stats</h3>
-
         <ul class="nav nav-tabs" id="myTab">
             <li><a href="#today" data-toggle="tab">Today</a></li>
             <li><a href="#thisWeek" data-toggle="tab">This Week</a></li>
@@ -12,56 +12,78 @@
             <li><a href="#thisYear" data-toggle="tab">This Year</a></li>
             <li><a href="#allTime" data-toggle="tab">All Time</a></li>
         </ul>
-        <div id="myTabContent" class="tab-content" style="overflow: visible;">
+        <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade" id="today">
-                <div>
+                <div class="row-fluid">
+                    <div class="alert alert-success clearfix">
+                        <h3 class="span6 pull-left"> <?php echo $statsSalesToday['count']; ?> Orders Today </h3>
+                        <h3 class="span6 pull-left"> $<?php echo $statsSalesToday['value']; ?> Total Value </h3>
+                    </div>
+
                     <?php
-                    echo
-                    '<div class="alert alert-success">'
-                    . '<h1>' . $statsSalesToday['count'] . '</h1><b>Orders Today</b>'
-                    . '<h1>$' . $statsSalesToday['value'] . '</h1><b>Total Value</b>'
-                    . '</div>';
-                    ?>
+                    // vars for chart
+                    $hour = array_fill(0, 24, 0);
+                    foreach ($statsSalesToday as $order) {
+                        if ($order['Transaction']) {
+                            $hourKey = (int) date('H', strtotime($order['Transaction']['created']));
+                            $hour[$hourKey]++;
+                        }
+                    } ?>
                     <script type="text/javascript">
-                        google.load("visualization", "1", {packages:["corechart"]});
-                        google.setOnLoadCallback(drawOrdersTodayChart);
-			 
-                        function drawOrdersTodayChart() {
-                            // Create and populate the data table.
-                            var data = google.visualization.arrayToDataTable([
-                                ['x', 'Orders'],
-                                        <?php
-                                        $hour = array_fill(0, 24, 0);
-                                        foreach ($statsSalesToday as $order) {
-                                            if ($order['Transaction']) {
-                                                $hourKey = (int) date('H', strtotime($order['Transaction']['created']));
-                                                $hour[$hourKey]++;
-                                            }
-                                        }
-                                        $i = 0;
-                                        while ($i < 24) {
-                                            ?>
-                                                                                    ['<?php echo $i ?>', <?php echo $hour[$i] ? $hour[$i] : 0 ?>],
-                                            <?php
-                                            ++$i;
-                                        }
-                                        ?>
-                                    ]);
-					
-                                    // Create and draw the visualization.
-                                    new google.visualization.LineChart(document.getElementById('orders_today')).
-                                        draw(data, {
-                                        curveType: "none",
-                                        width: '95%', 
-                                        height: 300,
-                                        legend: {position: 'none'},
-                                        chartArea: {width: '90%', height: '80%'}
-                                    }
-                                );
-                                    $(".masonry").masonry("reload"); // reload the layout
+                    $(function () {
+                        $('#myTab a:first').tab('show');
+                    });
+                    var chart;
+                    $(document).ready(function() {
+                        chart = new Highcharts.Chart({
+                            chart: {
+                                renderTo: 'ordersToday',
+                                type: 'spline'
+                            },
+                            credits: false,
+                            title: {
+                                text: false
+                            },
+                            subtitle: {
+                                text: false
+                            },
+                            xAxis: {
+                                type: 'datetime',
+                                dateTimeLabelFormats: { // don't display the dummy year
+                                    month: '%e. %b',
+                                    year: '%b'
                                 }
+                            },
+                            yAxis: {
+                                title: {
+                                    text: false
+                                },
+                                min: 0
+                            },
+                            tooltip: {
+                                formatter: function() {
+                                        return '<b>'+ this.series.name +'</b><br/>'+
+                                        Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
+                                }
+                            },
+        
+                            series: [{
+                                name: 'Leads',
+                                // Define the data points. All series have a dummy year
+                                // of 1970/71 in order to be compared on the same x axis. Note
+                                // that in JavaScript, months start at 0 for January, 1 for February etc.
+                                data: [
+                                <?php
+                                $i = 0;
+                                while ($i < 24) { ?>
+                                    [<?php echo $i ?>,   <?php echo $hour[$i] ? $hour[$i] : 0; ?>],
+                                <?php ++$i; } ?>
+                                ]
+                            }]
+                        });
+                    });
                     </script>
-                    <div id="orders_today"></div>
+                    <div id="ordersToday" style="min-width: 300px; height: 300px;"></div>
                 </div>
             </div>
             <div class="tab-pane fade" id="thisWeek">
@@ -109,12 +131,6 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-            $().ready(function(){
-                $('#myTab a:first').tab('show');
-                //$(".masonry").masonry("reload"); // reload the layout  
-            });
-        </script>
     </div>
     
     
@@ -137,7 +153,7 @@
 
 </div>
 
-<div class="products clear dashboardBox first pull-left">
+<div class="products clear dashboardBox first pull-left row-fluid">
     <h3>Setup</h3>
     <div class="span3">
         <h5>Store</h5>

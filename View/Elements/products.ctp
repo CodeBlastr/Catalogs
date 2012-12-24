@@ -1,4 +1,4 @@
-<div class="products" id="elementProducts">
+<div class="products" id="elementProducts">    
     <div class="indexContainer">
     <?php
     $i = 0;
@@ -26,7 +26,7 @@
                     <div class="recorddat">
                         <div class="truncate"><?php echo __('$'); ?><?php echo (!empty($product['ProductPrice'][0]['price']) ? $product['ProductPrice'][0]['price'] : $product['Product']['price']); ?></div>
                     </div>
-                    <?php if (empty($product['Option'])) { ?>
+                    <?php if (empty($product['Option']) && $product['Product']['is_buyable'] !== false) { ?>
                     <div class="indexCell itemAction productAction" id="productAction<?php echo $product['Product']['id']; ?>"> 
                         <?php echo $this->Element('cart_add', array('product' => $product), array('plugin' => 'products')); ?> 
                     </div>

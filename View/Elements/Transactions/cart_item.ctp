@@ -26,7 +26,7 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 
 echo $this->Form->input("TransactionItem.{$i}.quantity", array(
     'label' => false,
-	'class' => 'TransactionItemCartQty span1',
+	'class' => 'TransactionItemCartQty span5',
     'div' => false,
     'value' => $transactionItem['quantity'],
     'min' => $minQty, 'max' => $maxQty,
