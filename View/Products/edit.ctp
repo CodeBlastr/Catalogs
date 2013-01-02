@@ -107,8 +107,9 @@
             foreach ($existingOptions as $key => $value) {
                 echo __('<p>%s %s</p>', $this->Html->link('delete', array('action' => 'delete', $this->request->data['Product']['id'], $key), array('class' => 'btn btn-mini btn-primary'), 'Are you sure? This will delete related variant products!'), $value);
             }
-        }
-        ?>
+        } else {
+            echo __('<p>%s</p>', $this->Html->link(__('Add a variant group to add variants.'), '', array('data-target' => '#optionForms',  'class' => 'toggleClick')));
+        } ?>
     </fieldset>
 	<fieldset id="shippingDetails">
  		<legend class="toggleClick"><?php echo __d('products', 'Do you offer shipping for this product?');?></legend>

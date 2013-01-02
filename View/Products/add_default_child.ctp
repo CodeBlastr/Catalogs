@@ -10,21 +10,21 @@
                 $options[$option['id']] = $option['name'];
             }
             if (!empty($options)) {
-                echo $this->Form->input('Option.Option.' . $i, array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('add new', '#', array('class' => 'newOption', 'data-target' => '#Option'.$i.'Name'))), 'type' => 'select', 'options' => $options));
-                $optionLabel = __('%s <small>(%s)</small>', $select['name'], $this->Html->link('cancel', '#', array('class' => 'cancelOption', 'data-target' => '#OptionOption'.$i)));
+                echo $this->Form->input('Option.Option.' . $i, array('label' => __('%s <small>(%s)</small>', $select['name'], $this->Html->link('add new', '#', array('class' => 'newOption', 'data-target' => '#ChildOption'.$i.'Name'))), 'type' => 'select', 'options' => $options, 'id' => 'ChildOptionOption'.$i));
+                $optionLabel = __('%s <small>(%s)</small>', $select['name'], $this->Html->link('cancel', '#', array('class' => 'cancelOption', 'data-target' => '#ChildOptionOption'.$i)));
             } else {
                 $optionLabel = $select['name'];
             }
             
             echo $this->Form->input('Option.'. $i .'.parent_id', array('type' => 'hidden', 'value' => $select['id']));
-            echo $this->Form->input('Option.'. $i .'.name', array('label' => $optionLabel, 'value' => false));
+            echo $this->Form->input('Option.'. $i .'.name', array('label' => $optionLabel, 'value' => false, 'id' => 'ChildOption'.$i.'Name'));
             
             unset($options); 
             $i++;
         }
         echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999'));
         echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
-		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
+		echo $this->Form->input('Product.description', array('id' => 'ProductDescriptionChild', 'type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
     </fieldset>
 
     <fieldset>
@@ -50,6 +50,7 @@
     $('.newOption, .cancelOption').click(function(e){
         e.preventDefault();
         $(this).parent().parent().parent().hide();
+console.log($(this).attr('data-target'));
         $($(this).attr('data-target')).parent().show();
     });
 </script>

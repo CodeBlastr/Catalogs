@@ -22,6 +22,8 @@ App::uses('ProductsAppModel', 'Products.Model');
 class ProductBrand extends ProductsAppModel {
 
 	public $name = 'ProductBrand';	
+    
+    public $actsAs = array('Galleries.Mediable');
 	
 	public $hasMany = array(
 		'Product'=>array(
@@ -65,24 +67,6 @@ class ProductBrand extends ProductsAppModel {
 				));
 		} else {
 			return $this->find('list');	
-		}
-	}
-
-	public function add($data) {
-		if ($this->save($data)) {
-			$data['Gallery']['model'] = 'ProductBrand';
-			$data['Gallery']['foreign_key'] = $this->id;
-			if ($this->Gallery->GalleryImage->add($data, 'filename')) {
-				#return true;
-			} else if (!empty($data['GalleryImage']['filename'])) {
-				// return true;
-				// gallery image wasn't saved but I'll leave this error message as a todo,
-				// because I don't have a decision on whether we should roll back the user 
-				// if that happens, or just create the user anyway. 
-			}
-			return true;
-		} else {
-			return false;
 		}
 	}
 	

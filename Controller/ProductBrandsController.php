@@ -36,11 +36,11 @@ class ProductBrandsController extends ProductsAppController {
 
 	public function add() {
 		if (!empty($this->request->data)) {
-			if ($this->ProductBrand->add($this->request->data)) {
-				$this->Session->setFlash(__('The ProductBrand has been saved', true));
-				$this->redirect(array('action'=>'index'));
+			if ($this->ProductBrand->save($this->request->data)) {
+				$this->Session->setFlash(__('Brand saved'));
+				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The ProductBrand could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('Brand could not be saved. Please, try again.'));
 			}
 		}
 		$this->set('products', $this->ProductBrand->Product->find('list'));
