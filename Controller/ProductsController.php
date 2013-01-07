@@ -51,6 +51,7 @@ class ProductsController extends ProductsAppController {
 	public function dashboard(){
         $Transaction = ClassRegistry::init('Transactions.Transaction');
         $TransactionItem = ClassRegistry::init('Transactions.TransactionItem');
+        $this->set('counts', $counts = array_count_values(Set::extract('/Transaction/status', $Transaction->find('all'))));
 		$this->set('statsSalesToday', $Transaction->salesStats('today'));
 		$this->set('statsSalesThisWeek', $Transaction->salesStats('thisWeek'));
 		$this->set('statsSalesThisMonth', $Transaction->salesStats('thisMonth'));

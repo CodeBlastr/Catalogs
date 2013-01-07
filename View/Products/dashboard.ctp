@@ -1,10 +1,8 @@
 <?php echo $this->Html->script('http://code.highcharts.com/highcharts.js', array('inline' => false)); ?>
 <?php echo $this->Html->script('http://code.highcharts.com/modules/exporting.js', array('inline' => false)); ?>
-<?php //echo $this->Html->script('plugins/jquery.masonry.min', array('inline' => false));  ?>
 
-<div class="masonry products dashboard">
-    <div class="masonryBox dashboardBox span8 pull-left">
-        <h3 class="title">Stats</h3>
+<div class="products row-fluid">
+    <div class="span8 pull-left first">
         <ul class="nav nav-tabs" id="myTab">
             <li><a href="#today" data-toggle="tab">Today</a></li>
             <li><a href="#thisWeek" data-toggle="tab">This Week</a></li>
@@ -134,30 +132,35 @@
     </div>
     
     
+<<<<<<< HEAD
     <div class="masonryBox dashboardBox tagProducts span3 pull-left">
         <h3>Transactions</h3>
         <ul>
             <?php foreach ($transactionStatuses as $key => $status) { ?>
                 <li><?php echo $this->Html->link('List ' . $status, array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key, 'sort' => 'Transaction.created', 'direction' => 'desc')); ?></li>
+=======
+    <div class="tagProducts span3 pull-right last">
+        <ul class="nav nav-list">
+            <?php 
+            $counts['open'] = !empty($counts['open']) ? __('<span class="badge badge-inverse">%s</span>', $counts['open']) : '<span class="badge">0</span>';
+            $counts['shipped'] = !empty($counts['shipped']) ? __('<span class="badge badge-info">%s</span>', $counts['shipped']) : '<span class="badge">0</span>';
+            $counts['paid'] = !empty($counts['paid']) ? __('<span class="badge badge-success">%s</span>', $counts['paid']) : '<span class="badge">0</span>';
+            $counts['failed'] = !empty($counts['failed']) ? __('<span class="badge badge-important">%s</span>', $counts['failed']) : '<span class="badge">0</span>';
+            foreach (array_reverse($transactionStatuses) as $key => $status) { ?>
+                <li><?php echo $this->Html->link(__('%s %s Transactions', $counts[strtolower($status)], $status), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key), array('escape' => false)); ?></li>
+>>>>>>> 99378e3616ddbd793000f4b0f8a4ac1747b21e0e
             <?php } ?>
-        </ul>
-        <h5>Transaction Items</h5>
-        <p>List of items that are or have been part of a transaction.</p>
-        <ul>
-            <?php /* foreach ($itemStatuses as $key => $status) { ?>
-              <li><?php echo $this->Html->link($status . ' Items', array('plugin' => 'orders', 'controller' => 'order_items', 'action' => 'index', 'filter' => 'status:'.$key)); ?></li>
-              <?php } */ ?>
-            <li><?php echo $this->Html->link('List In Cart Items', array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open')); ?></li>
+            <li><?php echo $this->Html->link(__('%s In Cart Transactions', $counts['open']), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open'), array('escape' => false)); ?></li>
         </ul>
     </div>
 
 </div>
 
-<div class="products clear dashboardBox first pull-left row-fluid">
+<div class="products clear first pull-left row-fluid">
     <h3>Setup</h3>
     <div class="span3">
         <h5>Store</h5>
-        <ul>
+        <ul class="nav nav-list">
             <li><?php echo $this->Html->link('All Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index')); ?></li>
             <li><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></li>
             <?php //<li> echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add_virtual')); </li>?>
@@ -166,24 +169,24 @@
     </div>
     <div class="span3">
         <h5>Brands</h5>
-        <ul>
+        <ul class="nav nav-list">
             <li><?php echo $this->Html->link('List All Brands', array('plugin' => 'products', 'controller' => 'product_brands', 'action' => 'index')); ?></li>
             <li><?php echo $this->Html->link('Add a Brand', array('plugin' => 'products', 'controller' => 'product_brands', 'action' => 'add')); ?></li>
         </ul>
     </div>
     <div class="span3">
         <h5>Attributes</h5>
-        <ul>
+        <ul class="nav nav-list">
             <li><?php echo $this->Html->link('Product Variations', array('plugin' => 'products', 'controller' => 'products', 'action' => 'categories')); ?></li>
         </ul>
         <h5>Categories</h5>
-        <ul>
+        <ul class="nav nav-list">
             <li><?php echo $this->Html->link('List All Categories', array('plugin' => 'products', 'controller' => 'products', 'action' => 'categories')); ?></li>
         </ul>
     </div>
     <div class="span2">
         <h5>Settings</h5>
-        <ul>
+        <ul class="nav nav-list">
             <li><?php echo $this->Html->link('List All', array('plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Orders')); ?></li>
             <li><?php echo $this->Html->link('Tax Rates', array('plugin' => 'transactions', 'controller' => 'transaction_taxes', 'action' => 'index')); ?></li>
             <li><?php echo $this->Html->link('Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
