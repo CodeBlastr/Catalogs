@@ -132,13 +132,7 @@
     </div>
     
     
-<<<<<<< HEAD
-    <div class="masonryBox dashboardBox tagProducts span3 pull-left">
-        <h3>Transactions</h3>
-        <ul>
-            <?php foreach ($transactionStatuses as $key => $status) { ?>
-                <li><?php echo $this->Html->link('List ' . $status, array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key, 'sort' => 'Transaction.created', 'direction' => 'desc')); ?></li>
-=======
+
     <div class="tagProducts span3 pull-right last">
         <ul class="nav nav-list">
             <?php 
@@ -147,10 +141,10 @@
             $counts['paid'] = !empty($counts['paid']) ? __('<span class="badge badge-success">%s</span>', $counts['paid']) : '<span class="badge">0</span>';
             $counts['failed'] = !empty($counts['failed']) ? __('<span class="badge badge-important">%s</span>', $counts['failed']) : '<span class="badge">0</span>';
             foreach (array_reverse($transactionStatuses) as $key => $status) { ?>
-                <li><?php echo $this->Html->link(__('%s %s Transactions', $counts[strtolower($status)], $status), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key), array('escape' => false)); ?></li>
->>>>>>> 99378e3616ddbd793000f4b0f8a4ac1747b21e0e
+                <li><?php echo $this->Html->link(__('%s %s Transactions', $counts[strtolower($status)], $status), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key, 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
+
             <?php } ?>
-            <li><?php echo $this->Html->link(__('%s In Cart Transactions', $counts['open']), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open'), array('escape' => false)); ?></li>
+            <li><?php echo $this->Html->link(__('%s In Cart Transactions', $counts['open']), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open', 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
         </ul>
     </div>
 
