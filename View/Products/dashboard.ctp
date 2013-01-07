@@ -138,7 +138,7 @@
         <h3>Transactions</h3>
         <ul>
             <?php foreach ($transactionStatuses as $key => $status) { ?>
-                <li><?php echo $this->Html->link('List ' . $status, array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key)); ?></li>
+                <li><?php echo $this->Html->link('List ' . $status, array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key, 'sort' => 'Transaction.created', 'direction' => 'desc')); ?></li>
             <?php } ?>
         </ul>
         <h5>Transaction Items</h5>
