@@ -454,25 +454,28 @@ class Product extends ProductsAppModel {
     }
 
 /**
- * transactionItemAssociation callback
+ * origin_afterFind callback
  * 
- * Transaction Item Model allows the related model (this one) to add to the results
+ * A callback from related plugins which are only related by the abstract model/foreign_key in the db
  * 
  * @param array $results
  */
-    public function transactionItemAssociation($results = array()) {
-        $ids = Set::extract('/TransactionItem/foreign_key', $results);
-        $products = $this->_concatName($this->find('all', array('conditions' => array('Product.id' => $ids), 'contain' => array('Option'))));
-        $names = Set::combine($products, '{n}.Product.id', '{n}.Product.name');
-        $i = 0;
-        foreach ($results as $result) {
-            if ($names[$result['TransactionItem']['foreign_key']]) {
-                $results[$i]['TransactionItem']['name'] = $names[$result['TransactionItem']['foreign_key']];
-                $results[$i]['TransactionItem']['_associated']['name'] = $names[$result['TransactionItem']['foreign_key']];
-                $results[$i]['TransactionItem']['_associated']['viewLink'] = __('/products/products/view/%s', $result['TransactionItem']['foreign_key']);
-            }
-        }
-        return $results;
+    public function origin_afterFind(Model $Model, $results = array(), $primary = false) {
+    	if ($Model->name == 'TransactionItem') {
+	        $ids = Set::extract('/TransactionItem/foreign_key', $results);
+	        $products = $this->_concatName($this->find('all', array('conditions' => array('Product.id' => $ids), 'contain' => array('Option'))));
+	        $names = Set::combine($products, '{n}.Product.id', '{n}.Product.name');
+	        $i = 0;
+	        foreach ($results as $result) {
+	            if ($names[$result['TransactionItem']['foreign_key']]) {
+	                $results[$i]['TransactionItem']['name'] = $names[$result['TransactionItem']['foreign_key']];
+	                $results[$i]['TransactionItem']['_associated']['name'] = $names[$result['TransactionItem']['foreign_key']];
+	                $results[$i]['TransactionItem']['_associated']['viewLink'] = __('/products/products/view/%s', $result['TransactionItem']['foreign_key']);
+	            }
+				$i++;
+	        }
+	        return $results;
+    	}
     }
     
 /**
