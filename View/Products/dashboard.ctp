@@ -145,6 +145,7 @@
 
             <?php } ?>
             <li><?php echo $this->Html->link(__('%s In Cart Transactions', $counts['open']), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open', 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
+            <li><?php echo $this->Html->link(__('My Assigned Transactions'), array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'index', 'filter' => 'assignee_id:'.$this->Session->read('Auth.User.id'))); ?></li>
         </ul>
     </div>
 
