@@ -86,13 +86,15 @@ class ProductTestCase extends CakeTestCase {
 				'summary' => 'If you don\'t see this today, it will be gone tomorrow.',
 				'description' => '<p>Lorem ipsum dolor at tincidunt id, dapibus vitae sem. Pellentesque eget odio ut quam bibendum placerat eget consectetur sem.</p>',
 				'price' => '1400',
-				'!location' => 'Geneva',
-				'!bedrooms' => '3'
+				'Meta' => array(
+					'location' => 'Geneva',
+					'bedrooms' => '3'
+					)
 				)
 			);
         $this->Product->save($product);
         $result = $this->Product->findById($this->Product->id);
-        $this->assertEqual($result['Product']['!location'], $product['Product']['!location']);
+        $this->assertEqual($result['Product']['Meta']['location'], $product['Product']['Meta']['location']);
 	}
     
 /**
@@ -151,8 +153,10 @@ class ProductTestCase extends CakeTestCase {
 				'summary' => 'If you don\'t see this today, it will be gone tomorrow.',
 				'description' => '<p>Lorem ipsum dolor at tincidunt id, dapibus vitae sem. Pellentesque eget odio ut quam bibendum placerat eget consectetur sem.</p>',
 				'price' => '1400',
-				'!location' => 'Geneva',
-				'!bedrooms' => '3'
+				'Meta' => array(
+					'location' => 'Geneva',
+					'bedrooms' => '3'
+					)
 				)
 			);
 		$result = $this->Product->cleanItemPrice($price);
