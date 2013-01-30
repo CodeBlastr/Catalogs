@@ -130,6 +130,10 @@ class Product extends ProductsAppModel {
 	            );
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
+		if (in_array('Maps', CakePlugin::loaded())) {
+			// address field is in use in canopy, make sure it works there if changing the field name
+			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => '!location');
+		}
 
 		parent::__construct($id, $table, $ds); // this order is imortant
 		
