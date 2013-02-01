@@ -148,7 +148,8 @@ class ProductsController extends ProductsAppController {
                     'Gallery'
                     ),
                 'Gallery',
-                'Parent'
+                'Parent',
+				'Owner'
 				),
 			));
         !empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
