@@ -147,11 +147,11 @@ class Product extends ProductsAppModel {
  * @param type $options
  * @return boolean
  */
-    public function beforeSave($options) {
+    public function beforeSave($options = array()) {
         $this->Behaviors->attach('Galleries.Mediable'); // attaching the gallery behavior here, because the ProductParent was causing a problem making $Model->alias = 'ProductParent', in the behavior.
 		$this->data = $this->_newOptions($this->data);
         $this->data = $this->_cleanAddData($this->data);
-        return true;
+        return parent::beforeSave($options);
     }
     
 /**
