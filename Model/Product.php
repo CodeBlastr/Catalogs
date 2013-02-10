@@ -177,7 +177,7 @@ class Product extends ProductsAppModel {
  * @param int $primary
  * @return array
  */
-	public function afterFind($results, $primary) {
+	public function afterFind($results, $primary = false) {
 		// only play with prices if the find is not list type (which doesn't need prices)
 		if (!empty($this->filterPrice)) {
 			// this is for the find "all" type where the data format is $results[0]['Product']['id'];
