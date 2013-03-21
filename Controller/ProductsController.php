@@ -259,6 +259,17 @@ class ProductsController extends ProductsAppController {
         !empty($this->request->data['Parent']['id']) ?  $this->redirect(array($this->request->data['Parent']['id'])) : null; // redirect to parent
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
         $this->set('categories', $this->Product->Category->generateTreeList());
+
+		$selectedCategories =
+				$this->Product->Category->Categorized->find('all', array(
+					'conditions' => array(
+						'Categorized.model'=>$this->Product->alias,
+						'Categorized.foreign_key'=>$this->Product->id
+						),
+					'contain' => array('Category')
+					));
+		$this->set('selectedCategories',  Set::extract($categorized, '/Category/id'));
+
         $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.ProductsProductOption.option_id', '{n}.name'));
         $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('OR' => array(array('Option.parent_id' => ''), array('Option.parent_id' => null))))), $existingOptions));
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
