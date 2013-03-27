@@ -182,10 +182,11 @@
     <div class="span2">
         <h5>Settings</h5>
         <ul class="nav nav-list">
-            <li><?php echo $this->Html->link('List All', array('plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Orders')); ?></li>
-            <li><?php echo $this->Html->link('Tax Rates', array('plugin' => 'transactions', 'controller' => 'transaction_taxes', 'action' => 'index')); ?></li>
-            <li><?php echo $this->Html->link('Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
-            <li><?php echo $this->Html->link('Item Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:TRANSACTIONS_STATUS')); ?></li>
+            <li><?php echo $this->Html->link('List All', array('admin' => true, 'plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Transactions')); ?></li>
+            <li><?php echo $this->Html->link('Emails', array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'settings')); ?></li>
+            <li><?php echo $this->Html->link('Tax Rates', array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transaction_taxes', 'action' => 'index')); ?></li>
+            <li><?php echo $this->Html->link('Status Types', array('admin' => true, 'plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
+            <li><?php echo $this->Html->link('Item Status Types', array('admin' => true, 'plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:TRANSACTIONS_STATUS')); ?></li>
         </ul>
     </div>
 </div>
