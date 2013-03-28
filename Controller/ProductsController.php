@@ -230,7 +230,11 @@ class ProductsController extends ProductsAppController {
 		if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'));
-				$this->redirect(array('action' => 'view', $this->Product->id));
+				if ( isset($this->request->data['SaveAndContinue']) ) {
+					$this->redirect(array('action' => 'edit', $this->Product->id));
+				} else {
+					$this->redirect(array('action' => 'view', $this->Product->id));
+				}
             }
 		}
 		$this->Product->id = $id;

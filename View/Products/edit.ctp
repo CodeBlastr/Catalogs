@@ -145,7 +145,8 @@
         ?>
     </fieldset>
 	<?php } 
-    echo $this->Form->input('Save & Continue', array('label' => false, 'value' => 'Save & Continue', 'type' => 'submit', 'class' => 'btn pull-right'));
+    echo $this->Form->submit('Save & Continue', array('name' => 'SaveAndContinue', 'class' => 'btn pull-right'));
+	
     echo $this->Form->end('Save'); ?>
 </div>
 
