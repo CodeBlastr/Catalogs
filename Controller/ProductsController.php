@@ -272,7 +272,7 @@ class ProductsController extends ProductsAppController {
 						),
 					'contain' => array('Category')
 					));
-		$this->set('selectedCategories',  Set::extract($categorized, '/Category/id'));
+		$this->set('selectedCategories',  Set::extract($selectedCategories, '/Category/id'));
 
         $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.ProductsProductOption.option_id', '{n}.name'));
         $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('OR' => array(array('Option.parent_id' => ''), array('Option.parent_id' => null))))), $existingOptions));
