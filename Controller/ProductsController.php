@@ -162,6 +162,7 @@ class ProductsController extends ProductsAppController {
             }
         }
 		$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
+		$this->set('title_for_layout', $product['Product']['name']);
 		$this->set(compact('product', 'options'));
         return $product;
 	}
