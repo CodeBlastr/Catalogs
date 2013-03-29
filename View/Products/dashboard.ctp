@@ -141,11 +141,11 @@
             $counts['paid'] = !empty($counts['paid']) ? __('<span class="badge badge-success">%s</span>', $counts['paid']) : '<span class="badge">0</span>';
             $counts['failed'] = !empty($counts['failed']) ? __('<span class="badge badge-important">%s</span>', $counts['failed']) : '<span class="badge">0</span>';
             foreach (array_reverse($transactionStatuses) as $key => $status) { ?>
-                <li><?php echo $this->Html->link(__('%s %s Transactions', $counts[strtolower($status)], $status), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key, 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
+                <li><?php echo $this->Html->link(__('%s %s Transactions', $counts[strtolower($status)], $status), array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:' . $key, 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
 
             <?php } ?>
-            <li><?php echo $this->Html->link(__('%s In Cart Transactions', $counts['open']), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open', 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
-            <li><?php echo $this->Html->link(__('My Assigned Transactions'), array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'index', 'filter' => 'assignee_id:'.$this->Session->read('Auth.User.id'))); ?></li>
+            <li><?php echo $this->Html->link(__('%s In Cart Transactions', $counts['open']), array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'index', 'filter' => 'status:open', 'sort' => 'Transaction.created', 'direction' => 'desc'), array('escape' => false)); ?></li>
+            <li><?php echo $this->Html->link(__('My Assigned Transactions'), array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'index', 'filter' => 'assignee_id:'.$this->Session->read('Auth.User.id'))); ?></li>
         </ul>
     </div>
 
@@ -182,10 +182,11 @@
     <div class="span2">
         <h5>Settings</h5>
         <ul class="nav nav-list">
-            <li><?php echo $this->Html->link('List All', array('plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Orders')); ?></li>
-            <li><?php echo $this->Html->link('Tax Rates', array('plugin' => 'transactions', 'controller' => 'transaction_taxes', 'action' => 'index')); ?></li>
-            <li><?php echo $this->Html->link('Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
-            <li><?php echo $this->Html->link('Item Status Types', array('plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:TRANSACTIONS_STATUS')); ?></li>
+            <li><?php echo $this->Html->link('List All', array('admin' => true, 'plugin' => null, 'controller' => 'settings', 'action' => 'index', 'start' => 'type:Transactions')); ?></li>
+            <li><?php echo $this->Html->link('Emails', array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'settings')); ?></li>
+            <li><?php echo $this->Html->link('Tax Rates', array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transaction_taxes', 'action' => 'index')); ?></li>
+            <li><?php echo $this->Html->link('Status Types', array('admin' => true, 'plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'filter' => 'type:TRANSACTIONS_ITEM_STATUS')); ?></li>
+            <li><?php echo $this->Html->link('Item Status Types', array('admin' => true, 'plugin' => null, 'controller' => 'enumerations', 'action' => 'index', 'start' => 'type:TRANSACTIONS_STATUS')); ?></li>
         </ul>
     </div>
 </div>
