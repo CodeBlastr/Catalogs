@@ -215,14 +215,14 @@ $this->set('context_menu', array('menus' => array(
 	array(
 		'heading' => 'Products',
 		'items' => array(
-			$this->Html->link(__('List', true), array('controller' => 'products', 'action' => 'index')),
-			$this->Html->link(__('Add', true), array('controller' => 'products', 'action' => 'add')),
+			$this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
+			$this->Html->link(__('Add'), array('controller' => 'products', 'action' => 'add')),
 			)
 		),
  	array(
 		'heading' => 'Webpages',
 		'items' => array(
-			 $this->Html->link(__('List', true), array('action' => 'index')),
+			 $this->Html->link(__('List'), array('action' => 'index')),
 			 )
 		)
 	)));

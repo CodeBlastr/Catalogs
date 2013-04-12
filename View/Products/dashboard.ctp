@@ -211,7 +211,7 @@ $this->set('context_menu', array('menus' => array(
     array(
 		'heading' => 'Products',
 		'items' => array(
-			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard'), array('class' => 'active')),
+			$this->Html->link(__('Dashboard'), array('admin' => true, 'controller' => 'products', 'action' => 'dashboard'), array('class' => 'active')),
 			)
 		),
         array(

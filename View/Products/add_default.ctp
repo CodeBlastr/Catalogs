@@ -83,7 +83,7 @@ $this->set('context_menu', array('menus' => array(
 	array(
 		'heading' => 'Products',
 		'items' => array(
-			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard')),
+			$this->Html->link(__('Dashboard'), array('admin' => true, 'controller' => 'products', 'action' => 'dashboard')),
 			$this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
 			)
 		),

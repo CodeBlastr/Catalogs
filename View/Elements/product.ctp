@@ -1,5 +1,4 @@
 
-
 <div class="product view media row-fluid" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
 
     <div class="itemGallery productGallery pull-left media-object"> 
