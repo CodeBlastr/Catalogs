@@ -145,7 +145,7 @@ class ProductsController extends ProductsAppController {
 						),
 					),
 				'Children' => array(
-                    'Gallery'
+//                    'Gallery'
                     ),
                 'Gallery',
                 'Parent',
