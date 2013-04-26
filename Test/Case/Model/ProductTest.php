@@ -24,6 +24,7 @@ class ProductTestCase extends CakeTestCase {
         'plugin.Products.ProductBrand',
         'plugin.Products.ProductPrice',
         'plugin.Products.ProductStore',
+        'plugin.Products.ProductsProductOption',
         'plugin.Webpages.Webpage',
         'plugin.Users.User'
         );

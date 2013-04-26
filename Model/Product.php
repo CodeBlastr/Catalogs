@@ -430,6 +430,19 @@ class Product extends ProductsAppModel {
  * @return bool
  */
     public function deleteChildByOptionType($id, $optionId) {
+    	debug($this->Children->find('all', array(
+            'conditions' => array(
+                'Children.parent_id' => $id
+                ),
+            'contain' => array(
+                'Option' => array(
+                    'conditions' => array(
+                        'Option.parent_id' => $optionId
+                        )
+                    )
+                )
+            )));
+			break;
         $childIds = Set::extract('/Option/ProductsProductOption/product_id', Set::extract('/Option', $this->Children->find('all', array(
             'conditions' => array(
                 'Children.parent_id' => $id
