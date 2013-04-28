@@ -59,7 +59,8 @@ class ProductsController extends ProductsAppController {
 		$this->set('statsSalesAllTime', $Transaction->salesStats('allTime'));
 		$this->set('transactionStatuses', $Transaction->statuses());
 		$this->set('itemStatuses', $TransactionItem->statuses());
-		$this->set('page_title_for_layout', __('eCommerce Dashboard'));
+		$this->set('title_for_layout', __('Ecommerce Dashboard'));
+		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
         $this->layout = 'default';
 	}
 
