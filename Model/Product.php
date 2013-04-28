@@ -32,7 +32,8 @@ class Product extends ProductsAppModel {
 
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
-		'Metable'
+		'Metable',
+		'Transactions.Buyable'
         );
 
 	public $order = '';
