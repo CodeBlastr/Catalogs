@@ -205,6 +205,19 @@ class ProductsController extends ProductsAppController {
         $this->view = 'add_default';
         return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
     }
+    protected function _addArb($parentId = null) {
+    	if (!empty($this->request->data)) {
+			if ($this->Product->saveAll($this->request->data)) {
+				$this->Session->setFlash(__('Product saved.'));
+				$this->redirect(array('action' => 'edit', $this->Product->id));
+            } 
+		}
+		$this->set('page_title_for_layout', __('Create an ARB Product'));
+		$this->set('title_for_layout', __('Add Product Form'));
+        $this->layout = 'default';
+        $this->view = 'add_arb';
+        return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
+    }
     
     
     protected function _addDefaultChild($parentId) {
