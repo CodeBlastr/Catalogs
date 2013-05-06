@@ -33,7 +33,6 @@ class Product extends ProductsAppModel {
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
 		'Metable',
-		'Transactions.Buyable'
         );
 
 	public $order = '';
@@ -135,6 +134,9 @@ class Product extends ProductsAppModel {
 			// address field is in use in canopy, make sure it works there if changing the field name
 			/** @see MapableBehavior::beforeSave() **/
 			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => '!location');
+		}
+		if(in_array('Transactions', CakePlugin::loaded())) {
+			$this->actsAs[] = 'Transactions.Buyable';
 		}
 
 		parent::__construct($id, $table, $ds); // this order is imortant
