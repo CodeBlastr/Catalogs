@@ -297,6 +297,10 @@ class ProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
         $this->layout = 'default';
 	}
+
+public function editArb ($id = null, $child = null) {
+	return $this->edit($id, $child);
+}
     
 /**
  * 

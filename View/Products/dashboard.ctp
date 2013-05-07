@@ -157,9 +157,20 @@
         <h5>Store</h5>
         <ul class="nav nav-list">
             <li><?php echo $this->Html->link('All Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index')); ?></li>
-            <li><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></li>
-            <?php //<li> echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add_virtual')); </li>?>
+            <!-- <li><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></li> -->            <?php //<li> echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add_virtual')); </li>?>
             <li><?php echo $this->Html->link('Out Of Stock Products', array('plugin' => 'products', 'controller' => 'products', 'action' => 'index', 'filter' => 'stock:0')); ?></li>
+            <li>
+            	<div class="btn-group">
+            		<button class="btn btn-small"><?php echo $this->Html->link('Create a Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></button>
+            		<button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+            			<span class="caret"></span>
+            		</button>
+            		<ul class="dropdown-menu">
+            			<li><?php echo $this->Html->link('Create an ARB Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add', 'arb')); ?></li>
+            			<!-- <li><?php echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add', 'virtual')); ?></li> -->
+            		</ul>
+            	</div>
+            </li>
         </ul>
     </div>
     <div class="span3">
