@@ -90,18 +90,13 @@ class ProductsController extends ProductsAppController {
 	}
 
 /**
- * Named Parameter Joins
+ * Category method.
  *
- * Handles when there are named parameters to populate the variables for the view correctly.
- *
- * @access protected
  * @param void
  * @return void
  */
-	protected function _namedParameterJoins() {
-		// category id named
-		if (!empty($this->request->params['named']['category'])) {
-			$categoryId = $this->request->params['named']['category'];
+	public function category($categoryId = null) {
+		if (!empty($categoryId)) {
 			$this->paginate['joins'] = array(array(
 				'table' => 'categorized',
 				'alias' => 'Categorized',
@@ -112,12 +107,12 @@ class ProductsController extends ProductsAppController {
 					"Categorized.category_id = '{$categoryId}'",
 				),
 			));
-			$contain = $this->paginate['contain'][] = 'Category';
-			return $this->paginate;
-		} else {
-			return null;
-		}
+			$this->paginate['contain'][] = 'Category';
+		} 
+		$this->view = 'index';
+		return $this->index();
 	}
+
 
 /**
  * It is imperative that we document this function

@@ -1,6 +1,6 @@
 <?php
 // set the contextual sorting items
-$this->set('contextSort', array(
+$this->set('forms_sort', array(
     'type' => 'select',
     'sorter' => array(array(
             'heading' => '',
@@ -10,10 +10,6 @@ $this->set('contextSort', array(
             )
     )),
 ));
-
-echo $this->element('products');
-
-
 // set contextual search options
 $this->set('forms_search', array(
     'url' => '/products/products/index/', 
@@ -37,4 +33,6 @@ $this->set('context_menu', array('menus' => array(
                 $this->Html->link(__('Add'), array('controller' => 'products', 'action' => 'add')),
             )
         ),
-        ))); ?>
+        )));
+		
+echo $this->element('products'); ?>
