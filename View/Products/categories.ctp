@@ -37,3 +37,13 @@
         echo $this->Form->end('Submit'); ?>
     </div>
 </div>
+<?php
+// set the contextual menu items
+$this->set('context_menu', array('menus' => array(
+    array(
+		'heading' => 'Products',
+		'items' => array(
+			$this->Html->link(__('Dashboard'), array('admin' => true, 'controller' => 'products', 'action' => 'dashboard')),
+			)
+		),
+	))); ?>
