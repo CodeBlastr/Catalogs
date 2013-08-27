@@ -81,12 +81,13 @@ class ProductsController extends ProductsAppController {
         $this->paginate['contain'][] = 'Option';
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		//$this->paginate['fields'] = array('id', 'name', 'summary', 'price', 'is_buyable'); // removed for cnpynatn products index
-
-		$this->set('products', $this->paginate());
+        
+		$this->set('products', $products = $this->paginate());
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', 'summary'); 
 		$this->set('showGallery', true);
 		$this->set('galleryForeignKey', 'id');
+		return $products;
 	}
 
 /**
@@ -97,18 +98,45 @@ class ProductsController extends ProductsAppController {
  */
 	public function category($categoryId = null) {
 		if (!empty($categoryId)) {
-			$this->paginate['joins'] = array(array(
-				'table' => 'categorized',
-				'alias' => 'Categorized',
-				'type' => 'INNER',
-				'conditions' => array(
+			$this->paginate['joins'] = array(
+			    array(
+				 'table' => 'categorized',
+				 'alias' => 'Categorized',
+				 'type' => 'INNER',
+				 'conditions' => array(
 					"Categorized.foreign_key = Product.id",
 					"Categorized.model = 'Product'",
 					"Categorized.category_id = '{$categoryId}'",
-				),
-			));
+				)),
+				array(
+				 'table' => 'galleries',
+				 'alias' => 'Gallery',
+				 'type' => 'LEFT',
+				 'conditions' => array(
+					'Gallery.model = "Product"',
+					'Gallery.foreign_key = Product.id' 
+				)),
+				array(
+				 'table' => 'gallery_images',
+				 'alias' => 'GalleryImage',
+				 'type' => 'LEFT',
+				 'conditions' => array(
+					'GalleryImage.id = Gallery.gallery_thumb_id'
+				)),
+				array(
+				 'table' => 'metas',
+				 'alias' => 'meta',
+				 'type' => 'LEFT',
+				 'conditions' => array(
+					'meta.model = "Product"',
+					'meta.foreign_key = "Product.id"'
+				)),
+			);
+			
+			$this->paginate['fields'] = array('Product.*, Gallery.*, Meta.*,GalleryImage.filename');
 			$this->paginate['contain'][] = 'Category';
-		} 
+		}
+		
 		$this->view = 'index';
 		return $this->index();
 	}
@@ -166,6 +194,10 @@ class ProductsController extends ProductsAppController {
     protected function _viewChild($parentId) {
         
     }
+	
+	public function view_property($id = null) {
+		return $this->view($id);
+	}       
 
 
 /**
@@ -186,7 +218,6 @@ class ProductsController extends ProductsAppController {
         return $this->$function($parentId);
 	}
     
-    
     protected function _addDefault($parentId = null) {
     	if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
@@ -200,6 +231,7 @@ class ProductsController extends ProductsAppController {
         $this->view = 'add_default';
         return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
     }
+	
     protected function _addArb($parentId = null) {
     	if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
@@ -222,6 +254,23 @@ class ProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Add Product Variant Form'));
         $this->layout = false; // required for modal to work (but causes the standard view page not to)
         $this->view = 'add_default_child';
+    }
+
+/**
+ * Add an unbuyable property
+ * 
+ */
+    protected function _addProperty() {
+    	if (!empty($this->request->data)) {
+			if ($this->Product->saveAll($this->request->data)) {
+				$this->Session->setFlash(__('Property saved.'));
+				$this->redirect(array('action' => 'edit', $this->Product->id));
+            } 
+		}
+		$this->set('page_title_for_layout', __('Create a Property'));
+		$this->set('title_for_layout', __('Add Property Form'));
+        $this->layout = 'default';
+        $this->view = 'add_property';
     }
 
     
@@ -293,9 +342,18 @@ class ProductsController extends ProductsAppController {
         $this->layout = 'default';
 	}
 
-public function editArb ($id = null, $child = null) {
-	return $this->edit($id, $child);
-}
+
+	public function editArb ($id = null, $child = null) {
+		return $this->edit($id, $child);
+	}
+	
+/**
+ * Edit products of the property type
+ */
+	public function edit_property($id) {
+		$this->view = 'edit_property';
+		return $this->edit($id);
+	}
     
 /**
  * 
@@ -494,7 +552,8 @@ public function editArb ($id = null, $child = null) {
         $this->set('parentCategories', Set::combine($categories, '{n}.Category.id', '{n}.Category.name'));
         $this->set('parentOptions', Set::combine($options, '{n}.Option.id', '{n}.Option.name'));
         $this->set(compact('categories', 'options'));
-        $this->set('page_title_for_layout', __('Categories & Options'));
+        $this->set('page_title_for_layout', __('Product Categories & Options'));
+		$this->layout = 'default';
     }
 
 /**

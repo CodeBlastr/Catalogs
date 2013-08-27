@@ -24,7 +24,7 @@
     	<?php
 		echo $this->Form->input('Product.name', array('label' => 'Display Name'));
         echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999')); 
-        echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
+        echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Primary Image  <br /><small><em>You can add additional images after you save.</em></small>'));
 		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
     </fieldset>
 
@@ -64,7 +64,7 @@
 
 	<fieldset>
  		<legend class="toggleClick"><?php echo __('Does this product belong to a category?');?></legend>
-			<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)')); ?>
+			<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => __('Which categories? (%s)', $this->Html->link('edit categories', array('admin' => 1, 'plugin' => 'products', 'controller' => 'products', 'action' => 'categories'))))); ?>
 	</fieldset>
 	
 	<?php if(!empty($paymentOptions)) { ?>

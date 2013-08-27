@@ -187,7 +187,7 @@
         </ul>
         <h5>Categories</h5>
         <ul class="nav nav-list">
-            <li><?php echo $this->Html->link('List All Categories', array('plugin' => 'products', 'controller' => 'products', 'action' => 'categories')); ?></li>
+            <li><?php echo $this->Html->link('Product Categories', array('plugin' => 'products', 'controller' => 'products', 'action' => 'categories')); ?></li>
         </ul>
     </div>
     <div class="span2">
