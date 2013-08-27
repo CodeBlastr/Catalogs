@@ -167,7 +167,6 @@ class ProductsController extends ProductsAppController {
         
     }
 
-
 /**
  * Add method
  * * 
