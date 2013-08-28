@@ -125,20 +125,32 @@ class ProductsController extends ProductsAppController {
 				)),
 				array(
 				 'table' => 'metas',
-				 'alias' => 'meta',
+				 'alias' => 'Metas',
 				 'type' => 'LEFT',
 				 'conditions' => array(
-					'meta.model = "Product"',
-					'meta.foreign_key = "Product.id"'
+					'Metas.model = "Product"',
+					'Metas.foreign_key = "Product.id"'
 				)),
 			);
 			
-			$this->paginate['fields'] = array('Product.*, Gallery.*, Meta.*,GalleryImage.filename');
+			$this->paginate['fields'] = array('Product.*, Gallery.*, Metas.*,GalleryImage.filename');
 			$this->paginate['contain'][] = 'Category';
 		}
 		
 		$this->view = 'index';
 		return $this->index();
+	}
+
+/**
+ * 
+ * @param string $parentId
+ * @return array
+ */
+	public function categoryList($parentId = '') {
+		return $this->Product->Category->find('all', array(
+			'conditions' => array('Category.parent_id' => $parentId),
+			'fields' => array('Category.id', 'Category.name')
+		));
 	}
 
 
