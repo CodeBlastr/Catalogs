@@ -5,6 +5,12 @@ class ProductsSchema extends CakeSchema {
 
 	public function __construct($options = array()) {
 		parent::__construct();
+		
+		// wouldn't be needed in cakephp 2.4 (below 2.4 doesn't support fulltext indexes)
+		$caller = explode(PHP_EOL, Debugger::trace());
+		if (strpos($caller[2], '_loadSchema')) {
+			unset($this->tables['products']['indexes']['SEARCH_TAGS']);
+		}
 	}
 
 	public function before($event = array()) {
