@@ -108,7 +108,7 @@ class ProductsController extends ProductsAppController {
 				),
 			));
 			$this->paginate['contain'][] = 'Category';
-		} 
+		}
 		$this->view = 'index';
 		return $this->index();
 	}
@@ -477,7 +477,7 @@ class ProductsController extends ProductsAppController {
 	}
     
     
-    public function categories() {
+    public function categories($parentId = null) {
         if (!empty($this->request->data['Option'])) {
             if ($this->Product->Option->save($this->request->data)) {
                 $this->Session->setFlash(__('Option saved'));
@@ -488,7 +488,10 @@ class ProductsController extends ProductsAppController {
                 $this->Session->setFlash(__('Category saved'));
             }
         }
-        $categories = $this->Product->Category->find('threaded');
+		
+    	
+		$condtions = !empty($parentId) ? array('conditions' => array('Category.parent_id' => $parentId)) : null;
+        $categories = $this->Product->Category->find('threaded', $conditions);
         $options = $this->Product->Option->find('threaded');
         
         $this->set('parentCategories', Set::combine($categories, '{n}.Category.id', '{n}.Category.name'));
@@ -496,6 +499,7 @@ class ProductsController extends ProductsAppController {
         $this->set(compact('categories', 'options'));
         $this->set('page_title_for_layout', __('Product Categories & Options'));
 		$this->layout = 'default';
+		return $categories; // used in element Categories/categories
     }
 
 /**
