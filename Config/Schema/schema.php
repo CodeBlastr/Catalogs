@@ -17,6 +17,12 @@ class ProductsSchema extends CakeSchema {
 	public function after($event = array()) {
 		$this->UpdateSchema->rename($event, $this->renames);
 		$this->UpdateSchema->after($event);
+		
+		// wouldn't be needed in cakephp 2.4 (below 2.4 doesn't support fulltext indexes)
+		if (isset($event['create']) && $event['create'] == 'products') {
+		    $Product = ClassRegistry::init('Product');
+	        $Product->query("ALTER TABLE `products` ADD FULLTEXT `SEARCH_TAGS` ( `search_tags` )");
+		}
 	}
 
 	public $product_brands = array(
@@ -115,7 +121,7 @@ class ProductsSchema extends CakeSchema {
 		'search_tags' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'search_tags' => array('column' => 'search_tags', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'SEARCH_TAGS' => array('column' => 'search_tags', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	public $products_product_options = array(

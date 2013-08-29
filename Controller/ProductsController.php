@@ -86,6 +86,7 @@ class ProductsController extends ProductsAppController {
 		$this->set('displayDescription', 'summary'); 
 		$this->set('showGallery', true);
 		$this->set('galleryForeignKey', 'id');
+		
 		return $products;
 	}
 
@@ -95,7 +96,7 @@ class ProductsController extends ProductsAppController {
  * @param void
  * @return void
  */
-	public function category($categoryId = null) {
+	public function category($categoryId = null) {break;
 		if (!empty($categoryId)) {
 			$this->paginate['joins'] = array(array(
 				'table' => 'categorized',

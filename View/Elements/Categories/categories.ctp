@@ -1,5 +1,5 @@
 <?php
-$categories = $this->requestAction('/products/products/categoryList/'.$parentId);
+$categories = $this->requestAction('/products/products/categories/'.$parentId);
 if ( !empty($categories) ) {
 echo '<ul class="unstyled">';
 	foreach ( $categories as $category ) {
