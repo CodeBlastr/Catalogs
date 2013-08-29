@@ -112,9 +112,10 @@ class ProductsSchema extends CakeSchema {
 		'modifier_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'started' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'ended' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'search_tags' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'search_tags' => array('column' => 'search_tags', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	public $products_product_options = array(
