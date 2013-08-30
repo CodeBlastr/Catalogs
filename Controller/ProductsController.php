@@ -96,7 +96,7 @@ class ProductsController extends ProductsAppController {
  * @param void
  * @return void
  */
-	public function category($categoryId = null) {break;
+	public function category($categoryId = null) {
 		if (!empty($categoryId)) {
 			$this->paginate['joins'] = array(array(
 				'table' => 'categorized',
@@ -491,7 +491,7 @@ class ProductsController extends ProductsAppController {
         }
 		
     	
-		$condtions = !empty($parentId) ? array('conditions' => array('Category.parent_id' => $parentId)) : null;
+		$conditions = !empty($parentId) ? array('conditions' => array('Category.parent_id' => $parentId)) : null;
         $categories = $this->Product->Category->find('threaded', $conditions);
         $options = $this->Product->Option->find('threaded');
         
