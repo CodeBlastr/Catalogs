@@ -70,7 +70,8 @@ class ProductsController extends ProductsAppController {
  * @param void
  * @return void
  */
-	public function index() {
+	public function index($type = null) {
+
 		// setup paginate
 //		$this->paginate['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $this->userRoleId;
 //		$this->paginate['conditions']['OR'] = array(
@@ -78,9 +79,21 @@ class ProductsController extends ProductsAppController {
 //			array('Product.ended' => null),
 //			array('Product.ended' => '0000-00-00 00:00:00')
 //		);
+
+		if ($type !== null) {
+			switch ($type) {
+				case ('auction') :
+					// filter to only "auction" items 
+					$this->paginate['conditions'][] = array('Product.started <' => date('Y-m-d H:i:s'));
+					$this->paginate['conditions'][] = array('Product.ended >' => date('Y-m-d H:i:s'));
+					$this->view = 'auction_index';
+					break;
+			}
+		}
+		
         $this->paginate['contain'][] = 'Option';
 		$this->paginate['conditions']['Product.parent_id'] = null;
-		
+
 		$this->set('products', $products = $this->paginate());
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', 'summary'); 
@@ -222,6 +235,20 @@ class ProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Add Product Variant Form'));
         $this->layout = false; // required for modal to work (but causes the standard view page not to)
         $this->view = 'add_default_child';
+    }
+    
+    protected function _addAuction($parentId = null) {
+    	if (!empty($this->request->data)) {
+    		if ($this->Product->saveAll($this->request->data)) {
+    			$this->Session->setFlash(__('Product saved.'));
+    			$this->redirect(array('action' => 'edit', $this->Product->id));
+    		}
+    	}
+    	$this->set('page_title_for_layout', __('Create an Product for Auction'));
+    	$this->set('title_for_layout', __('Add Product Form'));
+    	$this->layout = 'default';
+    	$this->view = 'add_auction';
+    	return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
     }
 
     

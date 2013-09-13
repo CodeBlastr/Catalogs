@@ -167,6 +167,7 @@
             		</button>
             		<ul class="dropdown-menu">
             			<li><?php echo $this->Html->link('Create an ARB Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add', 'arb')); ?></li>
+            			<li><?php echo $this->Html->link('Create an Auctioned Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add', 'auction')); ?></li>
             			<!-- <li><?php echo $this->Html->link('Create a Virtual Product', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add', 'virtual')); ?></li> -->
             		</ul>
             	</div>
