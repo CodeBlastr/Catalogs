@@ -179,12 +179,60 @@ class ProductsController extends ProductsAppController {
     
     protected function _viewChild($parentId) {
         
-    }    
+    }
+    
+    public function viewAuction ($id = null, $child = null) {
+    	$this->view = 'view_auction';
+
+    	$this->Product->id = $id;
+    	if (!$this->Product->exists()) {
+    		throw new NotFoundException(__('Invalid product'));
+    	}
+    	
+    	$product = $this->Product->find('first' , array(
+    			'conditions' => array(
+    					'Product.id' => $id
+    			),
+    			'contain' => array(
+    					'ProductBid',
+    					'ProductBrand' => array(
+    							'fields' => array('name', 'id')
+    					),
+    					'ProductPrice' => array(
+    							'conditions' => array(
+    									'ProductPrice.user_role_id' => $this->userRoleId
+    							)
+    					),
+    					'Children',
+    					'Gallery',
+    					'Parent',
+    					'Owner'
+    			)
+    	));
+    	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
+    	
+    	// sort bids by highest -> lowest amount
+    	usort($product['ProductBid'], function($a, $b) {
+    		return $a['amount'] < $b['amount'];
+    	});
+    	
+    	$productsOptions = $this->Product->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => Set::extract('/id', $product['Children'])), 'contain' => 'Option', 'order' => array('Option.parent_id', 'Option.name')));
+    	$options = array();
+    	if (!empty($productsOptions)) {
+    		foreach ($productsOptions as $productsOption) {
+    			$options[$productsOption['ProductsOption']['product_id']][$productsOption['Option']['id']] = $productsOption['Option']['name'];
+    		}
+    	}
+    	$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
+    	$this->set('title_for_layout', $product['Product']['name']);
+    	$this->set(compact('product', 'options'));
+    	
+    }
 
 /**
  * Add method
  * * 
- * @param string $type [empty = default, arb, virtual, virtual_arb]
+ * @param string $type [empty = default, arb, virtual, virtual_arb, auction]
  * @param string $parentId
  */
 	public function add($type = 'default', $parentId = null) {
@@ -374,11 +422,11 @@ class ProductsController extends ProductsAppController {
 					)
 				));
 
-			foreach($data['Category'] as $k => $val ){
+			foreach ($data['Category'] as $k => $val ){
 				$data['Category'][$k] = $data['Category'][$k]['id'];
 			}
 			// setting values to parent values
-			foreach($this->request->data['Product'] as $fieldName => $fieldValue) {
+			foreach ($this->request->data['Product'] as $fieldName => $fieldValue) {
 				if(!empty($fieldValue)) {
 					$data['Product'][$fieldName] = $fieldValue ;
 				}
@@ -450,11 +498,11 @@ class ProductsController extends ProductsAppController {
  * @todo I'm relatively sure we need to get rid of this crap
  */
 	public function get_stock() {
-		if(!empty($this->request->data)) {
+		if (!empty($this->request->data)) {
 			$count_options = 0 ;
 			$category_ids = array();
-			foreach($this->request->data['CategoryOption'] as $k => $val) {
-				if(is_array($val)) {
+			foreach ($this->request->data['CategoryOption'] as $k => $val) {
+				if (is_array($val)) {
 					$count_options += count($val);
 					$category_ids = array_merge($category_ids, $val);
 				} else if (!empty($val)) {
@@ -464,12 +512,13 @@ class ProductsController extends ProductsAppController {
 			}
 			App::Import('Model', 'CategorizedOption');
 			$category = new CategorizedOption();
-			$productStores = $category->find('all', array('fields' => array('count(*), foreign_key'),
-						'conditions'=> array('category_option_id' => $category_ids),
-						'group' => "foreign_key having count(*) ={$count_options}",
-												));
+			$productStores = $category->find('all', array(
+					'fields' => array('count(*), foreign_key'),
+					'conditions'=> array('category_option_id' => $category_ids),
+					'group' => "foreign_key having count(*) ={$count_options}"
+					));
 			$id = array();
-			foreach($productStores as $k => $val) {
+			foreach ($productStores as $k => $val) {
 					$id[$k] = $val['CategorizedOption']['foreign_key'];
 			}
 			$products = $this->Product->find('all', array('conditions' => array(
@@ -517,7 +566,6 @@ class ProductsController extends ProductsAppController {
             }
         }
 		
-    	
 		$conditions = !empty($parentId) ? array('conditions' => array('Category.parent_id' => $parentId)) : null;
         $categories = $this->Product->Category->find('threaded', $conditions);
         $options = $this->Product->Option->find('threaded');
@@ -551,9 +599,7 @@ class ProductsController extends ProductsAppController {
 		$products = $this->Product->find('all', array(
 			'limit' => $count,
             'conditions' => $conditions,
-			'order' => array(
-				'RAND()',
-				),
+			'order' => array('RAND()')
 			));
 		if (!empty($products) && isset($this->request->params['requested'])) {
         	return $products;
@@ -572,7 +618,7 @@ class ProductsController extends ProductsAppController {
 		$options['conditions'] = array('Product.parent_id' => null);
 		$options['contain'] = array('ProductBrand', 'Gallery' => array('GalleryImage'));
 		$dealItem = $this->Product->find('first', $options);
-		if(empty($dealItem)) {
+		if (empty($dealItem)) {
 			$this->Session->setFlash(__('No Item Is Live', true));
 		} else {
 			return $dealItem;
@@ -610,22 +656,23 @@ class ProductsController extends ProductsAppController {
 		}
 
 		// all CI with options as clicked radio buttons and foreign key
-		$fkey_list = $CO->find('list', array('fields' => array('foreign_key'),
-							'conditions'=> $conditions,
-							//'conditions'=> array(
-							//	'OR' => array('category_option_id' => $category_options),
-							//					'CategorizedOption.foreign_key' => $children),
-						));
+		$fkey_list = $CO->find('list', array(
+				'fields' => array('foreign_key'),
+				'conditions'=> $conditions,
+				//'conditions'=> array(
+				//	'OR' => array('category_option_id' => $category_options),
+				//	'CategorizedOption.foreign_key' => $children),
+				));
 
 		$co_ids = array();
 
-
 		if (count($fkey_list) > 0) {
-		// only do when there is a children of CI
-		// categirt option ids to be shown activated
-		 $co_ids = $CO->find('list', array('fields' => array('category_option_id'),
-		 					'conditions'=> array('foreign_key' => $fkey_list)
-		 	 ));
+			// only do when there is a children of CI
+			// categirt option ids to be shown activated
+			 $co_ids = $CO->find('list', array(
+			 		'fields' => array('category_option_id'),
+			 		'conditions'=> array('foreign_key' => $fkey_list)
+			 	 ));
 		}
 
 		//unique categorized options
@@ -634,15 +681,18 @@ class ProductsController extends ProductsAppController {
 		if ($category_options) {
 
 			// data of CI with options as selected radio buttons
-			$fk_list = $CO->find('list', array('fields' => array('foreign_key'),
-								'conditions'=> array('category_option_id' => $category_options,
-													'CategorizedOption.foreign_key' => $children),
-								'group' => "foreign_key having count(*) =".count($category_options),
-							));
+			$fk_list = $CO->find('list', array(
+					'fields' => array('foreign_key'),
+					'conditions'=> array(
+							'category_option_id' => $category_options,
+							'CategorizedOption.foreign_key' => $children
+					),
+					'group' => "foreign_key having count(*) =".count($category_options)
+				));
 			if (count($fk_list) == 1) {
-				foreach($fk_list as $fk) {
+				foreach ($fk_list as $fk) {
 					$data['Product']['id'] = $fk;
-					if(is_array($ci[$fk])) {
+					if (is_array($ci[$fk])) {
 						foreach($ci[$fk] as $price => $stock){
 							$data['Product']['stock'] = $stock;
 							$data['Product']['price'] = $price;
