@@ -56,6 +56,11 @@ class Product extends ProductsAppModel {
 			'foreignKey' => 'parent_id',
 			'dependent' => true,
             ),
+		'ProductBid' => array(
+			'className' => 'Products.ProductBid',
+			'foreignKey' => 'product_id',
+			'dependent' => false
+			)
         );
         
     public $hasAndBelongsToMany = array(
