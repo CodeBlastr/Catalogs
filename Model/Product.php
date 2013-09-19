@@ -411,7 +411,8 @@ class Product extends ProductsAppModel {
     		'shipping_charge',
     		'payment_type',
     		'arb_settings',
-    		'is_virtual'
+    		'is_virtual',
+    		'price'
 	        );
 	    
 	    foreach($itemData['Product'] as $k => $v) {
