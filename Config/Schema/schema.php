@@ -1,36 +1,22 @@
 <?php 
 class ProductsSchema extends CakeSchema {
 
-	public $renames = array();
-
-	public function __construct($options = array()) {
-		parent::__construct();
-		
-		// wouldn't be needed in cakephp 2.4 (below 2.4 doesn't support fulltext indexes)
-		$caller = explode(PHP_EOL, Debugger::trace());
-		if (strpos($caller[2], '_loadSchema')) {
-			unset($this->tables['products']['indexes']['SEARCH_TAGS']);
-		}
-	}
-
 	public function before($event = array()) {
-		App::uses('UpdateSchema', 'Model'); 
-		$this->UpdateSchema = new UpdateSchema;
-		$before = $this->UpdateSchema->before($event);
-		return $before;
+		return true;
 	}
 
 	public function after($event = array()) {
-		$this->UpdateSchema->rename($event, $this->renames);
-		$this->UpdateSchema->after($event);
-		
-		// wouldn't be needed in cakephp 2.4 (below 2.4 doesn't support fulltext indexes)
-		if (isset($event['create']) && $event['create'] == 'products') {
-		    $Product = ClassRegistry::init('Product');
-	        $Product->query("ALTER TABLE `products` ADD FULLTEXT `SEARCH_TAGS` ( `search_tags` )");
-		}
 	}
 
+	public $product_bids = array(
+		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'product_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'amount' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 11, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
 	public $product_brands = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -124,10 +110,10 @@ class ProductsSchema extends CakeSchema {
 		'modifier_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'started' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'ended' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'search_tags' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'search_tags' => array('type' => 'text', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'SEARCH_TAGS' => array('column' => 'search_tags', 'unique' => 0, 'length' => 255)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'SEARCH_TAGS' => array('column' => 'search_tags', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	public $products_product_options = array(
