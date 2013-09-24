@@ -3,16 +3,6 @@ class ProductsSchema extends CakeSchema {
 
 	public $renames = array();
 
-	public function __construct($options = array()) {
-		parent::__construct();
-		
-		// wouldn't be needed in cakephp 2.4 (below 2.4 doesn't support fulltext indexes)
-		$caller = explode(PHP_EOL, Debugger::trace());
-		if (strpos($caller[2], '_loadSchema')) {
-			unset($this->tables['products']['indexes']['SEARCH_TAGS']);
-		}
-	}
-
 	public function before($event = array()) {
 		App::uses('UpdateSchema', 'Model'); 
 		$this->UpdateSchema = new UpdateSchema;
@@ -86,50 +76,50 @@ class ProductsSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
-	public $products = array(
-		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'parent_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'sku' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'summary' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'video_url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 128, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'is_public' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
-		'product_brand_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'store_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'stock' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-		'cart_min' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cart_max' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cost' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'price' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'weight' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'height' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'width' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'length' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'shipping_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'shipping_charge' => array('type' => 'float', 'null' => true, 'default' => NULL),
-		'payment_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'arb_settings' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'is_virtual' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
-		'is_buyable' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
-		'hours_expire' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'comment' => 'Used to denote how long a product should be available after purchase.'),
-		'order' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 2),
-		'model' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 155, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'foreign_key' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'owner_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'children' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'comment' => 'counter cache'),
-		'creator_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'modifier_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'started' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'ended' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'search_tags' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'SEARCH_TAGS' => array('column' => 'search_tags', 'unique' => 0, 'length' => 255)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
-	);
+	public $products = array( 
+          'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'parent_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL), 
+          'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL), 
+          'sku' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'summary' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'video_url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 128, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'is_public' => array('type' => 'boolean', 'null' => true, 'default' => NULL), 
+          'product_brand_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'store_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'stock' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10), 
+          'cart_min' => array('type' => 'integer', 'null' => true, 'default' => NULL), 
+          'cart_max' => array('type' => 'integer', 'null' => true, 'default' => NULL), 
+          'cost' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'price' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'weight' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'height' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'width' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'length' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'shipping_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'shipping_charge' => array('type' => 'float', 'null' => true, 'default' => NULL), 
+          'payment_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'arb_settings' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'is_virtual' => array('type' => 'boolean', 'null' => true, 'default' => NULL), 
+          'is_buyable' => array('type' => 'boolean', 'null' => true, 'default' => NULL), 
+          'hours_expire' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'comment' => 'Used to denote how long a product should be available after purchase.'), 
+          'order' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 2), 
+          'model' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 155, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'foreign_key' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'owner_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'children' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'comment' => 'counter cache'), 
+          'creator_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'modifier_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'started' => array('type' => 'datetime', 'null' => true, 'default' => NULL), 
+          'ended' => array('type' => 'datetime', 'null' => true, 'default' => NULL), 
+          'search_tags' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
+          'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL), 
+          'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL), 
+          'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)), 
+          'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM') 
+     );
 	public $products_product_options = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'option_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),

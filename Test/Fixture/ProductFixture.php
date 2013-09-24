@@ -4,6 +4,13 @@
  *
  */
 class ProductFixture extends CakeTestFixture {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'Product';
 	
 /**
  * Import
@@ -17,5 +24,15 @@ class ProductFixture extends CakeTestFixture {
  *
  * @var array
  */
-	public $records = array();
+	
+/**
+ * Records
+ *
+ * @var array
+ */
+	public $records = array(
+		array(
+			'id' => '5077241d-9040-43c9-85b1-22d40000000',
+		),
+	);
 }
