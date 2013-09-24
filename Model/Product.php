@@ -124,7 +124,7 @@ class Product extends ProductsAppModel {
 	    //        );
 		//}
 		
-		if (in_array('Categories', CakePlugin::loaded())) {
+		if (CakePlugin::loaded('Categories')) {
 			$this->hasAndBelongsToMany['Category'] = array(
 	            'className' => 'Categories.Category',
 	       		'joinTable' => 'categorized',
@@ -135,12 +135,12 @@ class Product extends ProductsAppModel {
 	            );
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
-		if (in_array('Maps', CakePlugin::loaded())) {
+		if (CakePlugin::loaded('Maps')) {
 			// address field is in use in canopy, make sure it works there if changing the field name
 			/** @see MapableBehavior::beforeSave() **/
 			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => '!location');
 		}
-		if(in_array('Transactions', CakePlugin::loaded())) {
+		if(CakePlugin::loaded('Transactions')) {
 			$this->actsAs[] = 'Transactions.Buyable';
 		}
 

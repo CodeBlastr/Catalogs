@@ -76,12 +76,43 @@ class PurchasableBehavior extends ModelBehavior {
 			for ($i = 0; $i < count($results); $i++) {
 				$product = Set::extract('/Product[foreign_key='.$results[$i][$Model->alias]['id'].']', $products);
 				if (!empty($product)) {
-					$results[$i]['Product'] = $product[0]['Product']; // there's only one possible because of the foreign_key = 
+					$results[$i]['Product'] = $product[0]['Product']; // there's only one possible because of the foreign_key
+					$results[$i] = $this->isPurchased($Model, $results[$i]);
 				}
 			}
 		}
 		return $results;
 	}
 	
+/**
+ * Is purchased method
+ * 
+ * Checks to see if a given product has been paid for and is set to the status "paid" (eg. unused)
+ * (used should be the status if it exists but is not usable anymore)
+ * 
+ * @param array $data
+ */
+ 	public function isPurchased(Model $Model, $data = array()) {
+		if(CakePlugin::loaded('Transactions')) {
+			$userId = CakeSession::read('Auth.User.id');
+			if (!empty($userId)) {
+				App::uses('TransactionItem', 'Transactions.Model');
+				$TransactionItem = new TransactionItem;
+				$transactionItems = $TransactionItem->find('all', array(
+					'conditions' => array(
+						'TransactionItem.customer_id' => $userId,
+						'TransactionItem.model' => $Model->alias,
+						'TransactionItem.foreign_key' => $data[$Model->alias]['id'],
+						'TransactionItem.status' => 'paid'
+						)
+					));
+				if (!empty($transactionItems)) {
+					$transactionItems = ZuhaSet::manyize($transactionItems);
+					$data['TransactionItem'] = $transactionItems['TransactionItem'];
+				}
+			}
+		}
+		return $data;
+ 	}
 	
 }

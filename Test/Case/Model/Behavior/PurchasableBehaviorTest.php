@@ -33,6 +33,23 @@ if (!class_exists('ProductArticle')) {
 }
 
 
+if (!class_exists('MockSession')) {
+	class MockSession {
+	/**
+	 * read
+	 */
+		public function read() {
+			return array('Auth' => array(
+				'User' => array(
+					'id' => 68,
+					'username' => 'donovan',
+				)
+			));
+		}
+	}
+}
+
+
 /**
  * BuyableBehavior Test Case
  *
@@ -65,6 +82,11 @@ class BuyableBehaviorTestCase extends CakeTestCase {
 		$this->Article = Classregistry::init('Products.ProductArticle');
 		$this->Product = Classregistry::init('Products.Product');
 		$this->TransactionItem = Classregistry::init('Transactions.TransactionItem');
+		
+		if (!class_exists('CakeSession')) {
+			App::uses('CakeSession', 'Model/Datasource');
+			CakeSession::write(MockSession::read());
+		} 
 	}
 
 /**
@@ -109,30 +131,27 @@ class BuyableBehaviorTestCase extends CakeTestCase {
 				'model' => 'Article',
 				'foreign_key' => $article['Article']['id'],
 				'price' => 10,
-				'customer_id' => 'a738299d-9040-43c9-85b1-22d400000001', 
+				'customer_id' => CakeSession::read('Auth.User.id'), 
 			)
 		);
 		// insert a fake transaction item as if it was purchased
 		if ($this->TransactionItem->save($transactionItem, array('callbacks' => false))) {
-			debug($this->TransactionItem->id);
+			$data = array(
+				'Product' => array(
+					'name' => 'Article Product',
+					'model' => 'Article', 
+					'foreign_key' => $article['Article']['id'],
+					'price' => 10
+				)
+			);
+			if ($this->Product->save($data)) {
+				$results = $this->Article->find('all');
+				$result[0] = Set::extract('/Product[foreign_key='.$article['Article']['id'].']', $results);
+				$result[1] = Set::extract('/Article[id='.$article['Article']['id'].']', $results);
+				$result[2] = Set::extract('/TransactionItem', $results);
+			}
 		}
-		debug($this->TransactionItem->find('first', array('conditions' => array('TransactionItem.id' => $this->TransactionItem->id))));
-		
-		break;
-		$data = array(
-			'Product' => array(
-				'name' => 'Article Product',
-				'model' => 'Article', 
-				'foreign_key' => $article['Article']['id'],
-				'price' => 10
-			)
-		);
-		if ($this->Product->save($data)) {
-			$results = $this->Article->find('all');
-			$result[0] = Set::extract('/Product[foreign_key='.$article['Article']['id'].']', $results);
-			$result[1] = Set::extract('/Article[id='.$article['Article']['id'].']', $results);
-		}
-		$this->assertTrue(!empty($result[0][0]['Product']) && !empty($result[1][0]['Article']));
+		$this->assertTrue(!empty($result[0][0]['Product']) && !empty($result[1][0]['Article']) && !empty($result[2][0]['TransactionItem']));
 	}
 
 }
