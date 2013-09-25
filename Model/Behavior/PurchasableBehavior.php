@@ -32,7 +32,85 @@ class PurchasableBehavior extends ModelBehavior {
  * @access private
  * @var array
  */
-    protected $defaults = array();
+    protected $defaults = array(
+    	'modelName' => '', // set in the setup
+		'foreignKey' => 'id'
+		);
+
+/**
+ * Credits var
+ * 
+ * @var boolean 
+ * @todo in the future this may need to contain a count of available credits??
+ */
+ 	public $credits = 0;
+
+/**
+ * Credit var
+ * The actual transactionItem which is acting as the credit.
+ * 
+ * @var array 
+ */
+ 	public $credit = array();
+	
+/**
+ * Configuration method.
+ *
+ * @param object $Model Model object
+ * @param array $config Config array
+ * @access public
+ * @return boolean
+ */
+    public function setup(Model $Model, $config = array()) {  	
+    	$this->settings = array_merge($this->defaults, $config);
+		$this->settings['modelName'] = !empty($this->settings['modelName']) ? $this->settings['modelName'] : $Model->name;
+    	return true;
+	}
+	
+/**
+ * Before save callback
+ * 
+ */
+ 	public function beforeSave(Model $Model, $options = array()) {
+ 		// look up to make sure that we have this item available
+		if (!empty($Model->data[$this->settings['modelName']][$this->settings['foreignKey']])) {
+			App::uses('TransactionItem', 'Transactions.Model');
+			$TransactionItem = new TransactionItem;
+			$transactionItem = $TransactionItem->find('first', array(
+				'conditions' => array(
+					'TransactionItem.model' => $this->settings['modelName'],
+					'TransactionItem.foreign_key' => $Model->data[$this->settings['modelName']][$this->settings['foreignKey']],
+					'TransactionItem.status' => 'paid'
+					)
+				));
+			if (!empty($transactionItem)) {
+				// then we have a credit to use
+				$this->credits = 1;
+				$this->credit = $transactionItem;
+			} else {
+				throw new Exception(__('No credits available'));
+			}
+		}
+		return true;
+ 	}
+
+/**
+ * After save callback
+ * 
+ */
+	public function afterSave(Model $Model, $created, $options = array()){
+		if ($this->credits > 0 && !empty($this->credit)) {
+			App::uses('TransactionItem', 'Transactions.Model');
+			$TransactionItem = new TransactionItem;
+			$TransactionItem->id = $this->credit['TransactionItem']['id'];
+			if ($TransactionItem->saveField('status', 'used', array('validate' => false, 'callbacks' => false))) {
+				return true;
+			} else {
+				throw new Exception(__('Problem using the credit, please notify the site administrator.'));
+			}
+		}
+		return true;
+	}
 
 /**
  * Before find callback
@@ -45,7 +123,7 @@ class PurchasableBehavior extends ModelBehavior {
 			// 'Product' => array(
 				// 'className' => 'Products.Product',
 				// 'foreignKey' => 'foreign_key',
-                // 'conditions' => array('Product.model' => $Model->name)
+                // 'conditions' => array('Product.model' => $this->settings['modelName'])
 				// )
 			// )), false);
  		// $query['contain'][] = 'Product';
@@ -65,10 +143,11 @@ class PurchasableBehavior extends ModelBehavior {
 		$foreignKeys = Set::extract('/'.$Model->alias.'/id', $results);
 		App::uses('Product', 'Products.Model');
 		$Product = new Product;
+		
 		$products = $Product->find('all', array(
 			'conditions' => array(
 				'Product.foreign_key' => $foreignKeys, 
-				'Product.model' => $Model->name
+				'Product.model' => $this->settings['modelName']
 				),
 			'callbacks' => false // I have a feeling there is a name conflict with another behavior, and causes a loop here if you leave callbacks in
 			));

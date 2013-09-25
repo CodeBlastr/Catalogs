@@ -14,7 +14,9 @@ if (!class_exists('ProductArticle')) {
 	 *
 	 */
 		public $actsAs = array(
-			'Products.Purchasable'
+			'Products.Purchasable' => array(
+				'foreignKey' => 'id' // used for habtm saves, where this might be something like category_id
+				)
 			);
 	/**
 	 *
@@ -112,6 +114,52 @@ class BuyableBehaviorTestCase extends CakeTestCase {
 	public function testBehaviorInstance() {
 		$this->assertTrue(is_a($this->Article->Behaviors->Purchasable, 'PurchasableBehavior'));
 	}
+/**
+ * Test saving 
+ * 
+ * Imagine that we're buying the ability to edit an article once.
+ */ 
+	public function testSaving() {
+		$article = $this->Article->find('first');
+		$transactionItem = array(
+			'TransactionItem' => array(
+				'name' => 'Article Product',
+				'transaction_id' => 'a043572d-9040-43c9-85b1-22d400000002', // doesn't exist
+				'status' => 'paid',
+				'quantity' => '1',
+				'model' => 'Article',
+				'foreign_key' => $article['Article']['id'],
+				'price' => 10,
+				'customer_id' => CakeSession::read('Auth.User.id'), 
+			)
+		);
+		// insert a fake transaction item as if it was purchased
+		if ($this->TransactionItem->save($transactionItem, array('callbacks' => false))) {
+			$transactionId = $this->TransactionItem->id;
+			$data = array(
+				'Product' => array(
+					'name' => 'Article Product',
+					'model' => 'Article', 
+					'foreign_key' => $article['Article']['id'],
+					'price' => 10
+				)
+			);
+			// insert a fake product and this is how we know it
+			if ($this->Product->save($data)) {
+				// now we need to resave the article in order to test that the transaction item is changed to used
+				$article = array(
+					'Article' => array(
+						'id' => $article['Article']['id'],
+						'title' => 'New Title'
+						)
+					);
+				if ($this->Article->save($article)) {
+					$transactionItem = $this->TransactionItem->read(null, $transactionId);
+				}
+			}
+		}
+		$this->assertEqual($transactionItem['TransactionItem']['status'], 'used');
+	}
 
 /**
  * Test finding 
@@ -119,6 +167,8 @@ class BuyableBehaviorTestCase extends CakeTestCase {
  * You should be able to make something purchasable, by simply creating a product.
  * Once you create the product we automatically return the product with the records
  * if it is Purchasable.
+ * 
+ * Imagine that we're buying the ability to edit an article once. (tested in testSaving)
  */ 
 	public function testFinding() {
 		$article = $this->Article->find('first');
@@ -144,6 +194,7 @@ class BuyableBehaviorTestCase extends CakeTestCase {
 					'price' => 10
 				)
 			);
+			// insert a fake product and this is how we know it
 			if ($this->Product->save($data)) {
 				$results = $this->Article->find('all');
 				$result[0] = Set::extract('/Product[foreign_key='.$article['Article']['id'].']', $results);
