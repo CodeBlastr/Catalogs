@@ -9,7 +9,11 @@ if(!empty($instance) && defined('__ELEMENT_PRODUCTS_CART_ADD_'.$instance)) {
 
 // set up defaults
 $productId = !empty($productId) ? $productId : $product['Product']['id'];
+$productName = !empty($productName) ? $productName : $product['Product']['name'];
 $productPrice = !empty($productPrice) ? $productPrice : $product['Product']['price'];
+$productModel = !empty($productModel) ? $productModel : $product['Product']['model'];
+$productForeignKey = !empty($productForeignKey) ? $productForeignKey : $product['Product']['foreign_key'];
+$productForeignKey = empty($productForeignKey) ? $productId : $productForeignKey;
 $minQty = !empty($product['Product']['cart_min']) ? $product['Product']['cart_min'] : 1;
 $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_max'] : null; ?>
 
@@ -25,8 +29,9 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 		// if the max allowable quantity of this item is only one, hide the TransactionItem.quantity input
 		echo $this->Element('Options/select', array('product' => $product), array('plugin' => 'products'));
 		echo (int)$maxQty === 1 ? $this->Form->hidden('TransactionItem.quantity' , array('class' => 'span', 'label' => false, 'value' => 1, 'min' => $minQty, 'max' => $maxQty)) : $this->Form->input('TransactionItem.quantity' , array('class' => 'span', 'label' => false, 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty));
-		echo $this->Form->hidden('TransactionItem.model' , array('value' => 'Product'));
-		echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productId));
+		echo $this->Form->hidden('TransactionItem.name' , array('value' => $productName));
+		echo $this->Form->hidden('TransactionItem.model' , array('value' => $productModel));
+		echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productForeignKey));
 		echo $this->Form->hidden('TransactionItem.price' , array('value' => $productPrice));
 
 		echo $this->Element('payment_type', array(), array('plugin' => 'products'));

@@ -123,7 +123,6 @@ class Product extends ProductsAppModel {
 	    //		// 'unique' => true,
 	    //        );
 		//}
-		
 		if (CakePlugin::loaded('Categories')) {
 			$this->hasAndBelongsToMany['Category'] = array(
 	            'className' => 'Categories.Category',
