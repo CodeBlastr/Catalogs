@@ -12,13 +12,13 @@ $this->set('forms_sort', array(
 ));
 // set contextual search options
 $this->set('forms_search', array(
-    'url' => '/products/products/index/', 
+    'url' => '/products/products/index/auction/', 
 	'inputs' => array(
 		array(
 			'name' => 'contains:name', 
 			'options' => array(
 				'label' => '', 
-				'placeholder' => 'Product Search',
+				'placeholder' => 'Search Auctions',
 				'value' => !empty($this->request->params['named']['contains']) ? substr($this->request->params['named']['contains'], strpos($this->request->params['named']['contains'], ':') + 1) : null,
 				)
 			),

@@ -71,6 +71,8 @@ class ProductsController extends ProductsAppController {
  * @return void
  */
 	public function index($type = null) {
+		
+		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 
 		// setup paginate
 //		$this->paginate['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $this->userRoleId;
@@ -86,15 +88,29 @@ class ProductsController extends ProductsAppController {
 					// filter to only "auction" items 
 					$this->paginate['conditions'][] = array('Product.started <' => date('Y-m-d H:i:s'));
 					$this->paginate['conditions'][] = array('Product.ended >' => date('Y-m-d H:i:s'));
+					$this->paginate['contain'][] = 'ProductBid';
 					$this->view = 'index_auction';
+					$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 					break;
 			}
 		}
 		
         $this->paginate['contain'][] = 'Option';
+        $this->paginate['contain'][] = 'Owner';
 		$this->paginate['conditions']['Product.parent_id'] = null;
 
-		$this->set('products', $products = $this->paginate());
+		$products = $this->paginate();
+		
+		if ($type === 'auction') {
+			foreach ($products as &$product) {
+				// sort bids by highest -> lowest amount
+				usort($product['ProductBid'], function($a, $b) {
+					return $a['amount'] < $b['amount'];
+				});
+			}
+		}
+
+		$this->set('products', $products);
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', 'summary'); 
 		$this->set('showGallery', true);
@@ -224,7 +240,7 @@ class ProductsController extends ProductsAppController {
     		}
     	}
     	$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
-    	$this->set('title_for_layout', $product['Product']['name']);
+    	$this->set('title_for_layout', $product['Product']['name'] . ' < Auctions | ' . __SYSTEM_SITE_NAME);
     	$this->set(compact('product', 'options'));
     	
     }
