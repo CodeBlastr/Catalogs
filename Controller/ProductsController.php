@@ -86,7 +86,7 @@ class ProductsController extends ProductsAppController {
 					// filter to only "auction" items 
 					$this->paginate['conditions'][] = array('Product.started <' => date('Y-m-d H:i:s'));
 					$this->paginate['conditions'][] = array('Product.ended >' => date('Y-m-d H:i:s'));
-					$this->view = 'auction_index';
+					$this->view = 'index_auction';
 					break;
 			}
 		}
