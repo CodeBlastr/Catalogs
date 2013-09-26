@@ -51,7 +51,7 @@ class ProductsController extends ProductsAppController {
 	public function dashboard(){
         $Transaction = ClassRegistry::init('Transactions.Transaction');
         $TransactionItem = ClassRegistry::init('Transactions.TransactionItem');
-        $this->set('counts', $counts = array_count_values(Set::extract('/Transaction/status', $Transaction->find('all'))));
+        $this->set('counts', $counts = array_count_values(array_filter(Set::extract('/Transaction/status', $Transaction->find('all')))));
 		$this->set('statsSalesToday', $Transaction->salesStats('today'));
 		$this->set('statsSalesThisWeek', $Transaction->salesStats('thisWeek'));
 		$this->set('statsSalesThisMonth', $Transaction->salesStats('thisMonth'));
@@ -232,14 +232,14 @@ class ProductsController extends ProductsAppController {
 /**
  * Add method
  * * 
- * @param string $type [empty = default, arb, virtual, virtual_arb, auction]
+ * @param string $type [empty = default, arb, virtual, virtual_arb, auction, membership]
  * @param string $parentId
  */
 	public function add($type = 'default', $parentId = null) {
         $function = '_add' . ucfirst($type);
         
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
-    	if (in_array('Categories', CakePlugin::loaded())) {
+    	if (CakePlugin::loaded('Categories')) {
         	$this->set('categories', $this->Product->Category->generateTreeList());
 		}
     	//$this->set('paymentOptions', $this->Product->paymentOptions());
@@ -298,6 +298,27 @@ class ProductsController extends ProductsAppController {
     	$this->view = 'add_auction';
     	return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
     }
+    
+    protected function _addMembership($parentId = null) {
+    	if (!empty($this->request->data)) {
+    		if ($this->Product->saveAll($this->request->data)) {
+    			$this->Session->setFlash(__('Membership saved.'));
+    			$this->redirect(array('action' => 'edit', $this->Product->id));
+    		}
+    	}
+    	$this->set('page_title_for_layout', __('Create a Membership Product'));
+    	$this->set('title_for_layout', __('Create a Membership Product'));
+    	$this->layout = 'default';
+        $this->view = 'add_membership';
+		
+		$userRoles = array_diff($this->Product->Owner->UserRole->find('list'), array('admin', 'guests'));
+		foreach ($userRoles as $key => $foreignKey) {
+			$userRoles[$key] = Inflector::humanize(Inflector::singularize($foreignKey));
+		}
+		$this->set('foreignKeys', $userRoles);
+		
+    	return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
+    }
 
     
 /**
@@ -309,9 +330,8 @@ class ProductsController extends ProductsAppController {
  * @throws NotFoundException
  */
 	public function edit($id = null, $child = false) {
-        if (!empty($child)) {
-            return $this->_editChild($id);
-        }
+				
+		// order is important
 		if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'));
@@ -322,16 +342,37 @@ class ProductsController extends ProductsAppController {
 				}
             }
 		}
+		
+		// order is important (categories for all products)
+    	if (CakePlugin::loaded('Categories')) {
+			$this->set('categories', $this->Product->Category->generateTreeList());
+			$selectedCategories = $this->Product->Category->Categorized->find('all', array(
+				'conditions' => array(
+					'Categorized.model'=>$this->Product->alias,
+					'Categorized.foreign_key'=>$this->Product->id
+				),
+				'contain' => array('Category')
+			));
+			$this->set('selectedCategories',  Set::extract($selectedCategories, '/Category/id'));
+		}
+		
+		// order is important for this
 		$this->Product->id = $id;
-		if (!$this->Product->exists()) {
+        if (!empty($child)) {
+            return $this->_editChild($id);
+        } elseif ($model = $this->Product->field('model')) {
+			if ($model == 'UserRole') {
+				return $this->_editMembership($id);
+			}
+		} else {
 			throw new NotFoundException(__('Invalid product'));
 		}
         
         $this->request->data = $this->Product->find('first', array(
             'conditions' => array(
                 'Product.id' => $id
-                ),
-            'contain' => array(
+			),
+			'contain' => array(
                 'Option',
                 'Gallery',
                 'Parent',
@@ -340,25 +381,15 @@ class ProductsController extends ProductsAppController {
                         'order' => array(
                             'Option.parent_id' => 'ASC',
                             'Option.name' => 'ASC',
-                            )
-                        ),
+                        )
                     ),
                 ),
-            ));
+            ),
+        ));
+		
         !empty($this->request->data['Parent']['id']) ?  $this->redirect(array($this->request->data['Parent']['id'])) : null; // redirect to parent
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
-        $this->set('categories', $this->Product->Category->generateTreeList());
-
-		$selectedCategories =
-				$this->Product->Category->Categorized->find('all', array(
-					'conditions' => array(
-						'Categorized.model'=>$this->Product->alias,
-						'Categorized.foreign_key'=>$this->Product->id
-						),
-					'contain' => array('Category')
-					));
-		$this->set('selectedCategories',  Set::extract($selectedCategories, '/Category/id'));
-
+        
         $this->set('existingOptions', $existingOptions = Set::combine($this->request->data['Option'], '{n}.ProductsProductOption.option_id', '{n}.name'));
         $this->set('options', array_diff($this->Product->Option->find('list', array('conditions' => array('OR' => array(array('Option.parent_id' => ''), array('Option.parent_id' => null))))), $existingOptions));
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
@@ -372,6 +403,29 @@ class ProductsController extends ProductsAppController {
 	public function editArb ($id = null, $child = null) {
 		return $this->edit($id, $child);
 	}
+
+/**
+ * Edit membership
+ */
+	protected function _editMembership ($id = null) {
+        $this->request->data = $this->Product->find('first', array(
+            'conditions' => array(
+                'Product.id' => $id
+			),
+        ));
+		// fix up arb settings so they prefill the form correctly
+		$this->request->data['Product']['arb_settings'] = unserialize($this->request->data['Product']['arb_settings']);
+		
+		$userRoles = array_diff($this->Product->Owner->UserRole->find('list'), array('admin', 'guests'));
+		foreach ($userRoles as $key => $foreignKey) {
+			$userRoles[$key] = Inflector::humanize(Inflector::singularize($foreignKey));
+		}
+		$this->set('foreignKeys', $userRoles);
+		$this->set('page_title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
+		$this->set('title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
+		$this->view = 'edit_membership';
+        $this->layout = 'default';
+	}
     
 /**
  * 
@@ -379,16 +433,7 @@ class ProductsController extends ProductsAppController {
  * @throws NotFoundException
  */
     protected function _editChild($id) {
-		if (!empty($this->request->data)) {
-			if ($this->Product->saveAll($this->request->data)) {
-				$this->Session->setFlash(__('Product saved.'));
-				$this->redirect(array('action' => 'view', $this->Product->id));
-            }
-		}
-		$this->Product->id = $id;
-		if (!$this->Product->exists()) {
-			throw new NotFoundException(__('Invalid product'));
-		}
+    	
         $this->Product->contain(array('Gallery', 'Option', 'Parent'));
         $this->request->data = $this->Product->read(null, $id);
        

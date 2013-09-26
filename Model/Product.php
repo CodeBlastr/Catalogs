@@ -113,16 +113,6 @@ class Product extends ProductsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
-		// this does not seem like it should be here
-		// and what is foreign_key_id... should just be foreign_key
-		//if (in_array('Transactions', CakePlugin::loaded())) {
-		//	$this->hasMany['TransactionItem'] = array(
-		//		'className' => 'Transactions.TransactionItem',
-		//		'foreignKey' => 'foreign_key_id',
-		//		'dependent' => false,
-	    //		// 'unique' => true,
-	    //        );
-		//}
 		if (CakePlugin::loaded('Categories')) {
 			$this->hasAndBelongsToMany['Category'] = array(
 	            'className' => 'Categories.Category',
@@ -199,19 +189,24 @@ class Product extends ProductsAppModel {
 			}
 		}
 
-		$i = 0;
-		foreach ($results as $result) {
-			$i = $i++;
-			if(!empty($result['Product']) && !empty($result['Product']['arb_settings'])) {
-				// set arb back to input values
-				$arbSettingsArray = unserialize($result['Product']['arb_settings']);
-				$arbSettingsString = '';
-				foreach ($arbSettingsArray as $key => $value ){
-					$arbSettingsString .= "$key = $value\n";
-				}
-				$results[$i]['Product']['arb_settings'] = $arbSettingsString ;
-			}
-		}
+		// this was causing problems for the transfer from product to transaction item
+		// if you need something like this back, then make sure when you add an arb item
+		// to cart that it transfers the arb settings to the transaction item correctly
+		// and leave a comment about where this is needed, because it seems pointless like it is.
+		// side note, don't use $i = 0, like this, just use a for loop instead of a foreach loop
+		// $i = 0;
+		// foreach ($results as $result) {
+			// $i = $i++;
+			// if(!empty($result['Product']) && !empty($result['Product']['arb_settings'])) {
+				// // set arb back to input values
+				// $arbSettingsArray = unserialize($result['Product']['arb_settings']);
+				// $arbSettingsString = '';
+				// foreach ($arbSettingsArray as $key => $value ){
+					// $arbSettingsString .= "$key = $value\n";
+				// }
+				// $results[$i]['Product']['arb_settings'] = $arbSettingsString ;
+			// }
+		// }
         
         $i = 0;
         if (!empty($results['Children'])) {
@@ -223,41 +218,7 @@ class Product extends ProductsAppModel {
             }
         }        
 		return $results;
-	}
-
-/**
- * Handles the adding of products and any additional functions that need to run with it.
- *
- * @todo		We need to change this from a random sku generator to something that checks for existence of the sku already, and throws an error back to the controller if it does.
- * @todo		Make it a products plugin setting for whether skus will be randomly generated or not.
- * @todo 		Not sure why we have deleteAll there, when I believe anytime you save a HABTM model it will delete all automatically.  If its not working without that, then there is a problem with the relationships.
- * @todo		The manual items that come after saveAll should be verified and roll back the item if its not updated correctly.
- * @todo		This function should use the throw exception syntax, and the controller should catch.
- */
-	//public function save($data = null, $params = array()) {
-	//	return parent::save($data, $params);
-        
-        
-//          This needs to be in a behavior too
-//			if (isset($data['Product']['id']) || $imageSaved) {
-//				// this is how the categories data should look when coming in.
-//				if (isset($data['Category']['Category'][0])) {
-//					$categorized = array('Product' => array('id' => array($this->id)));
-//					foreach ($data['Category']['Category'] as $catId) {
-//						$categorized['Category']['id'][] = $catId;
-//					}
-//					$this->Category->categorized($categorized, 'Product');
-//				}
-//
-//				if(isset($data['CategoryOption'])) {
-//					$this->CategoryOption->categorized_option($data, 'Product');
-//				}
-//				$ret = true;
-//			} else {
-//				$this->delete($this->id);
-//			}
-	//}
-    
+	}    
     
 
 /**
@@ -268,6 +229,11 @@ class Product extends ProductsAppModel {
  * @return array
  */
  	protected function _cleanAddData($data) {
+		// order is important
+		if (empty($data['Product']['price']) && !empty($data['Product']['arb_settings']['PaymentAmount'])) {
+			$data['Product']['price'] = $data['Product']['arb_settings']['PaymentAmount'];
+		}
+		
 		if (!empty($data['Product']['arb_settings'])) {
 			// serialize the data
 			$data['Product']['arb_settings'] = serialize($this->data['Product']['arb_settings']);
@@ -291,11 +257,12 @@ class Product extends ProductsAppModel {
         if (empty($data['GalleryImage']['filename']['name'])) {
             unset($data['GalleryImage']);
         }
+		
 		return $data;
 	}
     
 /**
- * 
+ * Someone please comment what this is for!!!
  */
     protected function _newOptions($data) {
         $output = !empty($data['Option']['Option']) ? array('Option' => array('Option' => $data['Option']['Option'])) : array();
@@ -319,13 +286,13 @@ class Product extends ProductsAppModel {
     }
 
 /**
- * Cleans products
+ * Cleans products' prices
  *
  * If the advanced price matrix exists, then we set the price using that.
  * If no price matrix exists we just use the default price
  * If price matrix is there, but empty (because the userRoleId weeded it out in the controller) we remove the item.
  *
- * @param {array} 		Typical structured data array
+ * @param array $products
  */
 	public function cleanItemsPrices($products) {
 		$i = 0;

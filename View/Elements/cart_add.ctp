@@ -14,6 +14,7 @@ $productPrice = !empty($productPrice) ? $productPrice : $product['Product']['pri
 $productModel = !empty($productModel) ? $productModel : $product['Product']['model'];
 $productForeignKey = !empty($productForeignKey) ? $productForeignKey : $product['Product']['foreign_key'];
 $productForeignKey = empty($productForeignKey) ? $productId : $productForeignKey;
+$productArb = !empty($productArb) ? $productArb : $product['Product']['arb_settings'];
 $minQty = !empty($product['Product']['cart_min']) ? $product['Product']['cart_min'] : 1;
 $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_max'] : null; ?>
 
@@ -33,6 +34,9 @@ $maxQty = !empty($product['Product']['cart_max']) ? $product['Product']['cart_ma
 		echo $this->Form->hidden('TransactionItem.model' , array('value' => $productModel));
 		echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productForeignKey));
 		echo $this->Form->hidden('TransactionItem.price' , array('value' => $productPrice));
+		echo $this->Form->hidden('TransactionItem.arb_settings' , array('value' => $productArb));
+		echo $this->Form->hidden('TransactionItem.cart_max' , array('value' => $maxQty));
+		echo $this->Form->hidden('TransactionItem.cart_min' , array('value' => $minQty));
 
 		echo $this->Element('payment_type', array(), array('plugin' => 'products'));
         
