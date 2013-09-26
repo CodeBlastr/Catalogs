@@ -359,6 +359,12 @@ class ProductsController extends ProductsAppController {
             }
 		}
 		
+		// check to see if we have a product before even worrying about anything else
+		$this->Product->id = $id;
+		if (!$this->Product->exists()) {
+			throw new NotFoundException(__('Invalid product'));
+		}
+		
 		// order is important (categories for all products)
     	if (CakePlugin::loaded('Categories')) {
 			$this->set('categories', $this->Product->Category->generateTreeList());
@@ -372,16 +378,13 @@ class ProductsController extends ProductsAppController {
 			$this->set('selectedCategories',  Set::extract($selectedCategories, '/Category/id'));
 		}
 		
+		// check for special products that need to be edited elsewhere
 		// order is important for this
-		$this->Product->id = $id;
+		$model = $this->Product->field('model');
         if (!empty($child)) {
             return $this->_editChild($id);
-        } elseif ($model = $this->Product->field('model')) {
-			if ($model == 'UserRole') {
-				return $this->_editMembership($id);
-			}
-		} else {
-			throw new NotFoundException(__('Invalid product'));
+        } elseif ($model == 'UserRole') {
+			return $this->_editMembership($id);
 		}
         
         $this->request->data = $this->Product->find('first', array(
