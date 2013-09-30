@@ -110,6 +110,13 @@ class Product extends ProductsAppModel {
 			'fields' => '',
 			'order' => ''
             ),
+		'Creator' => array(
+			'className' => 'Users.User',
+			'foreignKey' => 'creator_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+            ),
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {

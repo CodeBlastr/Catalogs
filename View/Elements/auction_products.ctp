@@ -5,7 +5,9 @@
 	<?php
     if (!empty($products)) {
         $i = 0;
-        foreach ($products as $product) : ?>
+        foreach ($products as $product) :
+        	$highestBid = (isset($product['ProductBid'][0]['amount'])) ? '$'.ZuhaInflector::pricify($product['ProductBid'][0]['amount']) : 'no bids';
+        ?>
         
 			<div class="ad-row media row-fluid">
 			
@@ -22,7 +24,7 @@
 					<div class="media-body">
 						<h4 class="media-heading"><?php echo $product['Product']['name'] ?></h4>
 						<div class="metas">
-							<a href="#">Pure Breed Cows</a>
+							<a href="<?php echo $this->Html->url(array('plugin'=>'users', 'controller'=>'users', 'action'=>'view', $product['Creator']['id'])) ?>"><?php echo $product['Creator']['full_name'] ?></a>
 							<div> 
 								<i class="icon-time"></i> <b><time datetime="<?php echo date('c', strtotime($product['Product']['ended']))?>"><?php echo $this->Time->timeAgoInWords($product['Product']['ended'])?></time> left</b>
 							</div>
@@ -36,7 +38,7 @@
 				<div class="span3">
 					<div class="price-tag">
 						<a href="<?php echo $this->Html->url(array('action'=>'viewAuction', $product['Product']['id'])) ?>">
-							$<span><?php echo ZuhaInflector::pricify($product['ProductBid'][0]['amount']) ?></span>
+							<?php echo $highestBid ?>
 						</a>
 					</div>
 				</div>

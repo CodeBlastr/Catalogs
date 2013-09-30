@@ -55,4 +55,4 @@ $this->set('context_menu', array('menus' => array(
 			$this->Html->link(__d('products', 'Delete'), array('action' => 'delete', $product['Product']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $product['Product']['id'])),
 			),
 		),
-	))); ?>
+	)));
