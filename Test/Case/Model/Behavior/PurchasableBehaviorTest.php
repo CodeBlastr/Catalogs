@@ -1,5 +1,5 @@
 <?php
-// Buyable Test
+// Purchasable Test
 App::uses('PurchasableBehavior', 'Products.Model/Behavior');
 
 
@@ -53,10 +53,10 @@ if (!class_exists('MockSession')) {
 
 
 /**
- * BuyableBehavior Test Case
+ * PurchasableBehavior Test Case
  *
  */
-class BuyableBehaviorTestCase extends CakeTestCase {
+class PurchasableBehaviorTestCase extends CakeTestCase {
 /**
  * Fixtures
  *
