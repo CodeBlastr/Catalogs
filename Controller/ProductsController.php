@@ -97,6 +97,7 @@ class ProductsController extends ProductsAppController {
 		
         $this->paginate['contain'][] = 'Option';
         $this->paginate['contain'][] = 'Owner';
+        $this->paginate['contain'][] = 'Creator';
 		$this->paginate['conditions']['Product.parent_id'] = null;
 
 		$products = $this->paginate();
