@@ -618,7 +618,10 @@ class ProductsController extends ProductsAppController {
         }
 	}
     
-    
+/**
+ * Categories method
+ * A page for editing product categories. 
+ */
     public function categories($parentId = null) {
         if (!empty($this->request->data['Option'])) {
             if ($this->Product->Option->save($this->request->data)) {
@@ -631,8 +634,8 @@ class ProductsController extends ProductsAppController {
             }
         }
 		
-		$conditions = !empty($parentId) ? array('conditions' => array('Category.parent_id' => $parentId)) : null;
-        $categories = $this->Product->Category->find('threaded', $conditions);
+		$conditions = !empty($parentId) ? array('Category.parent_id' => $parentId, 'Category.model' => 'Product') : array('Category.model' => 'Product');
+        $categories = $this->Product->Category->find('threaded', array('conditions' => $conditions));
         $options = $this->Product->Option->find('threaded');
         
         $this->set('parentCategories', Set::combine($categories, '{n}.Category.id', '{n}.Category.name'));

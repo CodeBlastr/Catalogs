@@ -126,7 +126,7 @@ class Product extends ProductsAppModel {
 	       		'joinTable' => 'categorized',
 	            'foreignKey' => 'foreign_key',
 	            'associationForeignKey' => 'category_id',
-	    		'conditions' => 'Categorized.model = "Product"',
+	    		'conditions' => array('Categorized.model' => 'Product'),
 	    		// 'unique' => true,
 	            );
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
