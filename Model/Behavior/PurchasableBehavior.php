@@ -70,26 +70,39 @@ class PurchasableBehavior extends ModelBehavior {
 /**
  * Before save callback
  * 
+ * See if the item being saved is purchasable.
+ * If so look to see if the current user has paid for one
  */
  	public function beforeSave(Model $Model, $options = array()) {
  		// look up to make sure that we have this item available
 		if (!empty($Model->data[$this->settings['modelName']][$this->settings['foreignKey']])) {
-			App::uses('TransactionItem', 'Transactions.Model');
-			$TransactionItem = new TransactionItem;
-			$transactionItem = $TransactionItem->find('first', array(
+			App::uses('Product', 'Products.Model');
+			$Product = new Product;
+			$product = $Product->find('count', array(
 				'conditions' => array(
-					'TransactionItem.model' => $this->settings['modelName'],
-					'TransactionItem.foreign_key' => $Model->data[$this->settings['modelName']][$this->settings['foreignKey']],
-					'TransactionItem.status' => 'paid'
+					'Product.model' => $this->settings['modelName'],
+					'Product.foreign_key' => $Model->data[$this->settings['modelName']][$this->settings['foreignKey']]
 					)
 				));
-			if (!empty($transactionItem)) {
-				// then we have a credit to use
-				$this->credits = 1;
-				$this->credit = $transactionItem;
-			} else {
-				throw new Exception(__('No credits available'));
-			}
+			if ($product > 0) {
+				App::uses('TransactionItem', 'Transactions.Model');
+				$TransactionItem = new TransactionItem;
+				$transactionItem = $TransactionItem->find('first', array(
+					'conditions' => array(
+						'TransactionItem.model' => $this->settings['modelName'],
+						'TransactionItem.foreign_key' => $Model->data[$this->settings['modelName']][$this->settings['foreignKey']],
+						'TransactionItem.status' => 'paid',
+						'TransactionItem.customer_id' => CakeSession::read('Auth.User.id')
+						)
+					));
+				if (!empty($transactionItem)) {
+					// then we have a credit to use
+					$this->credits = 1;
+					$this->credit = $transactionItem;
+				} else {
+					throw new Exception(__('No credits available'));
+				}
+			}			
 		}
 		return true;
  	}
