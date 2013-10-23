@@ -28,7 +28,21 @@
     		</table>
     	</div>
     	<div class="well well-large">
-        	<?php echo $this->Element('auction_bid', array('product' => $product), array('plugin' => 'products')); ?>
+        	<?php echo $this->Element('auction_bid', array('product' => $product), array('plugin' => 'products')); ?>       	
+        	<?php 
+	        	echo '<div class="action itemAddCart productAddCart">';
+				echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller'=>'transaction_items', 'action'=>'add'), 'class' => 'form-inline'));
+				echo $this->Form->hidden('TransactionItem.name' , array('value' => $productName));
+				echo $this->Form->hidden('TransactionItem.model' , array('value' => $productModel));
+				echo $this->Form->hidden('TransactionItem.foreign_key' , array('value' => $productForeignKey));
+				echo $this->Form->hidden('TransactionItem.price' , array('value' => $productPrice));
+				echo $this->Form->hidden('TransactionItem.arb_settings' , array('value' => $productArb));
+				echo $this->Form->hidden('TransactionItem.quanity' , array('value' => 1));
+			
+				echo $this->Form->submit('Buy Now', array('class' => 'btn btn-primary'));
+				$this->Form->end();
+			    echo '</div>'; 
+			?>
         </div>
     </div>
 </div>

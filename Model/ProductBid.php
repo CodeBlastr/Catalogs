@@ -4,6 +4,22 @@ class ProductBid extends ProductsAppModel {
 
 	public $name = 'ProductBid';
 
+	public $validate = array(
+		'amount' => array(
+			'notempty' => array(
+				'rule' => 'notEmpty',
+				'allowEmpty' => false, 
+				'message' => 'Please enter bid value',
+				'required' => 'create'
+				),
+			'checkHighBid' => array(
+				'rule' => array('_checkHighestBid'),
+				'allowEmpty' => false, 
+				'message' => 'Your bid should be higher than the current highest bid.',
+				),
+			)
+		);
+
 	public $belongsTo = array(
 		'Product' => array(
 			'className' => 'Products.Product',
@@ -18,5 +34,15 @@ class ProductBid extends ProductsAppModel {
 			'fields' => ''
 		)
 	);
+	
+	public function _checkHighestBid() {
+		if (!empty($this->data['ProductBid']['product_id'])) {
+			$highestBid = $this->field('amount', array('ProductBid.product_id' => $this->data['ProductBid']['product_id']), 'ProductBid.amount DESC');
+			if ($highestBid > $this->data['ProductBid']['amount']) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

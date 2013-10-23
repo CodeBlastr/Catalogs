@@ -70,30 +70,7 @@ class ProductsController extends ProductsAppController {
  * @param void
  * @return void
  */
-	public function index($type = null) {
-		
-		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
-
-		// setup paginate
-//		$this->paginate['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $this->userRoleId;
-//		$this->paginate['conditions']['OR'] = array(
-//			array('Product.ended >' => date('Y-m-d h:i:s')),
-//			array('Product.ended' => null),
-//			array('Product.ended' => '0000-00-00 00:00:00')
-//		);
-
-		if ($type !== null) {
-			switch ($type) {
-				case ('auction') :
-					// filter to only "auction" items 
-					$this->paginate['conditions'][] = array('Product.started <' => date('Y-m-d H:i:s'));
-					$this->paginate['conditions'][] = array('Product.ended >' => date('Y-m-d H:i:s'));
-					$this->paginate['contain'][] = 'ProductBid';
-					$this->view = 'index_auction';
-					$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
-					break;
-			}
-		}
+	public function index() {
 		
         $this->paginate['contain'][] = 'Option';
         $this->paginate['contain'][] = 'Owner';
@@ -102,15 +79,8 @@ class ProductsController extends ProductsAppController {
 
 		$products = $this->paginate();
 		
-		if ($type === 'auction') {
-			foreach ($products as &$product) {
-				// sort bids by highest -> lowest amount
-				usort($product['ProductBid'], function($a, $b) {
-					return $a['amount'] < $b['amount'];
-				});
-			}
-		}
-
+		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('page_title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('products', $products);
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', 'summary'); 
@@ -119,6 +89,34 @@ class ProductsController extends ProductsAppController {
 		
 		return $products;
 	}
+
+/**
+ * Auctions method
+ * An index for products of the auction type
+ * 
+ * @param void
+ * @return void
+ */
+ 	public function auctions() {
+		$this->paginate['conditions'][] = array('Product.started <' => date('Y-m-d H:i:s'));
+		$this->paginate['conditions'][] = array('Product.ended >' => date('Y-m-d H:i:s'));
+		$this->paginate['contain'][] = 'ProductBid';
+		$this->paginate['conditions']['Product.parent_id'] = null;
+
+		$products = $this->index();
+		
+		foreach ($products as &$product) {
+			// sort bids by highest -> lowest amount
+			usort($product['ProductBid'], function($a, $b) {
+				return $a['amount'] < $b['amount'];
+			});
+		}
+		
+		$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('page_title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('products', $products);		
+		return $products;
+ 	}
 
 /**
  * Category method.
@@ -198,8 +196,7 @@ class ProductsController extends ProductsAppController {
         
     }
     
-    public function viewAuction ($id = null, $child = null) {
-    	$this->view = 'view_auction';
+    public function auction ($id = null, $child = null) {
 
     	$this->Product->id = $id;
     	if (!$this->Product->exists()) {
@@ -207,24 +204,24 @@ class ProductsController extends ProductsAppController {
     	}
     	
     	$product = $this->Product->find('first' , array(
-    			'conditions' => array(
-    					'Product.id' => $id
-    			),
-    			'contain' => array(
-    					'ProductBid',
-    					'ProductBrand' => array(
-    							'fields' => array('name', 'id')
-    					),
-    					'ProductPrice' => array(
-    							'conditions' => array(
-    									'ProductPrice.user_role_id' => $this->userRoleId
-    							)
-    					),
-    					'Children',
-    					'Gallery',
-    					'Parent',
-    					'Owner'
-    			)
+			'conditions' => array(
+				'Product.id' => $id
+			),
+			'contain' => array(
+				'ProductBid',
+				'ProductBrand' => array(
+					'fields' => array('name', 'id')
+				),
+				'ProductPrice' => array(
+					'conditions' => array(
+						'ProductPrice.user_role_id' => $this->userRoleId
+					)
+				),
+				'Children',
+				'Gallery',
+				'Parent',
+				'Owner'
+			)
     	));
     	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
     	
@@ -637,7 +634,7 @@ class ProductsController extends ProductsAppController {
 		$conditions = !empty($parentId) ? array('Category.parent_id' => $parentId, 'Category.model' => 'Product') : array('Category.model' => 'Product');
         $categories = $this->Product->Category->find('threaded', array('conditions' => $conditions));
         $options = $this->Product->Option->find('threaded');
-        
+
         $this->set('parentCategories', Set::combine($categories, '{n}.Category.id', '{n}.Category.name'));
         $this->set('parentOptions', Set::combine($options, '{n}.Option.id', '{n}.Option.name'));
         $this->set(compact('categories', 'options'));
