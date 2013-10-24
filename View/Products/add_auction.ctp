@@ -20,6 +20,7 @@
 ?>
 <div class="productAdd form">
 	<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
+	<?php echo $this->Form->hidden('Product.type', array('value' => 'auction')); ?>
     <fieldset>
     	<?php
 					echo $this->Form->input('Product.name', array(

@@ -47,6 +47,35 @@ class ProductTestCase extends CakeTestCase {
 		unset($this->Product);
 		parent::tearDown();
 	}
+	
+/**
+ * Test expire
+ * 
+ */
+ 	public function testExpire() {
+ 		$results = array(
+			(int) 0 => array(
+				'Product' => array(
+					'id' => '5249c848-f100-4cc4-a0b0-04df0ad25527',
+					'sku' => '90657',
+					'name' => 'Brown Cow',
+					'description' => '<p>How now, brown cow?</p>',
+					'stock' => null,
+					'price' => '1600',
+					'is_expired' => null,
+					'hours_expire' => null,
+					'started' => '2013-09-30 11:50:00',
+					'ended' => '2013-10-20 11:50:00',
+					'search_tags' => null,
+					'type' => 'auction'
+				),
+			)
+		);
+		$results = $this->Product->_expire($results);
+		
+		debug($results);
+		break;
+ 	}
 
 /**
  * testAdd method

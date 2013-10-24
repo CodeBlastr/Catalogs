@@ -165,6 +165,7 @@ class Product extends ProductsAppModel {
  * @return array
  */
 	public function beforeFind($queryData) {
+		parent::beforeFind($queryData);
 		// always limit products by the user role if the price matrix is used
         if (class_exists('CakeSession')) {
             $userRoleId = CakeSession::read('Auth.User.user_role_id');
@@ -173,6 +174,8 @@ class Product extends ProductsAppModel {
             // stop filtering the price if we use fields and price isn't included
             $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
         }
+		
+		
 		return $queryData;
 	}
 
@@ -195,6 +198,8 @@ class Product extends ProductsAppModel {
 				$results = $this->cleanItemPrice($results);
 			}
 		}
+		
+		$results = $this->_expire($results);
 
 		// this was causing problems for the transfer from product to transaction item
 		// if you need something like this back, then make sure when you add an arb item
@@ -224,8 +229,33 @@ class Product extends ProductsAppModel {
                 $i++;
             }
         }        
-		return $results;
+		return parent::afterFind($results, $primary = false);
 	}    
+
+
+/**
+ * Check product expiration 
+ * @param array $results
+ * @return array
+ */
+
+	public function _expire($results){
+		for ($i=0; $i < count($results); $i++) {
+			debug($results[$i]['Product']['ended']);
+			debug(date('Y-m-d h:i:s'));
+			debug(strtotime($results[$i]['Product']['ended']) < time());
+			if(strtotime($results[$i]['Product']['ended']) < time()) {
+				$results[$i]['Product']['is_expired'] = 1;
+				if ($this->save($results[$i], array('callbacks' => false, 'validate' => false))) {
+					
+				} else {
+					throw new Exception(__('Error expiring auctions, please alert an administrator.'));
+				}
+			}
+		}
+		return $results;
+	}
+
     
 
 /**
