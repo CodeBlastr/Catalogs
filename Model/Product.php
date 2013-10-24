@@ -240,16 +240,13 @@ class Product extends ProductsAppModel {
  */
 
 	public function _expire($results){
-		for ($i=0; $i < count($results); $i++) {
-			debug($results[$i]['Product']['ended']);
-			debug(date('Y-m-d h:i:s'));
-			debug(strtotime($results[$i]['Product']['ended']) < time());
-			if(strtotime($results[$i]['Product']['ended']) < time()) {
-				$results[$i]['Product']['is_expired'] = 1;
-				if ($this->save($results[$i], array('callbacks' => false, 'validate' => false))) {
-					
-				} else {
-					throw new Exception(__('Error expiring auctions, please alert an administrator.'));
+		if(isset($results[0]['Product'])) {
+			for ($i=0; $i < count($results); $i++) {
+				if(strtotime($results[$i]['Product']['ended']) < time()) {
+					$results[$i]['Product']['is_expired'] = true;
+					if (!$this->save($results[$i]['Product'], array('callbacks' => false, 'validate' => false, 'counterCache' => false))) {
+						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
+					}
 				}
 			}
 		}
