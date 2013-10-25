@@ -36,6 +36,8 @@ class Product extends ProductsAppModel {
         );
 
 	public $order = '';
+	
+	public $isExpired = false;
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
@@ -176,6 +178,10 @@ class Product extends ProductsAppModel {
         }
 		
 		
+		
+			$this->isExpired = !empty($queryData['conditions']['Product.is_expired']) ? true : false;
+		
+		
 		return $queryData;
 	}
 
@@ -199,7 +205,10 @@ class Product extends ProductsAppModel {
 			}
 		}
 		
-		$results = $this->_expire($results);
+		if ($this->isExpired === false){
+			$results = $this->_expire($results);
+		}
+	
 
 		// this was causing problems for the transfer from product to transaction item
 		// if you need something like this back, then make sure when you add an arb item
@@ -239,21 +248,29 @@ class Product extends ProductsAppModel {
  * @return array
  */
 
-	public function _expire($results){
+	protected function _expire($results){
 		if(isset($results[0]['Product'])) {
-			for ($i=0; $i < count($results); $i++) {
-				if(strtotime($results[$i]['Product']['ended']) < time()) {
-					$results[$i]['Product']['is_expired'] = true;
-					if (!$this->save($results[$i]['Product'], array('callbacks' => false, 'validate' => false, 'counterCache' => false))) {
+			$count = count($results); // order is important because we are using unset() in the loop
+			for ($i = 0; $i < $count; ++$i) {
+				if(!empty($results[$i]['Product']['is_expired'])) {
+					unset($results[$i]);
+				}
+				if(!empty($results[$i]) && strtotime($results[$i]['Product']['ended']) < time()) {
+					$this->id = $results[$i]['Product']['id'];
+					if (!$this->saveField('is_expired', 1, false)) {
 						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
+					} else {
+						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctioneerExpiredAuction($results[$i]) : null; 
+						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctionBidderExpiredAuction($results[$i]) : null;
 					}
+					unset($results[$i]);
 				}
 			}
 		}
 		return $results;
 	}
-
-    
+	
+	
 
 /**
  * Cleans data for adding
