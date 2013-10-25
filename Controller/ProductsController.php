@@ -175,7 +175,8 @@ class ProductsController extends ProductsAppController {
                     ),
                 'Gallery',
                 'Parent',
-				'Owner'
+				'Owner',
+				'ProductHighestBidder'
 				),
 			));
         !empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
@@ -221,7 +222,8 @@ class ProductsController extends ProductsAppController {
 				'Children',
 				'Gallery',
 				'Parent',
-				'Owner'
+				'Owner',
+				'ProductHighestBidder' => 'User'
 			)
     	));
     	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
@@ -241,102 +243,11 @@ class ProductsController extends ProductsAppController {
     	$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
     	$this->set('title_for_layout', $product['Product']['name'] . ' < Auctions | ' . __SYSTEM_SITE_NAME);
     	$this->set(compact('product', 'options'));
+		
+		debug($product);
     	
     }
 
-
-	
-/**
- * Notify Auctioneer (Site Admin/Owner) that Auction Product has Expired.
- * @param array $results
- * @return array
- * 
- */
-	protected function _notifyAuctioneerExpiredAuction($result){
-		debug($result); 
-		//if expired auction 		
-		$this->loadModel('Webpages.Webpage');
-		$webpage = $this->Webpage->findById(26);
-		$product = array();
-		foreach($products as $product){
-			$product = $product;
-			$mailTo = $product['Creator']['email'];
-			$message = $Thsi->Webpage->replaceToken($webpages['Webpage']['content'], $product);
-			$subject = $webpage['Webpage']['name'];
-			$this->__sendMail($mailTo, $subject, $message);
-		}		
-	}
-	
-	
-
-/**
- * Notify Auctioneer (Site Admin/Owner) that Auction Product has been Purchased.
- * @param array $results
- * @return array
- * 
- */	
-	protected function _notifyAuctioneerPurchasedAuction($result){
-		
-			//if purchased Auction 
-		$this->loadModel('Webpages.Webpage');
-		$webpage = $this->Webpage->findById(27);		
-		$product = array();
-		foreach($products as $product){
-			$product = $product;//anything else add here
-			$mailTo = $product['Creater']['email']; 
-			$message = $this->Webpage->replaceTokens($webpage['Webpage']['content'], $product);
-			$subject = $webpage['Webpage']['name'];
-			$this->__sendMail($mailTo, $subject, $message); 
-		}	
-	}
-	
-		
-
-
-
-/**
- * Notify Auction Bidder that auction has expired
- * @param array $results
- * @return array
- * 
- */	
-	protected function _notifyAuctionBidderExpiredAuction($result){
-		
-		//Auction Bidder was out bid 
-		$this->loadModel('Webpages.Webpage');
-		$webpage = $this->Webpage->findById(28);	
-		$product = array();
-		foreach($products as $product){
-			$product = $product;//anything else add here
-			$mailTo = $product['Creater']['email']; //****Change to user email instead of crator****
-			$message = $this->Webpage->replaceTokens($webpage['Webpage']['content'], $product);
-			$subject = $webpage['Webpage']['name'];
-			$this->__sendMail($mailTo, $subject, $message); 
-		}
-	}
-		
-
-/**
- * Notify Auction bidder that that they have won the Auction
- * @param array $results
- * @return array
- * 
- */
- 	protected function _notifyAuctionBidderWon($result){
- 		
-		//Auction Bidder was out bid 
-		$this->loadModel('Webpages.Webpage');
-		$webpage = $this->Webpage->findById(29);	
-		$product = array();
-		foreach($products as $product){
-			$product = $product;//anything else add here
-			$mailTo = $product['Creater']['email']; //****Change to user email instead of crator****
-			$message = $this->Webpage->replaceTokens($webpage['Webpage']['content'], $product);
-			$subject = $webpage['Webpage']['name'];
-			$this->__sendMail($mailTo, $subject, $message); 
-		}
-	}		
-    
 
 /**
  * Add method

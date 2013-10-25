@@ -45,4 +45,5 @@ class ProductBid extends ProductsAppModel {
 		return true;
 	}
 
+
 }

@@ -28,7 +28,7 @@
     		</table>
     	</div>
     	<div class="well well-large">
-        	<?php echo $this->Element('auction_bid', array('product' => $product), array('plugin' => 'products')); ?>      
+        	<?php echo $this->Element('\Auctions\bid', array('product' => $product), array('plugin' => 'products')); ?>      
         </div>
         <div class="well"> 
         	<?php echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'add'), 'class' => 'form-inline')); ?>

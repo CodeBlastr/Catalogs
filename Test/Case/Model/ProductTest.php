@@ -47,7 +47,7 @@ class ProductTestCase extends CakeTestCase {
 		unset($this->Product);
 		parent::tearDown();
 	}
-	
+
 /**
  * Test expire
  * 

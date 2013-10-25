@@ -61,8 +61,16 @@ class Product extends ProductsAppModel {
 		'ProductBid' => array(
 			'className' => 'Products.ProductBid',
 			'foreignKey' => 'product_id',
-			'dependent' => false
-			)
+			'dependent' => false,
+			),
+			'ProductHighestBidder' => array(
+				'className' => 'Products.ProductBid',
+				'foreignKey' => 'product_id',
+				'dependent' => true,
+				'fields' => '',
+				'order' => 'amount DESC',
+				'limit' => 1
+			),
         );
         
     public $hasAndBelongsToMany = array(
@@ -83,7 +91,8 @@ class Product extends ProductsAppModel {
 			'conditions' => array('Gallery.model' => 'Product'),
 			'fields' => '',
 			'order' => ''
-            )
+            ), 
+            
         );
 
 	//products association.
@@ -176,9 +185,7 @@ class Product extends ProductsAppModel {
             // stop filtering the price if we use fields and price isn't included
             $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
         }
-		
-		
-		
+
 			$this->isExpired = !empty($queryData['conditions']['Product.is_expired']) ? true : false;
 		
 		
@@ -248,7 +255,7 @@ class Product extends ProductsAppModel {
  * @return array
  */
 
-	protected function _expire($results){
+	public function _expire($results){
 		if(isset($results[0]['Product'])) {
 			$count = count($results); // order is important because we are using unset() in the loop
 			for ($i = 0; $i < $count; ++$i) {
@@ -261,7 +268,7 @@ class Product extends ProductsAppModel {
 						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
 					} else {
 						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctioneerExpiredAuction($results[$i]) : null; 
-						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctionBidderExpiredAuction($results[$i]) : null;
+						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctionBidWinner($results[$i]) : null;
 					}
 					unset($results[$i]);
 				}
@@ -269,6 +276,60 @@ class Product extends ProductsAppModel {
 		}
 		return $results;
 	}
+	
+	
+/**
+ * Notify Auctioneer (Site Admin/Owner) that Auction Product has Expired.
+ * @param array $results
+ * @return array
+ * 
+ */
+	public function _notifyAuctioneerExpiredAuction($result){
+		$this->__sendMail($result['Creator']['email'],'Auctioneer Expired Auction', $result);	
+	}
+	
+/**
+ * Notify Auction Bidder that auction has expired
+ * @param array $results
+ * @return array
+ * 
+ */	
+	protected function _notifyAuctionBidWinner($result){
+		//lookup highest bid for this product id from prodct bid...sort by amount decending
+		//$this->Product->ProductBid->_checkHighestBid();
+		// App::uses('ProductBid', 'Product.Model');
+		// $ProductBid = new ProductBid();
+		// $winner = $ProductBid->findById($id);
+// 		
+		// if (!empty($this->data['ProductBid']['product_id'])) {
+			// $highestBid = $this->field('amount', array('ProductBid.product_id' => $this->data['ProductBid']['product_id']), 'ProductBid.amount DESC');
+		// }
+   			
+	$this->__sendMail($result['ProductHighestBidder'][0]['User']['email'],'Auction Winner Notification', $result);		
+	}
+		
+
+/**
+ * Notify Auction bidder that that they have won the Auction
+ * @param array $results
+ * @return array
+ * 
+ */
+ 	protected function _notifyAuctionBidderWon($result){
+ 		
+		//Auction Bidder was out bid 
+		$Webpage = App::uses('Webpages.Webpage');
+		$webpage = $Webpage->findById(26);
+		$product = array();
+		foreach($products as $product){
+			$product = $product;//anything else add here
+			$mailTo = $product['Creater']['email']; //****Change to user email instead of crator****
+			$message = $this->Webpage->replaceTokens($webpage['Webpage']['content'], $product);
+			$subject = $webpage['Webpage']['name'];
+			$this->__sendMail($mailTo, $subject, $message); 
+		}
+	}		
+    
 	
 	
 
