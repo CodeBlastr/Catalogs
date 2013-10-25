@@ -45,5 +45,12 @@ class ProductBid extends ProductsAppModel {
 		return true;
 	}
 
-
+/**
+ * Get Winner method
+ * Find the highest bid and return the bid and the user. 
+ */
+	public function getWinner($productId) {
+		return $this->find('first', array('conditions' => array('ProductBid.product_id' => $productId), 'contain' => array('User')));
+	}
+	
 }

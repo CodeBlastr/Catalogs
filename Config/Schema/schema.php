@@ -118,6 +118,7 @@ class ProductsSchema extends CakeSchema {
           'foreign_key' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
           'owner_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
           'children' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'comment' => 'counter cache'), 
+          'seller_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
           'creator_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
           'modifier_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
           'started' => array('type' => 'datetime', 'null' => true, 'default' => NULL), 

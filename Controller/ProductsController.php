@@ -176,7 +176,6 @@ class ProductsController extends ProductsAppController {
                 'Gallery',
                 'Parent',
 				'Owner',
-				'ProductHighestBidder'
 				),
 			));
         !empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
@@ -221,9 +220,7 @@ class ProductsController extends ProductsAppController {
 				),
 				'Children',
 				'Gallery',
-				'Parent',
-				'Owner',
-				'ProductHighestBidder' => 'User'
+				'Owner'
 			)
     	));
     	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent

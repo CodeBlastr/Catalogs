@@ -63,14 +63,7 @@ class Product extends ProductsAppModel {
 			'foreignKey' => 'product_id',
 			'dependent' => false,
 			),
-			'ProductHighestBidder' => array(
-				'className' => 'Products.ProductBid',
-				'foreignKey' => 'product_id',
-				'dependent' => true,
-				'fields' => '',
-				'order' => 'amount DESC',
-				'limit' => 1
-			),
+			
         );
         
     public $hasAndBelongsToMany = array(
@@ -81,7 +74,15 @@ class Product extends ProductsAppModel {
             'associationForeignKey' => 'option_id',
     		//'unique' => false,
 	        ),
-        );
+        'Winner' => array(
+			'className' => 'Users.User',
+			'joinTable' => 'product_bids',
+			'foreignKey' => 'product_id',
+			'associationForeignKey' => 'user_id',
+			'order' => array('amount' => 'DESC'),
+			'limit' => 1
+			),
+       );
 
 	public $hasOne = array(
 		'Gallery' => array(
@@ -256,23 +257,31 @@ class Product extends ProductsAppModel {
  */
 
 	public function _expire($results){
-		if(isset($results[0]['Product'])) {
+		if(!empty($results[$this->alias])){ //handles single products
+			$results[0] = $results;
+			$single = true;
+		}
+		if(isset($results[0][$this->alias])) { //this handles many Products
 			$count = count($results); // order is important because we are using unset() in the loop
 			for ($i = 0; $i < $count; ++$i) {
-				if(!empty($results[$i]['Product']['is_expired'])) {
+				if(!empty($results[$i][$this->alias]['is_expired'])) {
 					unset($results[$i]);
 				}
-				if(!empty($results[$i]) && strtotime($results[$i]['Product']['ended']) < time()) {
-					$this->id = $results[$i]['Product']['id'];
-					if (!$this->saveField('is_expired', 1, false)) {
-						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
+				if(!empty($results[$i][$this->alias]['ended']) && strtotime($results[$i][$this->alias]['ended']) < time()) {
+					$this->id = $results[$i][$this->alias]['id'];
+					if ($this->saveField('is_expired', 1, false)) {
+						$results[$i][$this->alias]['type'] == auction ? $this->notifySeller($results[$i]) : null; 
+						$results[$i][$this->alias]['type'] == auction ? $this->notifyWinner($results[$i]) : null;
 					} else {
-						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctioneerExpiredAuction($results[$i]) : null; 
-						$results[$i]['Product']['type'] == auction ? $this->_notifyAuctionBidWinner($results[$i]) : null;
+						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
 					}
 					unset($results[$i]);
 				}
 			}
+		}
+		if(!empty($single) && !empty($results[0][$this->alias])){
+			$results = $results[0];
+			unset($results[0]);
 		}
 		return $results;
 	}
@@ -284,8 +293,10 @@ class Product extends ProductsAppModel {
  * @return array
  * 
  */
-	public function _notifyAuctioneerExpiredAuction($result){
-		$this->__sendMail($result['Creator']['email'],'Auctioneer Expired Auction', $result);	
+	public function notifySeller($product){
+		// note we need to add a field to the product model called 
+		$auctioneer = $this->User->find('first', array('conditions' => array('User.id' => $product['Product']['seller_id'])));
+		$this->__sendMail($auctioneer['User']['email'],'Webpages.Auctioneer Expired Auction', $product);	
 	}
 	
 /**
@@ -294,42 +305,11 @@ class Product extends ProductsAppModel {
  * @return array
  * 
  */	
-	protected function _notifyAuctionBidWinner($result){
-		//lookup highest bid for this product id from prodct bid...sort by amount decending
-		//$this->Product->ProductBid->_checkHighestBid();
-		// App::uses('ProductBid', 'Product.Model');
-		// $ProductBid = new ProductBid();
-		// $winner = $ProductBid->findById($id);
-// 		
-		// if (!empty($this->data['ProductBid']['product_id'])) {
-			// $highestBid = $this->field('amount', array('ProductBid.product_id' => $this->data['ProductBid']['product_id']), 'ProductBid.amount DESC');
-		// }
-   			
-	$this->__sendMail($result['ProductHighestBidder'][0]['User']['email'],'Auction Winner Notification', $result);		
-	}
+	public function notifyWinner($product){
+		$winner = $this->ProductBid->getWinner($product[$this->alias]['id']);
+		$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $product);	
 		
-
-/**
- * Notify Auction bidder that that they have won the Auction
- * @param array $results
- * @return array
- * 
- */
- 	protected function _notifyAuctionBidderWon($result){
- 		
-		//Auction Bidder was out bid 
-		$Webpage = App::uses('Webpages.Webpage');
-		$webpage = $Webpage->findById(26);
-		$product = array();
-		foreach($products as $product){
-			$product = $product;//anything else add here
-			$mailTo = $product['Creater']['email']; //****Change to user email instead of crator****
-			$message = $this->Webpage->replaceTokens($webpage['Webpage']['content'], $product);
-			$subject = $webpage['Webpage']['name'];
-			$this->__sendMail($mailTo, $subject, $message); 
-		}
-	}		
-    
+	}
 	
 	
 
