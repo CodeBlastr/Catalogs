@@ -294,6 +294,7 @@ class Product extends ProductsAppModel {
  * 
  */
 	public function notifySeller($product){
+		debug($product);
 		// note we need to add a field to the product model called 
 		$auctioneer = $this->User->find('first', array('conditions' => array('User.id' => $product['Product']['seller_id'])));
 		$this->__sendMail($auctioneer['User']['email'],'Webpages.Auctioneer Expired Auction', $product);	
