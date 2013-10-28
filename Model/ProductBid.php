@@ -31,7 +31,9 @@ class ProductBid extends ProductsAppModel {
 			'className' => 'Users.User',
 			'foreignKey' => 'user_id',
 			'conditions' => '',
-			'fields' => ''
+			'fields' => '',
+			'order' => array('amount' => 'DESC'),
+			'limit' => 1
 		)
 	);
 	

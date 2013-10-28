@@ -62,6 +62,9 @@ class Product extends ProductsAppModel {
 			'className' => 'Products.ProductBid',
 			'foreignKey' => 'product_id',
 			'dependent' => false,
+			'order' => array('amount' => 'DESC'),
+			'limit' => 1
+			
 			),
 			
         );
@@ -294,10 +297,12 @@ class Product extends ProductsAppModel {
  * 
  */
 	public function notifySeller($product){
+		
 		debug($product);
-		// note we need to add a field to the product model called 
-		$auctioneer = $this->User->find('first', array('conditions' => array('User.id' => $product['Product']['seller_id'])));
-		$this->__sendMail($auctioneer['User']['email'],'Webpages.Auctioneer Expired Auction', $product);	
+		// note we need to add a field to the product model called sellerid
+		//$auctioneer = $this->$find('first', array('conditions' => array('User.id' => $product['Product']['seller_id'])));
+		//$debug($auctioneer); 
+		$this->__sendMail($product['Creator']['email'],'Webpages.Auctioneer Expired Auction', $product);	
 	}
 	
 /**
@@ -308,7 +313,10 @@ class Product extends ProductsAppModel {
  */	
 	public function notifyWinner($product){
 		$winner = $this->ProductBid->getWinner($product[$this->alias]['id']);
-		$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $product);	
+		debug($winner);
+		$emailarr = $product + $winner;
+		debug($emailarr); 
+		$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $emailarr);	
 		
 	}
 	

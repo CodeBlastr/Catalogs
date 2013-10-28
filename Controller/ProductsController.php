@@ -115,7 +115,7 @@ class ProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('products', $products);	
-
+	debug($products);
 		return $products;
  	}
 
@@ -220,7 +220,8 @@ class ProductsController extends ProductsAppController {
 				),
 				'Children',
 				'Gallery',
-				'Owner'
+				'Owner',
+				'Winner' => 'User'
 			)
     	));
     	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
