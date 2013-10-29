@@ -115,7 +115,7 @@ class ProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('products', $products);	
-	debug($products);
+		
 		return $products;
  	}
 
@@ -241,9 +241,6 @@ class ProductsController extends ProductsAppController {
     	$product = $this->Product->cleanItemPrice($product, $this->userRoleId);
     	$this->set('title_for_layout', $product['Product']['name'] . ' < Auctions | ' . __SYSTEM_SITE_NAME);
     	$this->set(compact('product', 'options'));
-		
-		debug($product);
-    	
     }
 
 
