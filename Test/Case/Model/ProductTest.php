@@ -49,6 +49,61 @@ class ProductTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test expire
+ * 
+ */
+ 	public function testExpire() {
+ 		$results = array(
+			(int) 0 => array(
+				'Product' => array(
+					'id' => '5249c848-f100-4cc4-a0b0-04df0ad25527',
+					'sku' => '90657',
+					'name' => 'Brown Cow',
+					'description' => '<p>How now, brown cow?</p>',
+					'stock' => null,
+					'price' => '1600',
+					'children' => 0,
+					'is_expired' => false,
+					'hours_expire' => null,
+					'started' => '2013-09-30 11:50:00',
+					'ended' => '2013-10-20 11:50:00',
+					'search_tags' => null,
+					'type' => 'auction'
+				),
+			)
+		);
+		
+		
+		$results = $this->Product->_expire($results);
+		$this->assertTrue($results[0]['Product']['is_expired']); ///this should expire
+		
+		$results = array(
+			(int) 0 => array(
+				'Product' => array(
+					'id' => '5249c848-f100-4cc4-a0b0-04df0ad25527',
+					'sku' => '90657',
+					'name' => 'Brown Cow',
+					'description' => '<p>How now, brown cow?</p>',
+					'stock' => null,
+					'price' => '1600',
+					'children' => 0,
+					'is_expired' => false,
+					'hours_expire' => null,
+					'started' => '2013-09-30 11:50:00',
+					'ended' => date('Y-m-d h:i:s', strtotime('+3 days')),
+					'search_tags' => null,
+					'type' => 'auction'
+				),
+			)
+		);
+		
+		$results = $this->Product->_expire($results);
+		
+		$this->assertTrue($results[0]['Product']['is_expired'] === false); //this should not expire
+		
+ 	}
+
+/**
  * testAdd method
  *
  * @return void
@@ -128,15 +183,6 @@ class ProductTestCase extends CakeTestCase {
         $this->assertTrue(empty($result)); // product should be gone
     }
     
-    
-/**
- * testCleanItemsPrices method
- *
- * @return void
- */
-	public function testCleanItemsPrices() {
-
-	}
 /**
  * testCleanItemPrice method
  *
@@ -162,13 +208,5 @@ class ProductTestCase extends CakeTestCase {
 			);
 		$result = $this->Product->cleanItemPrice($price);
 		$this->assertEqual(strpos($result['Product']['price'], ','), false); // there should not be commas in the price return from the model (it doesn't work in forms)
-	}
-/**
- * testPaymentOptions method
- *
- * @return void
- */
-	public function testPaymentOptions() {
-
 	}
 }

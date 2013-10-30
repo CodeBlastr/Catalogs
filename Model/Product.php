@@ -36,6 +36,8 @@ class Product extends ProductsAppModel {
         );
 
 	public $order = '';
+	
+	public $isExpired = false;
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
@@ -59,8 +61,12 @@ class Product extends ProductsAppModel {
 		'ProductBid' => array(
 			'className' => 'Products.ProductBid',
 			'foreignKey' => 'product_id',
-			'dependent' => false
-			)
+			'dependent' => false,
+			'order' => array('amount' => 'DESC'),
+			'limit' => 1
+			
+			),
+			
         );
         
     public $hasAndBelongsToMany = array(
@@ -71,7 +77,15 @@ class Product extends ProductsAppModel {
             'associationForeignKey' => 'option_id',
     		//'unique' => false,
 	        ),
-        );
+        'Winner' => array(
+			'className' => 'Users.User',
+			'joinTable' => 'product_bids',
+			'foreignKey' => 'product_id',
+			'associationForeignKey' => 'user_id',
+			'order' => array('amount' => 'DESC'),
+			'limit' => 1
+			),
+       );
 
 	public $hasOne = array(
 		'Gallery' => array(
@@ -81,7 +95,8 @@ class Product extends ProductsAppModel {
 			'conditions' => array('Gallery.model' => 'Product'),
 			'fields' => '',
 			'order' => ''
-            )
+            ), 
+            
         );
 
 	//products association.
@@ -165,6 +180,7 @@ class Product extends ProductsAppModel {
  * @return array
  */
 	public function beforeFind($queryData) {
+		parent::beforeFind($queryData);
 		// always limit products by the user role if the price matrix is used
         if (class_exists('CakeSession')) {
             $userRoleId = CakeSession::read('Auth.User.user_role_id');
@@ -173,6 +189,10 @@ class Product extends ProductsAppModel {
             // stop filtering the price if we use fields and price isn't included
             $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
         }
+
+			$this->isExpired = !empty($queryData['conditions']['Product.is_expired']) ? true : false;
+		
+		
 		return $queryData;
 	}
 
@@ -195,6 +215,11 @@ class Product extends ProductsAppModel {
 				$results = $this->cleanItemPrice($results);
 			}
 		}
+		
+		if ($this->isExpired === false){
+			$results = $this->_expire($results);
+		}
+	
 
 		// this was causing problems for the transfer from product to transaction item
 		// if you need something like this back, then make sure when you add an arb item
@@ -224,9 +249,78 @@ class Product extends ProductsAppModel {
                 $i++;
             }
         }        
-		return $results;
+		return parent::afterFind($results, $primary = false);
 	}    
-    
+
+
+/**
+ * Check product expiration 
+ * @param array $results
+ * @return array
+ */
+
+	public function _expire($results){
+		if(!empty($results[$this->alias])){ //handles single products
+			$results[0] = $results;
+			$single = true;
+		}
+		if(isset($results[0][$this->alias])) { //this handles many Products
+			$count = count($results); // order is important because we are using unset() in the loop
+			for ($i = 0; $i < $count; ++$i) {
+				if(!empty($results[$i][$this->alias]['is_expired'])) {
+					unset($results[$i]);
+				}
+				if(!empty($results[$i][$this->alias]['ended']) && strtotime($results[$i][$this->alias]['ended']) < time()) {
+					$this->id = $results[$i][$this->alias]['id'];
+					if ($this->saveField('is_expired', 1, false)) {
+						$results[$i][$this->alias]['type'] == auction ? $this->notifySeller($results[$i]) : null; 
+						$results[$i][$this->alias]['type'] == auction ? $this->notifyWinner($results[$i]) : null;
+					} else {
+						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
+					}
+					unset($results[$i]);
+				}
+			}
+		}
+		if(!empty($single) && !empty($results[0][$this->alias])){
+			$results = $results[0];
+			unset($results[0]);
+		}
+		return $results;
+	}
+	
+	
+/**
+ * Notify Auctioneer (Site Admin/Owner) that Auction Product has Expired.
+ * @param array $results
+ * @return array
+ * 
+ */
+	public function notifySeller($product){
+		
+		debug($product);
+		// note we need to add a field to the product model called sellerid
+		//$auctioneer = $this->$find('first', array('conditions' => array('User.id' => $product['Product']['seller_id'])));
+		//$debug($auctioneer); 
+		$this->__sendMail($product['Creator']['email'],'Webpages.Auctioneer Expired Auction', $product);	
+	}
+	
+/**
+ * Notify Auction Bidder that auction has expired
+ * @param array $results
+ * @return array
+ * 
+ */	
+	public function notifyWinner($product){
+		$winner = $this->ProductBid->getWinner($product[$this->alias]['id']);
+		debug($winner);
+		$emailarr = $product + $winner;
+		debug($emailarr); 
+		$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $emailarr);	
+		
+	}
+	
+	
 
 /**
  * Cleans data for adding

@@ -15,16 +15,15 @@
 					<?php
 					echo $this->Html->link(
 						$this->Media->display($product['Media'][0], array('width' => 181, 'height' => 121, 'alt' => $product['Product']['name'])),
-						array('plugin' => 'products', 'controller' => 'products', 'action' => 'viewAuction', $product['Product']['id']), array('class' => 'pull-left', 'escape' => false)
-					);
-					?>
+						array('plugin' => 'products', 'controller' => 'products', 'action' => 'auction', $product['Product']['id']), array('class' => 'pull-left', 'escape' => false)
+					); ?>
 				</div>
 			
 				<div class="span7">
 					<div class="media-body">
-						<h4 class="media-heading"><?php echo $product['Product']['name'] ?></h4>
+						<h4 class="media-heading"><?php echo $this->Html->link($product['Product']['name'], array('plugin' => 'products', 'controller' => 'products', 'action' => 'auction', $product['Product']['id'])); ?></h4>
 						<div class="metas">
-							<a href="<?php echo $this->Html->url(array('plugin'=>'users', 'controller'=>'users', 'action'=>'view', $product['Creator']['id'])) ?>"><?php echo $product['Creator']['full_name'] ?></a>
+							from <?php echo $this->Html->link($product['Creator']['full_name'], array('plugin'=>'users', 'controller'=>'users', 'action'=>'view', $product['Creator']['id'])) ?>
 							<div> 
 								<i class="icon-time"></i> <b><time datetime="<?php echo date('c', strtotime($product['Product']['ended']))?>"><?php echo $this->Time->timeAgoInWords($product['Product']['ended'])?></time> left</b>
 							</div>
