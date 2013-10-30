@@ -35,4 +35,4 @@ $this->set('context_menu', array('menus' => array(
         ),
         )));
 		
-echo $this->element('auction_products');
+echo $this->element('Products.Auctions/products'); //change to auctions/products

@@ -6,14 +6,13 @@ class ProductBidsController extends ProductsAppController {
 	public $uses = 'Products.ProductBid';
 
 	public function add() {
-		if (!empty($this->request->data)) {
+		if ($this->request->is('post')) {
 			$this->request->data('ProductBid.user_id', $this->userId);
-			$bidSaved = $this->ProductBid->save($this->request->data);
-			if ($bidSaved) {
+			if ($this->ProductBid->save($this->request->data)) {
 				$this->Session->setFlash('Bid received');
 				$this->redirect($this->referer());
 			} else {
-				$this->Session->setFlash('Unable to process bid.  Try again.');
+				$this->Session->setFlash('Unable to process bid. Please try again. ' . ZuhaInflector::flatten($this->ProductBid->invalidFields()));
 				$this->redirect($this->referer());
 			}
 		}

@@ -2,11 +2,11 @@
 if (!empty($product['Children'])) {
     echo __('<div class="children">');
     foreach ($product['Children'] as $child) {
-        echo $this->Element('auction_product', array('product' => array('Product' => $child, 'Gallery' => $child['Gallery'])), array('plugin' => 'products'));
+        echo $this->Element('\Auctions\product', array('product' => array('Product' => $child, 'Gallery' => $child['Gallery'])), array('plugin' => 'products'));
     }
     echo __('</div>');
 } else {
-    echo $this->Element('auction_product', array('product' => $product), array('plugin' => 'products'));
+    echo $this->Element('\Auctions\product', array('product' => $product), array('plugin' => 'products'));
 }
 ?>
 

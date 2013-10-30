@@ -1,8 +1,7 @@
 
 <div class="product view media row-fluid" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
-            <h2 class="media-heading" itemprop="name"><?php echo $product['Product']['name']; echo !empty($product['ProductBrand']['name']) ? ' by ' . $this->Html->link($product['ProductBrand']['name'], array('controller' => 'product_brands', 'action' => 'view', $product['ProductBrand']['id'])) : ''; ?></h2>
-
-    <div class="itemGallery productGallery pull-left media-object"> 
+	<h2 class="media-heading" itemprop="name"><?php echo $product['Product']['name']; ?> <?php echo !empty($product['ProductBrand']['name']) ? ' by ' . $this->Html->link($product['ProductBrand']['name'], array('controller' => 'product_brands', 'action' => 'view', $product['ProductBrand']['id'])) : ''; ?></h2>
+	<div class="itemGallery productGallery pull-left media-object"> 
         <?php echo $this->Element('Galleries.gallery', array('model' => 'Product', 'foreignKey' => $product['Product']['id'])); ?>
     </div>
 
@@ -10,13 +9,13 @@
         <div class="itemSummary productSummary">
             <span itemprop="description"><?php echo $product['Product']['summary']; ?></span>
         </div>
-        <?php 
-        echo $product['Product']['description'];
-        if($product['Product']['hours_expire'] !== NULL) { 
-            echo __('<p class="productHoursExpire">This virtual product will be accessible for %s hours after purchase.</p>', $product['Product']['hours_expire']); 
-        } ?>
+        <?php
+		echo $product['Product']['description'];
+		if ($product['Product']['hours_expire'] !== NULL) {
+			echo __('<p class="productHoursExpire">This virtual product will be accessible for %s hours after purchase.</p>', $product['Product']['hours_expire']);
+		} ?>
         <div class="itemPrice productPrice" itemprop="offers" itemscope itemtype="http://schema.org/Offer"> 
-            <?php echo __('Price: $'); ?><span id="itemPrice" itemprop="price"><?php echo (!empty($product['ProductPrice'][0]['price']) ? ZuhaInflector::pricify($product['ProductPrice'][0]['price']) : ZuhaInflector::pricify($product['Product']['price'])); ?></span> 
+            <?php echo __('Price: $'); ?><span id="itemPrice" itemprop="price"><?php echo(!empty($product['ProductPrice'][0]['price']) ? ZuhaInflector::pricify($product['ProductPrice'][0]['price']) : ZuhaInflector::pricify($product['Product']['price'])); ?></span> 
         </div>
     </div>
 
@@ -28,7 +27,18 @@
     		</table>
     	</div>
     	<div class="well well-large">
-        	<?php echo $this->Element('auction_bid', array('product' => $product), array('plugin' => 'products')); ?>
+        	<?php echo $this->Element('Products.Auctions/bid', array('product' => $product)); ?>      
+        </div>
+        <div class="well"> 
+        	<?php echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'add'), 'class' => 'form-inline')); ?>
+        	<?php echo $this->Form->hidden('TransactionItem.name', array('value' => $productName)); ?>
+        	<?php echo $this->Form->hidden('TransactionItem.model', array('value' => $productModel)); ?>
+        	<?php echo $this->Form->hidden('TransactionItem.foreign_key', array('value' => $productForeignKey)); ?>
+        	<?php echo $this->Form->hidden('TransactionItem.price', array('value' => $productPrice)); ?>
+        	<?php echo $this->Form->hidden('TransactionItem.arb_settings', array('value' => $productArb)); ?>
+        	<?php echo $this->Form->hidden('TransactionItem.quanity', array('value' => 1)); ?>
+        	<?php echo $this->Form->submit('Buy Now', array('class' => 'btn btn-primary btn-mini')); ?>
+        	<?php $this->Form->end(); ?>
         </div>
     </div>
 </div>
