@@ -198,33 +198,31 @@ class ProductsController extends ProductsAppController {
         
     }
     
-    public function viewAuction ($id = null, $child = null) {
-    	$this->view = 'view_auction';
-
+    public function auction ($id = null, $child = null) {
     	$this->Product->id = $id;
     	if (!$this->Product->exists()) {
     		throw new NotFoundException(__('Invalid product'));
     	}
     	
     	$product = $this->Product->find('first' , array(
-    			'conditions' => array(
-    					'Product.id' => $id
-    			),
-    			'contain' => array(
-    					'ProductBid',
-    					'ProductBrand' => array(
-    							'fields' => array('name', 'id')
-    					),
-    					'ProductPrice' => array(
-    							'conditions' => array(
-    									'ProductPrice.user_role_id' => $this->userRoleId
-    							)
-    					),
-    					'Children',
-    					'Gallery',
-    					'Parent',
-    					'Owner'
-    			)
+			'conditions' => array(
+				'Product.id' => $id
+			),
+			'contain' => array(
+				'ProductBid',
+				'ProductBrand' => array(
+					'fields' => array('name', 'id')
+				),
+				'ProductPrice' => array(
+					'conditions' => array(
+						'ProductPrice.user_role_id' => $this->userRoleId
+					)
+				),
+				'Children',
+				'Gallery',
+				'Parent',
+				'Owner'
+			)
     	));
     	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
     	
