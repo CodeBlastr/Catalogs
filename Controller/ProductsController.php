@@ -76,7 +76,7 @@ class ProductsController extends ProductsAppController {
         $this->paginate['contain'][] = 'Owner';
         $this->paginate['contain'][] = 'Creator';
 		$this->paginate['conditions']['Product.parent_id'] = null;
-		$products = $this->paginate();
+		$products = $this->paginate('Product');
 		
 		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
@@ -192,13 +192,13 @@ class ProductsController extends ProductsAppController {
 	}
     
     protected function _viewChild($parentId) {
-        
+
     }
     
     public function auction ($id = null, $child = null) {
     	$this->Product->id = $id;
     	if (!$this->Product->exists()) {
-    		throw new NotFoundException(__('Invalid product'));
+    		throw new NotFoundException(__('Invalid auction'));
     	}
     	
     	$product = $this->Product->find('first' , array(
@@ -207,18 +207,7 @@ class ProductsController extends ProductsAppController {
 			),
 			'contain' => array(
 				'ProductBid',
-				'ProductBrand' => array(
-					'fields' => array('name', 'id')
-				),
-				'ProductPrice' => array(
-					'conditions' => array(
-						'ProductPrice.user_role_id' => $this->userRoleId
-					)
-				),
-				'Children',
 				'Gallery',
-				'Owner',
-				'Winner' => 'User'
 			)
     	));
     	!empty($product['Parent']['id']) && empty($child) ?  $this->redirect(array($product['Parent']['id'])) : null; // redirect to parent
@@ -248,11 +237,12 @@ class ProductsController extends ProductsAppController {
  * @param string $parentId
  */
 	public function add($type = 'default', $parentId = null) {
+		$this->redirect('admin');
         $function = '_add' . ucfirst($type);
         
         $this->set('productBrands', $this->Product->ProductBrand->find('list'));
     	if (CakePlugin::loaded('Categories')) {
-        	$this->set('categories', $this->Product->Category->generateTreeList());
+        	$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
 		}
     	//$this->set('paymentOptions', $this->Product->paymentOptions());
         
@@ -296,7 +286,7 @@ class ProductsController extends ProductsAppController {
         $this->layout = false; // required for modal to work (but causes the standard view page not to)
         $this->view = 'add_default_child';
     }
-    
+
     protected function _addAuction($parentId = null) {
     	if (!empty($this->request->data)) {
     		if ($this->Product->saveAll($this->request->data)) {
@@ -304,8 +294,8 @@ class ProductsController extends ProductsAppController {
     			$this->redirect(array('action' => 'edit', $this->Product->id));
     		}
     	}
-    	$this->set('page_title_for_layout', __('Create an Product for Auction'));
-    	$this->set('title_for_layout', __('Add Product Form'));
+    	$this->set('page_title_for_layout', __('Create an Auction'));
+    	$this->set('title_for_layout', __('Create an Auction'));
     	$this->layout = 'default';
     	$this->view = 'add_auction';
     	return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;

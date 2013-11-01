@@ -48,10 +48,49 @@ class ProductBid extends ProductsAppModel {
 	}
 
 /**
+ * Finish Auction method
+ * 
+ */
+	public function finishAuction($product, $options = array()) {
+		if ($options['email'] === false) {
+			/// then email the winner
+			$this->notifySeller($product, $options); 
+			$this->notifyWinner($product, $options);
+		}
+		// do any other auction wrap up stuff here, just don't know what that might be right now...
+	}
+	
+	
+/**
+ * Notify Auctioneer (Site Admin/Owner) that Auction Product has Expired.
+ * @param array $results
+ * @return array
+ * 
+ */
+	public function notifySeller($product, $options = array()){
+		// note we need to add a field to the product model called sellerid
+		$this->__sendMail($product['Creator']['email'],'Webpages.Auctioneer Expired Auction', $product);	
+	}
+	
+/**
+ * Notify Auction Bidder that auction has expired
+ * @param array $results
+ * @return array
+ * 
+ */	
+	public function notifyWinner($product, $options = array()){
+		$winner = $this->getWinner($product[$this->alias]['id'], $options);
+		if (!empty($winner)) { // there may not have been a winner
+			$emailarr = $product + $winner;
+			$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $emailarr);	
+		}
+	}
+
+/**
  * Get Winner method
  * Find the highest bid and return the bid and the user. 
  */
-	public function getWinner($productId) {
+	public function getWinner($productId, $options = array()) {
 		return $this->find('first', array('conditions' => array('ProductBid.product_id' => $productId), 'contain' => array('User')));
 	}
 	

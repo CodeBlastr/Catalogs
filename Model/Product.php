@@ -103,7 +103,7 @@ class Product extends ProductsAppModel {
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'counterCache' => 'children',
-			'counterScope' => array('Product.parent_id NOT' => null),
+			'counterScope' => array('Parent.parent_id NOT' => null),
             ),
 		'ProductStore'=>array(
 			'className' => 'Products.ProductStore',
@@ -200,12 +200,12 @@ class Product extends ProductsAppModel {
 		// only play with prices if the find is not list type (which doesn't need prices)
 		if (!empty($this->filterPrice)) {
 			// this is for the find "all" type where the data format is $results[0]['Product']['id'];
-			if (isset($results[0]['Product']) && !empty($results[0]['Product'])) {
+			if (isset($results[0][$this->alias]) && !empty($results[0][$this->alias])) {
 				$results = $this->cleanItemsPrices($results);
 			}
 
 			// this is for single products being returned
-			if (isset($results['Product']['id']) && !empty($results['Product']['id'])) {
+			if (isset($results[$this->alias]['id']) && !empty($results[$this->alias]['id'])) {
 				$results = $this->cleanItemPrice($results);
 			}
 		}
@@ -261,7 +261,7 @@ class Product extends ProductsAppModel {
 		}
 		if (empty($data[0])) {
 			// if $data is empty then we will expire all ended products
-			$data = $this->find('all', array('conditions' => array('Product.is_expired' => false, 'Product.ended' < date('Y-m-d h:i:s')), 'callbacks' => false));
+			$data = $this->find('all', array('conditions' => array($this->alias . '.is_expired' => false, $this->alias . '.ended' < date('Y-m-d h:i:s')), 'callbacks' => false));
 		}
 		if(isset($data[0][$this->alias])) { //this handles many Products
 			$count = count($data); // order is important because we are using unset() in the loop
@@ -272,10 +272,7 @@ class Product extends ProductsAppModel {
 				if(!empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
 					$this->id = $data[$i][$this->alias]['id'];
 					if ($this->saveField('is_expired', 1, false)) {
-						if ($options['email'] !== false) {
-							$data[$i][$this->alias]['type'] == 'auction' ? $this->notifySeller($data[$i]) : null; 
-							$data[$i][$this->alias]['type'] == 'auction' ? $this->notifyWinner($data[$i]) : null;
-						}
+						$data[$i][$this->alias]['type'] == 'auction' ? $this->ProductBid->finishAuction($data[$i], $options) : null;
 					} else {
 						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
 					}
@@ -291,32 +288,6 @@ class Product extends ProductsAppModel {
 	}
 	
 	
-/**
- * Notify Auctioneer (Site Admin/Owner) that Auction Product has Expired.
- * @param array $results
- * @return array
- * 
- */
-	public function notifySeller($product){
-		// note we need to add a field to the product model called sellerid
-		$this->__sendMail($product['Creator']['email'],'Webpages.Auctioneer Expired Auction', $product);	
-	}
-	
-/**
- * Notify Auction Bidder that auction has expired
- * @param array $results
- * @return array
- * 
- */	
-	public function notifyWinner($product){
-		$winner = $this->ProductBid->getWinner($product[$this->alias]['id']);
-		if (!empty($winner)) { // there may not have been a winner
-			$emailarr = $product + $winner;
-			$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $emailarr);	
-		}
-	}
-	
-	
 
 /**
  * Cleans data for adding
@@ -327,27 +298,27 @@ class Product extends ProductsAppModel {
  */
  	protected function _cleanAddData($data) {
 		// order is important
-		if (empty($data['Product']['price']) && !empty($data['Product']['arb_settings']['PaymentAmount'])) {
-			$data['Product']['price'] = $data['Product']['arb_settings']['PaymentAmount'];
+		if (empty($data[$this->alias]['price']) && !empty($data[$this->alias]['arb_settings']['PaymentAmount'])) {
+			$data[$this->alias]['price'] = $data[$this->alias]['arb_settings']['PaymentAmount'];
 		}
 		
-		if (!empty($data['Product']['arb_settings'])) {
+		if (!empty($data[$this->alias]['arb_settings'])) {
 			// serialize the data
-			$data['Product']['arb_settings'] = serialize($this->data['Product']['arb_settings']);
+			$data[$this->alias]['arb_settings'] = serialize($this->data[$this->alias]['arb_settings']);
 		}
 
-		if(!empty($data['Product']['payment_type'])) {
-			$data['Product']['payment_type'] = implode(',', $this->data['Product']['payment_type']);
+		if(!empty($data[$this->alias]['payment_type'])) {
+			$data[$this->alias]['payment_type'] = implode(',', $this->data[$this->alias]['payment_type']);
 		}
 
-		if (!empty($data['Product']['name']) && empty($data['Product']['sku'])) {
+		if (!empty($data[$this->alias]['name']) && empty($data[$this->alias]['sku'])) {
 			// generate random sku if none exists
-			$data['Product']['sku'] = rand(10000, 99000);
+			$data[$this->alias]['sku'] = rand(10000, 99000);
 		}
         
-        if (!empty($data['Option']['Option'][0]) && !empty($data['Product']['id'])) {
+        if (!empty($data['Option']['Option'][0]) && !empty($data[$this->alias]['id'])) {
             // need to manually add existing options so they aren't auto-deleted
-            $existingOptions = Set::extract('/ProductsOption/option_id', $this->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => $data['Product']['id']), 'callbacks' => false)));
+            $existingOptions = Set::extract('/ProductsOption/option_id', $this->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => $data[$this->alias]['id']), 'callbacks' => false)));
             $data['Option']['Option'] = array_merge($data['Option']['Option'], $existingOptions);
         }
         
@@ -397,20 +368,20 @@ class Product extends ProductsAppModel {
         $productPriceCount = 0;
 		foreach ($products as $product) {
 			// this is to check for single product.
-			if (isset($product['Product']['id']) && !empty($product['Product']['id'])) {
+			if (isset($product[$this->alias]['id']) && !empty($product[$this->alias]['id'])) {
 				unset($productPriceCount);
 				// count the prices to see if the price matrix was used at all
 				$productPriceCount = $this->ProductPrice->find('count', array('conditions' => array(
-					'ProductPrice.product_id' => $product['Product']['id'],
+					'ProductPrice.product_id' => $product[$this->alias]['id'],
 					)));
 				// remove the default price if matrix was used
 				if ($productPriceCount > 0) {
-					unset($products[$i]['Product']['price']);
+					unset($products[$i][$this->alias]['price']);
 				}
 				$products[$i] = $this->cleanItemPrice($product);
 
 				// remove the product all together if the price matrix was used, and price is 0 for this user's role
-				if (empty($products[$i]['Product']['price'])) {
+				if (empty($products[$i][$this->alias]['price'])) {
 					unset($products[$i]);
 				}
 				$i++;
@@ -431,12 +402,12 @@ class Product extends ProductsAppModel {
 		if (!empty($product['ProductPrice'][0])) {
 			foreach ($product['ProductPrice'] as $price) {
 				// set the price in the original products to user role price
-				$product['Product']['price'] = $price['price'];
+				$product[$this->alias]['price'] = $price['price'];
 			}
 		}
 
-		if (!empty($product['Product']['price'])) {
-			$product['Product']['price'] = $product['Product']['price'];
+		if (!empty($product[$this->alias]['price'])) {
+			$product[$this->alias]['price'] = $product[$this->alias]['price'];
 		}
 
 		unset($product['ProductPrice']); // its not needed now
@@ -483,7 +454,7 @@ class Product extends ProductsAppModel {
     		'price'
 	        );
 	    
-	    foreach($itemData['Product'] as $k => $v) {
+	    foreach($itemData[$this->alias] as $k => $v) {
     		if(in_array($k, $fieldsToCopyDirectly)) {
     		    $return['TransactionItem'][$k] = $v;
     		}
@@ -528,7 +499,7 @@ class Product extends ProductsAppModel {
                 )
             ))));
         if (!empty($childIds)) {
-            if ($this->Option->ProductsOption->deleteAll(array('ProductsOption.option_id' => $optionId, 'ProductsOption.product_id' => $id)) && $this->deleteAll(array('Product.id' => $childIds))) {
+            if ($this->Option->ProductsOption->deleteAll(array('ProductsOption.option_id' => $optionId, 'ProductsOption.product_id' => $id)) && $this->deleteAll(array($this->alias . '.id' => $childIds))) {
                 return true;
             } else {
                 throw new Exception(__('Child deletes failed'));
@@ -553,7 +524,7 @@ class Product extends ProductsAppModel {
     public function origin_afterFind(Model $Model, $results = array(), $primary = false) {
     	if ($Model->name == 'TransactionItem') {
 	        $ids = Set::extract('/TransactionItem/foreign_key', $results);
-	        $products = $this->_concatName($this->find('all', array('conditions' => array('Product.id' => $ids), 'contain' => array('Option'))));
+	        $products = $this->_concatName($this->find('all', array('conditions' => array($this->alias . '.id' => $ids), 'contain' => array('Option'))));
 	        $names = Set::combine($products, '{n}.Product.id', '{n}.Product.name');
 	        $i = 0;
 	        foreach ($results as $result) {
@@ -576,18 +547,18 @@ class Product extends ProductsAppModel {
  * @param array $products
  */
     protected function _concatName($products = array()) {
-        if (!empty($products[0]['Product']) && !empty($products[0]['Option'])) {
+        if (!empty($products[0][$this->alias]) && !empty($products[0]['Option'])) {
             $i = 0;
             foreach ($products as $product) {
                 if (!empty($product['Option'])) {
-                    $products[$i]['Product']['name'] = __('%s (', $product['Product']['name']);
+                    $products[$i][$this->alias]['name'] = __('%s (', $product[$this->alias]['name']);
                     $n = 1;
                     $total = count($product['Option']);
                     foreach ($product['Option'] as $option) {
                         if ($n < $total) {
-                            $products[$i]['Product']['name'] .= __('%s, ', $option['name']);
+                            $products[$i][$this->alias]['name'] .= __('%s, ', $option['name']);
                         } else {
-                            $products[$i]['Product']['name'] .= __('%s)', $option['name']);
+                            $products[$i][$this->alias]['name'] .= __('%s)', $option['name']);
                         }
                         $n++;
                     }
