@@ -36,8 +36,6 @@ class Product extends ProductsAppModel {
         );
 
 	public $order = '';
-	
-	public $isExpired = false;
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
@@ -189,10 +187,6 @@ class Product extends ProductsAppModel {
             // stop filtering the price if we use fields and price isn't included
             $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
         }
-
-			$this->isExpired = !empty($queryData['conditions']['Product.is_expired']) ? true : false;
-		
-		
 		return $queryData;
 	}
 
@@ -215,11 +209,6 @@ class Product extends ProductsAppModel {
 				$results = $this->cleanItemPrice($results);
 			}
 		}
-		
-		if ($this->isExpired === false){
-			$results = $this->_expire($results);
-		}
-	
 
 		// this was causing problems for the transfer from product to transaction item
 		// if you need something like this back, then make sure when you add an arb item
@@ -248,45 +237,57 @@ class Product extends ProductsAppModel {
                 }
                 $i++;
             }
-        }        
+        }
+		$this->expire(); // expires ended products, but we probably will want to have this in a different spot (eg. cron) on a higher traffic site
 		return parent::afterFind($results, $primary = false);
 	}    
 
 
 /**
  * Check product expiration 
- * @param array $results
+ * 
+ * Expires items in the data array.  If the array is empty it will 
+ * expire all ended products found in the db.
+ * 
+ * @param array $data
+ * @param array $options
  * @return array
  */
 
-	public function _expire($results){
-		if(!empty($results[$this->alias])){ //handles single products
-			$results[0] = $results;
+	public function expire(array $data = array(), array $options = array()){
+		if(!empty($data[$this->alias])){ //handles single products
+			$data[0] = $data;
 			$single = true;
 		}
-		if(isset($results[0][$this->alias])) { //this handles many Products
-			$count = count($results); // order is important because we are using unset() in the loop
+		if (empty($data[0])) {
+			// if $data is empty then we will expire all ended products
+			$data = $this->find('all', array('conditions' => array('Product.is_expired' => false, 'Product.ended' < date('Y-m-d h:i:s')), 'callbacks' => false));
+		}
+		if(isset($data[0][$this->alias])) { //this handles many Products
+			$count = count($data); // order is important because we are using unset() in the loop
 			for ($i = 0; $i < $count; ++$i) {
-				if(!empty($results[$i][$this->alias]['is_expired'])) {
-					unset($results[$i]);
+				if(!empty($data[$i][$this->alias]['is_expired'])) {
+					unset($data[$i]);
 				}
-				if(!empty($results[$i][$this->alias]['ended']) && strtotime($results[$i][$this->alias]['ended']) < time()) {
-					$this->id = $results[$i][$this->alias]['id'];
+				if(!empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
+					$this->id = $data[$i][$this->alias]['id'];
 					if ($this->saveField('is_expired', 1, false)) {
-						$results[$i][$this->alias]['type'] == auction ? $this->notifySeller($results[$i]) : null; 
-						$results[$i][$this->alias]['type'] == auction ? $this->notifyWinner($results[$i]) : null;
+						if ($options['email'] !== false) {
+							$data[$i][$this->alias]['type'] == 'auction' ? $this->notifySeller($data[$i]) : null; 
+							$data[$i][$this->alias]['type'] == 'auction' ? $this->notifyWinner($data[$i]) : null;
+						}
 					} else {
 						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
 					}
-					unset($results[$i]);
+					unset($data[$i]);
 				}
 			}
 		}
-		if(!empty($single) && !empty($results[0][$this->alias])){
-			$results = $results[0];
-			unset($results[0]);
+		if(!empty($single) && !empty($data[0][$this->alias])){
+			$data = $data[0];
+			unset($data[0]);
 		}
-		return $results;
+		return $data;
 	}
 	
 	
@@ -297,11 +298,7 @@ class Product extends ProductsAppModel {
  * 
  */
 	public function notifySeller($product){
-		
-		debug($product);
 		// note we need to add a field to the product model called sellerid
-		//$auctioneer = $this->$find('first', array('conditions' => array('User.id' => $product['Product']['seller_id'])));
-		//$debug($auctioneer); 
 		$this->__sendMail($product['Creator']['email'],'Webpages.Auctioneer Expired Auction', $product);	
 	}
 	
@@ -313,11 +310,10 @@ class Product extends ProductsAppModel {
  */	
 	public function notifyWinner($product){
 		$winner = $this->ProductBid->getWinner($product[$this->alias]['id']);
-		debug($winner);
-		$emailarr = $product + $winner;
-		debug($emailarr); 
-		$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $emailarr);	
-		
+		if (!empty($winner)) { // there may not have been a winner
+			$emailarr = $product + $winner;
+			$this->__sendMail($winner['User']['email'],'Webpages.Auction Winner Notification', $emailarr);	
+		}
 	}
 	
 	

@@ -21,7 +21,9 @@ class ProductTestCase extends CakeTestCase {
         'plugin.Galleries.Gallery',
         'plugin.Galleries.GalleryImage',
         'plugin.Products.Product',
+        'plugin.Products.ProductBid',
         'plugin.Products.ProductBrand',
+        'plugin.Products.ProductOption',
         'plugin.Products.ProductPrice',
         'plugin.Products.ProductStore',
         'plugin.Products.ProductsProductOption',
@@ -53,54 +55,76 @@ class ProductTestCase extends CakeTestCase {
  * 
  */
  	public function testExpire() {
- 		$results = array(
-			(int) 0 => array(
-				'Product' => array(
-					'id' => '5249c848-f100-4cc4-a0b0-04df0ad25527',
-					'sku' => '90657',
-					'name' => 'Brown Cow',
-					'description' => '<p>How now, brown cow?</p>',
-					'stock' => null,
-					'price' => '1600',
-					'children' => 0,
-					'is_expired' => false,
-					'hours_expire' => null,
-					'started' => '2013-09-30 11:50:00',
-					'ended' => '2013-10-20 11:50:00',
-					'search_tags' => null,
-					'type' => 'auction'
-				),
+ 		$this->Product->notifications = false; // supress notifications so that we don't need a fixture for them
+ 		$data = array(
+			'Product' => array(
+				'id' => '5249c848-f100-4cc4-a0b0-04df0ad25527',
+				'name' => 'Brown Cow',
+				'description' => '<p>How now, brown cow?</p>',
+				'price' => '45',
+				'is_expired' => 0,
+				'started' => '2013-09-30 11:50:00',
+				'ended' => '2013-10-20 11:50:00',
+				'type' => 'auction'
 			)
 		);
-		
-		
-		$results = $this->Product->_expire($results);
-		$this->assertTrue($results[0]['Product']['is_expired']); ///this should expire
+		$this->Product->create();
+		$this->Product->save($data);
+		$results = $this->Product->expire($data, array('email' => false));
+		$results = $this->Product->find('first', array('conditions' => array('Product.id' => $data['Product']['id'])));
+		$this->assertTrue($results['Product']['is_expired']); ///this should be expired
 		
 		$results = array(
 			(int) 0 => array(
 				'Product' => array(
-					'id' => '5249c848-f100-4cc4-a0b0-04df0ad25527',
-					'sku' => '90657',
+					'id' => '4249c848-f100-4cc4-a0b0-04df0ad25528',
 					'name' => 'Brown Cow',
 					'description' => '<p>How now, brown cow?</p>',
-					'stock' => null,
-					'price' => '1600',
-					'children' => 0,
-					'is_expired' => false,
-					'hours_expire' => null,
+					'price' => '16',
+					'is_expired' => 0,
 					'started' => '2013-09-30 11:50:00',
 					'ended' => date('Y-m-d h:i:s', strtotime('+3 days')),
-					'search_tags' => null,
 					'type' => 'auction'
 				),
 			)
 		);
-		
-		$results = $this->Product->_expire($results);
-		
-		$this->assertTrue($results[0]['Product']['is_expired'] === false); //this should not expire
-		
+		$results = $this->Product->expire($results, array('email' => false));
+		$this->assertTrue($results[0]['Product']['is_expired'] === 0); //this should not expire
+ 	}
+
+/**
+ * testExpireEmpty method
+ */
+ 	public function testExpireEmpty() {
+ 		$this->Product->notifications = false; // supress notifications so that we don't need a fixture for them
+ 		// if the first parameter in expire is empty then 
+ 		$data[] = array(
+			'Product' => array(
+				'name' => 'Brown Cow',
+				'stock' => null,
+				'price' => '45.00',
+				'is_expired' => 0,
+				'started' => '2013-09-30 11:50:00',
+				'ended' => '2013-10-20 11:50:00',
+				'type' => 'auction'
+			)
+		);
+		$data[] = array(
+			'Product' => array(
+				'name' => 'Brown Cow',
+				'stock' => null,
+				'price' => '18.00',
+				'is_expired' => 0,
+				'started' => '2013-09-30 11:50:00',
+				'ended' => '2013-10-24 11:50:00',
+				'type' => 'auction'
+			)
+		);
+		$this->Product->create();
+		$this->Product->saveAll($data);
+ 		$this->Product->expire(array(), array('email' => false));
+		$results = Set::extract('/Product/is_expired', $this->Product->find('all'));
+		$this->assertTrue(array(true, true) == $results);  // both products should have been expired
  	}
 
 /**

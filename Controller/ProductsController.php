@@ -76,7 +76,6 @@ class ProductsController extends ProductsAppController {
         $this->paginate['contain'][] = 'Owner';
         $this->paginate['contain'][] = 'Creator';
 		$this->paginate['conditions']['Product.parent_id'] = null;
-
 		$products = $this->paginate();
 		
 		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
@@ -86,7 +85,6 @@ class ProductsController extends ProductsAppController {
 		$this->set('displayDescription', 'summary'); 
 		$this->set('showGallery', true);
 		$this->set('galleryForeignKey', 'id');
-		
 		return $products;
 	}
 
