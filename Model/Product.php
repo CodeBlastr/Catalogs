@@ -238,53 +238,7 @@ class Product extends ProductsAppModel {
                 $i++;
             }
         }
-		$this->expire(); // expires ended products, but we probably will want to have this in a different spot (eg. cron) on a higher traffic site
 		return parent::afterFind($results, $primary = false);
-	}    
-
-
-/**
- * Check product expiration 
- * 
- * Expires items in the data array.  If the array is empty it will 
- * expire all ended products found in the db.
- * 
- * @param array $data
- * @param array $options
- * @return array
- */
-
-	public function expire(array $data = array(), array $options = array()){
-		if(!empty($data[$this->alias])){ //handles single products
-			$data[0] = $data;
-			$single = true;
-		}
-		if (empty($data[0])) {
-			// if $data is empty then we will expire all ended products
-			$data = $this->find('all', array('conditions' => array($this->alias . '.is_expired' => false, $this->alias . '.ended' < date('Y-m-d h:i:s')), 'callbacks' => false));
-		}
-		if(isset($data[0][$this->alias])) { //this handles many Products
-			$count = count($data); // order is important because we are using unset() in the loop
-			for ($i = 0; $i < $count; ++$i) {
-				if(!empty($data[$i][$this->alias]['is_expired'])) {
-					unset($data[$i]);
-				}
-				if(!empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
-					$this->id = $data[$i][$this->alias]['id'];
-					if ($this->saveField('is_expired', 1, false)) {
-						$data[$i][$this->alias]['type'] == 'auction' ? $this->ProductBid->finishAuction($data[$i], $options) : null;
-					} else {
-						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
-					}
-					unset($data[$i]);
-				}
-			}
-		}
-		if(!empty($single) && !empty($data[0][$this->alias])){
-			$data = $data[0];
-			unset($data[0]);
-		}
-		return $data;
 	}
 	
 	
