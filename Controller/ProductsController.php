@@ -42,19 +42,7 @@ class ProductsController extends ProductsAppController {
  *
  */
 	public function dashboard() {
-		$Transaction = ClassRegistry::init('Transactions.Transaction');
-		$TransactionItem = ClassRegistry::init('Transactions.TransactionItem');
-		$this->set('counts', $counts = array_count_values(array_filter(Set::extract('/Transaction/status', $Transaction->find('all')))));
-		$this->set('statsSalesToday', $Transaction->salesStats('today'));
-		$this->set('statsSalesThisWeek', $Transaction->salesStats('thisWeek'));
-		$this->set('statsSalesThisMonth', $Transaction->salesStats('thisMonth'));
-		$this->set('statsSalesThisYear', $Transaction->salesStats('thisYear'));
-		$this->set('statsSalesAllTime', $Transaction->salesStats('allTime'));
-		$this->set('transactionStatuses', $Transaction->statuses());
-		$this->set('itemStatuses', $TransactionItem->statuses());
-		$this->set('title_for_layout', __('Ecommerce Dashboard'));
-		$this->set('page_title_for_layout', __('Ecommerce Dashboard'));
-		$this->layout = 'default';
+		$this->redirect(array('prefix' => 'admin', 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'dashboard'));
 	}
 
 /**
