@@ -19,16 +19,6 @@ class ProductsSchema extends CakeSchema {
 		$this->UpdateSchema->after($event);
 	}
 
-	public $product_bids = array(
-		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null),
-		'product_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'amount' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 11, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
-	);
-
 	public $product_brands = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -129,7 +119,6 @@ class ProductsSchema extends CakeSchema {
           'started' => array('type' => 'datetime', 'null' => true, 'default' => null), 
           'ended' => array('type' => 'datetime', 'null' => true, 'default' => null), 
           'search_tags' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
-          'type' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'), 
           'created' => array('type' => 'datetime', 'null' => false, 'default' => null), 
           'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
           'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)), 

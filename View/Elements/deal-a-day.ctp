@@ -7,7 +7,7 @@ if(!empty($instance) && defined('__ELEMENT_PRODUCTS_DEALADAY_'.$instance)) {
 	extract(unserialize(__ELEMENT_PRODUCTS_DEALADAY));
 }
 # setup defaults
-$dealItem = $this->requestAction('products/products/deal_a_day');
+$dealItem = $this->requestAction('products/products/daily_deal');
 $gallery = $dealItem;
 echo $this->Html->script('/products/js/time.js');
 
