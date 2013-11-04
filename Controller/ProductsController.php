@@ -90,7 +90,7 @@ class ProductsController extends ProductsAppController {
 					//                    'Gallery'
 				),
 				'Gallery',
-				'Parent',
+				//'Parent',
 				'Owner',
 			),
 		));
@@ -137,7 +137,7 @@ class ProductsController extends ProductsAppController {
 	}
 
 	protected function _addDefault($parentId = null) {
-		if (!empty($this->request->data)) {
+		if ($this->request->is('post')) {
 			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'));
 				$this->redirect(array(

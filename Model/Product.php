@@ -103,7 +103,7 @@ class Product extends ProductsAppModel {
 			'className' => 'Products.Product',
 			'foreignKey' => 'parent_id',
 			'counterCache' => 'children',
-			'counterScope' => array('Parent.parent_id NOT' => null),
+			'counterScope' => array('parent_id NOT' => null),
             ),
 		'ProductStore'=>array(
 			'className' => 'Products.ProductStore',
@@ -170,6 +170,20 @@ class Product extends ProductsAppModel {
 		$this->data = $this->_newOptions($this->data);
         $this->data = $this->_cleanAddData($this->data);
         return parent::beforeSave($options);
+    }
+    
+/**
+ * After save method
+ * 
+ * @param type $options
+ * @return boolean
+ */
+    public function afterSave($created, $options = array()) {
+    	$foreignKey = $this->field('foreign_key', array('id' => $this->id));
+		if (empty($foreignKey)) {
+			$this->saveField('foreign_key', $this->id, array('validate' => false, 'callbacks' => false, 'counterCache' => false));
+		}
+        return parent::afterSave($created, $options);
     }
     
 /**
@@ -279,6 +293,10 @@ class Product extends ProductsAppModel {
         if (empty($data['GalleryImage']['filename']['name'])) {
             unset($data['GalleryImage']);
         }
+
+		if (empty($data['Product']['model'])) {
+			$data['Product']['model'] = 'Product';
+		}
 		
 		return $data;
 	}

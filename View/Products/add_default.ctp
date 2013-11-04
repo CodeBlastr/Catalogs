@@ -22,6 +22,7 @@
 	<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
     <fieldset>
     	<?php
+		echo $this->Form->input('Product.model', array('type' => 'hidden', 'value' => 'Product'));
 		echo $this->Form->input('Product.name', array('label' => 'Display Name'));
         echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999')); 
         echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Primary Image  <br /><small><em>You can add additional images after you save.</em></small>'));
