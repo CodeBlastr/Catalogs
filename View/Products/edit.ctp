@@ -18,7 +18,6 @@
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
  ?>
-
 <div class="row products">
 	<div class="span3 col-md-4" id="productNav">
 	    <ul class="list-group nav-list">
