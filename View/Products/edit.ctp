@@ -130,7 +130,7 @@
 	 	echo $this->Form->input('Product.shipping_charge'); ?>
     </fieldset>
     
-    <?php if (empty($this->request->data['Product']['parent_id']) && in_array('Categories', CakePlugin::loaded())) { ?>
+    <?php if (empty($this->request->data['Product']['parent_id']) && CakePlugin::loaded('Categories')) { ?>
 	<fieldset id="productCategorization">
  		<legend class="toggleClick"><?php echo __d('products', 'Does this product belong to a category?');?></legend>
 		<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'selected' => $selectedCategories, 'label' => __('Choose categories (%s)', $this->Html->link('edit', array('action' => 'categories'))))); ?>
