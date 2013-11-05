@@ -28,7 +28,7 @@
 			<?php echo $this->Form->input('Product.cart_max', array('type' => 'hidden', 'value' => 1)); ?>
 			<?php echo $this->Form->input('Product.model', array('type' => 'hidden', 'value' => 'UserRole')); ?>
 			<?php echo $this->Form->input('Product.name', array('label' => 'Display Name')); ?>
-	        <?php echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Promo Image  <small>(add more images after save)</small>')); ?>
+	        <?php echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null; ?>
 			<?php //echo $this->Form->input('Product.price', array('label' => 'Price <small>(Use 0 for a free trial peroids.)</small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999', 'data-mask' => 'X.00')); ?>
 	    	<?php 		
 			$arbSettingsValues = array(

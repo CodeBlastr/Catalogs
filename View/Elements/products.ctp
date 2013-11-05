@@ -6,7 +6,7 @@
         foreach ($products as $product) { ?>
             <div class="indexRow">
                 <div class="indexCell galleryThumb imageCell" id="galleryThumb<?php echo $product['Product']['id']; ?>"> 
-                    <?php echo $this->Element('thumb', array('model' => 'Product', 'foreignKey' => $product['Product']['id'], 'thumbSize' => 'medium', 'thumbLink' => '/products/products/view/'.$product['Product']['id']), array('plugin' => 'galleries')); ?>
+                    <?php echo $this->Media->display($product['Media'][0], array('alt' => $product['Product']['name'])); ?>
                 </div>
                 <div class="indexCell itemDescription productDescription metaCell" id="productDescription<?php echo $product["Product"]["id"]; ?>"> 
                     <ul class="metaData">

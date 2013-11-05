@@ -35,10 +35,7 @@
 		echo $this->Form->input('Product.stock', array('label' => 'Would you like to track inventory?', 'after' => '<p>Enter your current item count or leave blank for unlimited</p>'));
 		echo $this->Form->input('Product.cart_min', array('label' => 'Minimun Cart Quantity?', 'after' => '<p>Enter the minimum cart quantity or leave blank for 1</p>'));
 		echo $this->Form->input('Product.cart_max', array('label' => 'Maximum Cart Quantity?', 'after' => '<p>Enter the max cart quantity or leave blank for unlimited</p>'));
-        echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Upload your best image for this item.', 'after' => ' <p> You can add additional images after you save.</p>'));
-	    echo $this->Form->input('GalleryImage.dir', array('type' => 'hidden'));
-	    echo $this->Form->input('GalleryImage.mimetype', array('type' => 'hidden'));
-	    echo $this->Form->input('GalleryImage.filesize', array('type' => 'hidden'));
+        echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null;
 		echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo or Summary Text', 'after' => '<p>Used to entice people to view more about this item.</p>'));
 		echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?'));
 		echo $this->Form->input('Product.video_url', array('type' => 'text', 'label' => 'Is there a video for this product?', 'after' => '(may not be used in all themes)', 'placeholder'=>'http://www.youtube.com/watch?v=aM94aorYVS4'));

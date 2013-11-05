@@ -95,11 +95,12 @@ class ProductBrandsController extends ProductsAppController {
 		}
 	}
 
-	public function get_brands($productID = null) {
-		if ($productID) {
-			$this->set('brands', $this->ProductBrand->find('list', array(
-					'conditions' => array('ProductBrand.product_id'=>$productID))));
-		}
-	}
+	// deprecated, delete if this doesn't cause any errors 11/4/2013 RK
+	// public function get_brands($productID = null) {
+		// if ($productID) {
+			// $this->set('brands', $this->ProductBrand->find('list', array(
+					// 'conditions' => array('ProductBrand.product_id'=>$productID))));
+		// }
+	// }
 
 }

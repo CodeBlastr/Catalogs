@@ -9,11 +9,7 @@ $products = $this->requestAction('/products/products/category/521b7d14-e534-4fbf
 			<div class="carousel-inner">
 		        <?php for($i = 0; $i < count($products); $i++) { ?>
 				<div class="<?php echo $i == 0 ? 'active' : null; ?> item">
-					<?php
-					//echo !empty($products[$i]['GalleryImage']['_embed']) ? '<iframe height="' . $products[$i]['GallerySettings']['largeImageHeight'] . '" width="100%" src="' . $products['GalleryImage']['filename']['_embed'] . '" frameborder="0" allowfullscreen></iframe>' : $this->Html->image($products['GalleryImage'][$i]['dir'] . '/' . $products['GalleryImage'][$i]['filename']);?>
-					<?php
-					echo $this->Element('Galleries.thumb', array('thumbSize' => 'large', 'model' => 'Product', 'foreignKey' => $products[$i]['Product']['id']));
-					?>
+					<?php echo $this->Media->display($products[$i]['Media'][0], array('alt' => $products[$i]['Product']['name'])); ?>
 					<div class="carousel-caption">
 						<h4><small>Featured Listing</small></h4>
 						<h1><?php echo $this->Html->link($products[$i]['Product']['name'], array('plugin' => 'products', 'controller' => 'products', 'action' => 'view_property', $products[$i]['Product']['id'])); ?></h1>
@@ -55,14 +51,9 @@ $products = $this->requestAction('/products/products/category/521b7d14-e534-4fbf
 			<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
 			<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
 			<ul class="carousel-indicators row-fluid" style="position: static;">
-		        <?php for($i = 0; $i < count($products); $i++) { ?>
+		        <?php for($i = 0; $i < count($products); $i++) : ?>
 		        	<li data-target="#myCarousel" data-slide-to="<?php echo $i; ?>" class="<?php echo $i == 0 ? 'active' : null; ?>"></li>
-		        	
-				<?php /*<li data-target="#myCarousel" data-slide-to="<?php echo $i; ?>" class="<?php echo $i == 0 ? 'active' : null; ?> pull-left"><?php
-				$img = !empty($products['GalleryImage'][$i]['_thumb']) ? $products['GalleryImage'][$i]['_thumb'] : $products['GalleryImage'][$i]['dir'] . '/thumb/small/' . $products['GalleryImage'][$i]['filename'];
-				echo $this->Html->image($img, array('width' => $products['GallerySettings']['smallImageWidth'], 'height' => $products['GallerySettings']['smallImageHeight'])); ?></li> */ ?>
-				
-				<?php } ?>
+		        <?php endfor; ?>
 			</ul>
 		</div>
 	</div>

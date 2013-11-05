@@ -85,18 +85,6 @@ class Product extends ProductsAppModel {
 			),
        );
 
-	public $hasOne = array(
-		'Gallery' => array(
-			'className' => 'Galleries.Gallery',
-			'foreignKey' => 'foreign_key',
-			'dependent' => true,
-			'conditions' => array('Gallery.model' => 'Product'),
-			'fields' => '',
-			'order' => ''
-            ), 
-            
-        );
-
 	//products association.
 	public $belongsTo = array(
 		'Parent'=>array(
@@ -133,6 +121,9 @@ class Product extends ProductsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
+		if(CakePlugin::loaded('Media')) {
+			$this->actsAs[] = 'Media.MediaAttachable';
+		}
 		if (CakePlugin::loaded('Categories')) {
 			$this->hasAndBelongsToMany['Category'] = array(
 	            'className' => 'Categories.Category',
@@ -166,7 +157,7 @@ class Product extends ProductsAppModel {
  * @return boolean
  */
     public function beforeSave($options = array()) {
-        $this->Behaviors->attach('Galleries.Mediable'); // attaching the gallery behavior here, because the ProductParent was causing a problem making $Model->alias = 'ProductParent', in the behavior.
+        // commented out when switching to Media.MediaAttachable... $this->Behaviors->attach('Galleries.Mediable'); // attaching the gallery behavior here, because the ProductParent was causing a problem making $Model->alias = 'ProductParent', in the behavior.
 		$this->data = $this->_newOptions($this->data);
         $this->data = $this->_cleanAddData($this->data);
         return parent::beforeSave($options);
@@ -243,15 +234,6 @@ class Product extends ProductsAppModel {
 			// }
 		// }
         
-        $i = 0;
-        if (!empty($results['Children'])) {
-            foreach ($results['Children'] as $child) {
-                if (empty($child['Gallery'])) {
-                    $results['Children'][$i]['Gallery'] = $results['Gallery'];
-                }
-                $i++;
-            }
-        }
 		return parent::afterFind($results, $primary = false);
 	}
 	
@@ -288,10 +270,6 @@ class Product extends ProductsAppModel {
             // need to manually add existing options so they aren't auto-deleted
             $existingOptions = Set::extract('/ProductsOption/option_id', $this->Option->ProductsOption->find('all', array('conditions' => array('ProductsOption.product_id' => $data[$this->alias]['id']), 'callbacks' => false)));
             $data['Option']['Option'] = array_merge($data['Option']['Option'], $existingOptions);
-        }
-        
-        if (empty($data['GalleryImage']['filename']['name'])) {
-            unset($data['GalleryImage']);
         }
 
 		if (empty($data['Product']['model'])) {

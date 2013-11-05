@@ -62,8 +62,6 @@ class ProductsController extends ProductsAppController {
 		$this->set('products', $products);
 		$this->set('displayName', 'name');
 		$this->set('displayDescription', 'summary');
-		$this->set('showGallery', true);
-		$this->set('galleryForeignKey', 'id');
 		return $products;
 	}
 
@@ -86,11 +84,7 @@ class ProductsController extends ProductsAppController {
 						'id'
 					)),
 				'ProductPrice' => array('conditions' => array('ProductPrice.user_role_id' => $this->userRoleId, ), ),
-				'Children' => array(
-					//                    'Gallery'
-				),
-				'Gallery',
-				//'Parent',
+				'Children',
 				'Owner',
 			),
 		));
@@ -263,7 +257,6 @@ class ProductsController extends ProductsAppController {
 			'conditions' => array('Product.id' => $id),
 			'contain' => array(
 				'Option',
-				'Gallery',
 				'Parent',
 				'Children' => array('Option' => array('order' => array(
 					'Option.parent_id' => 'ASC',
@@ -317,7 +310,6 @@ class ProductsController extends ProductsAppController {
  */
 	protected function _editChild($id) {
 		$this->Product->contain(array(
-			'Gallery',
 			'Option',
 			'Parent'
 		));

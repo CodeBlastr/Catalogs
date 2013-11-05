@@ -27,14 +27,6 @@
 	        <li class="list-group-item"><a class="tab-trigger" data-target="#productVariants"><i class="icon-chevron-right"></i> Product Variants</a></li>
 	        <li class="list-group-item"><a class="tab-trigger" data-target="#shippingDetails"><i class="icon-chevron-right"></i> Shipping Details</a></li>
 	        <li class="list-group-item"><a class="tab-trigger" data-target="#productCategorization"><i class="icon-chevron-right"></i> Categorization</a></li>
-	        <li class="list-group-item"><a data-target="#GalleryEditForm">Quick Image Add</a>
-	        <?php
-	        echo $this->Form->create('Gallery', array('url' => '/galleries/galleries/edit', 'enctype' => 'multipart/form-data'));
-	        echo $this->Form->input('GalleryImage.filename', array('label' => false, 'type' => 'file'));
-		    echo $this->Form->input('Gallery.model', array('type' => 'hidden', 'value' => 'Product'));
-	    	echo $this->Form->input('Gallery.foreign_key', array('type' => 'hidden', 'value' => $this->request->data['Product']['id']));
-	    	echo $this->Form->end('Upload');?>
-	        </li>
 	        <li class="list-group-item"><a data-target="#optionForm">Add Variant Group</a>
 	        <?php
 	        $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '', 'placeholder' => 'Group Name (eg. Sizes)', 'class' => 'span2')) . $this->Form->end('Submit');
@@ -73,9 +65,7 @@
 	    </fieldset>
 	    <fieldset id="productImages">
 	        <legend class="toggleClick"><?php echo __d('products', 'Product images'); ?></legend>
-	        <?php
-	        echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $this->request->data['Product']['id']), array('plugin' => 'galleries'));
-	        echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id'])); ?>
+	        <?php echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null; ?>
 	    </fieldset>    
 	    <fieldset id="productVariants">
 	        <legend class="toggleClick"><?php echo __d('products', 'Production Variations'); ?></legend>
@@ -173,7 +163,6 @@ $(function() {
             });
         });
         // side nav clean up
-        $('#GalleryEditForm, #optionForms').css('padding', '8px').hide();
         $('#productNav a[data-target="#productDetails"]').parent().addClass('active');
         $('body').css('padding-bottom', '800px');
         
