@@ -2,7 +2,7 @@
 if (!empty($product['Children'])) {
     echo __('<div class="children">');
     foreach ($product['Children'] as $child) {
-        echo $this->Element('product', array('product' => array('Product' => $child, 'Gallery' => $child['Gallery'])), array('plugin' => 'products'));
+        echo $this->Element('Products.product', array('product' => array('Product' => $child)));
     }
     echo __('</div>');
 } else {

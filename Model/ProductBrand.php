@@ -21,9 +21,7 @@ App::uses('ProductsAppModel', 'Products.Model');
  */
 class ProductBrand extends ProductsAppModel {
 
-	public $name = 'ProductBrand';	
-    
-    public $actsAs = array('Galleries.Mediable');
+	public $name = 'ProductBrand';
 	
 	public $hasMany = array(
 		'Product'=>array(
@@ -32,15 +30,7 @@ class ProductBrand extends ProductsAppModel {
 			'dependent' => true,
 		),
 	);
-
-	public $hasOne = array(
-		'Gallery' => array(
-			'className' => 'Galleries.Gallery',
-			'foreignKey' => 'foreign_key',
-			'dependent' => false,
-		),
-	);
-
+	
 	public $belongsTo = array(
 		'ProductStore' => array(
 			'className' => 'Products.ProductStore',
@@ -57,6 +47,16 @@ class ProductBrand extends ProductsAppModel {
 			'order' => ''
 		),
 	);
+
+/**
+ * Constructor
+ */
+	public function __construct($id = null, $table = null, $ds = null) {
+		if(CakePlugin::loaded('Media')) {
+			$this->actsAs[] = 'Media.MediaAttachable';
+		}
+		parent::__construct($id, $table, $ds);
+	}
 
 	public function get_brands($productId = null) {
 		if ($productId) {

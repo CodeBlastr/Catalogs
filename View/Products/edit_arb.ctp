@@ -20,9 +20,7 @@
  ?>
 <div class="productAdd form">
     <div class="hero-unit pull-right">
-        <?php
-        echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $this->request->data['Product']['id']), array('plugin' => 'galleries'));
-        echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id'])); ?>
+        <?php echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null; ?>
     </div>
 
     <?php echo $this->Form->create('Product', array('type' => 'file')); ?>

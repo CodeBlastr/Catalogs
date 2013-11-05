@@ -23,7 +23,7 @@
             $i++;
         }
         echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999'));
-        echo $this->Form->input('GalleryImage.filename', array('type' => 'file', 'label' => 'Gallery Image  <br /><small><em>You can add additional images after you save.</em></small>'));
+        echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null;
 		echo $this->Form->input('Product.description', array('id' => 'ProductDescriptionChild', 'type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>
     </fieldset>
 

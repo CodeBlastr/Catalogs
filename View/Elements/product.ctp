@@ -2,7 +2,7 @@
 <div class="product view media row-fluid" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
 
     <div class="itemGallery productGallery pull-left media-object"> 
-        <?php echo $this->Element('Galleries.gallery', array('model' => 'Product', 'foreignKey' => $product['Product']['id'])); ?>
+        <?php echo $this->Media->display($product['Media'][0], array('alt' => $product['Product']['name'])); ?>
     </div>
 
     <div class="itemDescription productDescription span5 pull-left media-body">
