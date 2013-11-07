@@ -22,7 +22,6 @@ if (!empty($product['Children'])) {
         });
     });
 </script>
-
 <?php
 // set contextual search options
 $this->set('forms_search', array(
