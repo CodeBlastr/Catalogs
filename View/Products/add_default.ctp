@@ -18,6 +18,7 @@
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
  ?>
+
 <div class="productAdd form">
 	<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
     <fieldset>
