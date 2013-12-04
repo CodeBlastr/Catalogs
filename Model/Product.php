@@ -161,7 +161,7 @@ class Product extends ProductsAppModel {
  * @return boolean
  */
     public function afterSave($created, $options = array()) {
-    	$foreignKey = $this->field('foreign_key', array('id' => $this->id));
+    	$foreignKey = $this->field('foreign_key', array('Product.id' => $this->id));
 		if (empty($foreignKey)) {
 			$this->saveField('foreign_key', $this->id, array('validate' => false, 'callbacks' => false, 'counterCache' => false));
 		}
