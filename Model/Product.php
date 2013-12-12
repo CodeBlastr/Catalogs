@@ -65,15 +65,7 @@ class Product extends ProductsAppModel {
             'foreignKey' => 'product_id',
             'associationForeignKey' => 'option_id',
     		//'unique' => false,
-	        ),
-        'Winner' => array(
-			'className' => 'Users.User',
-			'joinTable' => 'product_bids',
-			'foreignKey' => 'product_id',
-			'associationForeignKey' => 'user_id',
-			'order' => array('amount' => 'DESC'),
-			'limit' => 1
-			),
+	        )
        );
 
 	//products association.
