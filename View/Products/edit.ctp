@@ -39,7 +39,6 @@
 	        </li>
 	    </ul>
 	</div>
-	
 	<div class="products productAdd form pull-right span8 col-md-8" data-spy="scroll" data-target="#productNav">
 		<?php echo $this->Form->create('Product', array('type' => 'file')); ?>
 	    <fieldset id="productDetails">
@@ -194,7 +193,7 @@ $(function() {
             $($(this).attr('data-target')).parent().parent().prev().show();
         });
     });
-})
+});
 
 </script>
 

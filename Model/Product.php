@@ -143,6 +143,9 @@ class Product extends ProductsAppModel {
         // commented out when switching to Media.MediaAttachable... $this->Behaviors->attach('Galleries.Mediable'); // attaching the gallery behavior here, because the ProductParent was causing a problem making $Model->alias = 'ProductParent', in the behavior.
 		$this->data = $this->_newOptions($this->data);
         $this->data = $this->_cleanAddData($this->data);
+        if(isset($this->data['Product']['data']) && !empty($this->data['Product']['data'])) {
+        	$this->data['Product']['data'] = serialize($this->data['Product']['data']);
+        }
         return parent::beforeSave($options);
     }
     
@@ -217,6 +220,12 @@ class Product extends ProductsAppModel {
 			// }
 		// }
         
+		for($i = 0 ; $i < count($results) ; $i++) {
+			if(isset($results[$i]['Product']['data']) && !empty($results[$i]['Product']['data'])) {
+				$results[$i]['Product']['data'] = unserialize(($results[$i]['Product']['data']));
+			}
+		}
+		
 		return parent::afterFind($results, $primary = false);
 	}
 	
@@ -384,7 +393,8 @@ class Product extends ProductsAppModel {
     		'payment_type',
     		'arb_settings',
     		'is_virtual',
-    		'price'
+    		'price',
+	    	'data'
 	        );
 	    
 	    foreach($itemData[$this->alias] as $k => $v) {

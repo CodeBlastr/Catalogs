@@ -275,6 +275,7 @@ class ProductsController extends ProductsAppController {
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
 		$this->set('page_title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
 		$this->set('title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
+		//debug($this->layout);exit;
 		$this->layout = 'default';
 	}
 
