@@ -21,7 +21,7 @@ App::uses('ProductsAppController', 'Products.Controller');
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and
  * Future Versions
  */
-class ProductsController extends ProductsAppController {
+class AppProductsController extends ProductsAppController {
 
 /**
  * Name
@@ -651,5 +651,11 @@ class ProductsController extends ProductsAppController {
 		// }
 		// echo json_encode($data);
 	// }
+
+}
+
+if (!isset($refuseInit)) {
+	class ProductsController extends AppProductsController {
+	}
 
 }

@@ -219,12 +219,16 @@ class Product extends ProductsAppModel {
 				// $results[$i]['Product']['arb_settings'] = $arbSettingsString ;
 			// }
 		// }
-        
-		for($i = 0 ; $i < count($results) ; $i++) {
-			if(isset($results[$i]['Product']['data']) && !empty($results[$i]['Product']['data'])) {
-				$results[$i]['Product']['data'] = unserialize(($results[$i]['Product']['data']));
+		
+        if(isset($results[$this->alias])) {
+        	$results[$this->alias]['data'] = unserialize(($results[$this->alias]['data']));
+        }else {
+			for($i = 0 ; $i < count($results) ; $i++) {
+				if(isset($results[$i][$this->alias]['data']) && !empty($results[$i][$this->alias]['data'])) {
+					$results[$i][$this->alias]['data'] = unserialize(($results[$i][$this->alias]['data']));
+				}
 			}
-		}
+        }
 		
 		return parent::afterFind($results, $primary = false);
 	}
