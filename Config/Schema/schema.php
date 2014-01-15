@@ -98,7 +98,7 @@ class ProductsSchema extends CakeSchema {
         'cart_min' => array('type' => 'integer', 'null' => true, 'default' => null), 
         'cart_max' => array('type' => 'integer', 'null' => true, 'default' => null), 
         'cost' => array('type' => 'float', 'null' => true, 'default' => null), 
-        'price' => array('type' => 'float', 'null' => true, 'default' => null), 
+        'price' => array('type' => 'float', 'null' => true, 'default' => 0), 
         'weight' => array('type' => 'float', 'null' => true, 'default' => null), 
         'height' => array('type' => 'float', 'null' => true, 'default' => null), 
         'width' => array('type' => 'float', 'null' => true, 'default' => null), 
