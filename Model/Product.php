@@ -146,6 +146,7 @@ class Product extends ProductsAppModel {
         if(isset($this->data['Product']['data']) && !empty($this->data['Product']['data'])) {
         	$this->data['Product']['data'] = serialize($this->data['Product']['data']);
         }
+        
         return parent::beforeSave($options);
     }
     
@@ -170,13 +171,13 @@ class Product extends ProductsAppModel {
  */
 	public function beforeFind($queryData) {
 		parent::beforeFind($queryData);
-		// always limit products by the user role if the price matrix is used
+		
+		//if sesssion doesn not exist, or does not contain user role id
+		//Set filter to false
         if (class_exists('CakeSession')) {
-            $userRoleId = CakeSession::read('Auth.User.user_role_id');
-            $queryData['contain']['ProductPrice']['conditions']['ProductPrice.user_role_id'] = $userRoleId;
-
-            // stop filtering the price if we use fields and price isn't included
-            $this->filterPrice = !empty($queryData['fields']) && is_array($queryData['fields']) && (array_search('price', $queryData['fields']) === false && array_search('Product.price', $queryData['fields']) === false) ? false : true;
+            if(!CakeSession::check('Auth.User.user_role_id')) {
+            	$this->filterPrice = false;
+            }
         }
 		return $queryData;
 	}
@@ -189,7 +190,7 @@ class Product extends ProductsAppModel {
  */
 	public function afterFind($results, $primary = false) {
 		// only play with prices if the find is not list type (which doesn't need prices)
-		if (!empty($this->filterPrice)) {
+		if ($this->filterPrice) {
 			// this is for the find "all" type where the data format is $results[0]['Product']['id'];
 			if (isset($results[0][$this->alias]) && !empty($results[0][$this->alias])) {
 				$results = $this->cleanItemsPrices($results);
@@ -200,7 +201,7 @@ class Product extends ProductsAppModel {
 				$results = $this->cleanItemPrice($results);
 			}
 		}
-
+		
 		// this was causing problems for the transfer from product to transaction item
 		// if you need something like this back, then make sure when you add an arb item
 		// to cart that it transfers the arb settings to the transaction item correctly
@@ -309,29 +310,11 @@ class Product extends ProductsAppModel {
  * @param array $products
  */
 	public function cleanItemsPrices($products) {
-		$i = 0;
-		// get the price for the logged in user
-        $productPriceCount = 0;
-		foreach ($products as $product) {
-			// this is to check for single product.
-			if (isset($product[$this->alias]['id']) && !empty($product[$this->alias]['id'])) {
-				unset($productPriceCount);
-				// count the prices to see if the price matrix was used at all
-				$productPriceCount = $this->ProductPrice->find('count', array('conditions' => array(
-					'ProductPrice.product_id' => $product[$this->alias]['id'],
-					)));
-				// remove the default price if matrix was used
-				if ($productPriceCount > 0) {
-					unset($products[$i][$this->alias]['price']);
-				}
-				$products[$i] = $this->cleanItemPrice($product);
-
-				// remove the product all together if the price matrix was used, and price is 0 for this user's role
-				if (empty($products[$i][$this->alias]['price'])) {
-					unset($products[$i]);
-				}
-				$i++;
-            }
+		if(isset($product[0])) {
+			throw new Exception('Products is not an array');
+		}
+		foreach ($products as $i => $product) {
+			$products[$i] = $this->cleanItemPrice($product);
 		}
 		return $products;
 	}
@@ -345,19 +328,45 @@ class Product extends ProductsAppModel {
  * @todo				This price with Zuha::enum() thing is not very reliable, as the names are hard coded.  Haven't thought of a good way around it quite yet, but no one is using multiple or sales prices so removing giving it an easy default for now.  But if we use more prices in the matrix than we need to, its going to cause the wrong prices to be spit out.
  */
 	public function cleanItemPrice($product) {
-		if (!empty($product['ProductPrice'][0])) {
-			foreach ($product['ProductPrice'] as $price) {
-				// set the price in the original products to user role price
-				$product[$this->alias]['price'] = $price['price'];
+		$price = false;
+		if(isset($product['ProductPrice']) && !empty($product['ProductPrice'])) {
+			$price = $this->_getPriceFromMatrix($product['ProductPrice']);
+		}else {
+			$prices = $this->ProductPrice->find('all', array(
+				'conditions' => array(
+					'ProductPrice.product_id' => $product['Product']['id'],
+				)
+			));
+			if($prices) {
+				$price = $this->_getPriceFromMatrix($prices);
 			}
 		}
-
-		if (!empty($product[$this->alias]['price'])) {
-			$product[$this->alias]['price'] = $product[$this->alias]['price'];
+		
+		if($price){
+			$product['Product']['price'] = $price;	
 		}
-
-		unset($product['ProductPrice']); // its not needed now
+		
 		return $product;
+	}
+	
+	/**
+	 * _getPriceFromMatrix method
+	 * 
+	 * Retrieves the price form a price matrix
+	 * returns false when no price found or price
+	 *
+	 * @param array $arr - Price Matrix form ProductPrice
+	 * @return boolean || float
+	 */
+	
+	protected function _getPriceFromMatrix($arr) {
+		$userroleid = 8;
+		$arr = isset($arr['ProductPrice']) ? $arr['ProductPrice'] : $arr;
+		if($key = array_search($userroleid, Hash::extract($arr, '{n}.user_role_id'))) {
+			return $arr[$key]['price'];
+		}
+		
+		return false;
 	}
 
 /**
