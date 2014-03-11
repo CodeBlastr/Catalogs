@@ -133,7 +133,7 @@ class AppProductsController extends ProductsAppController {
 	protected function _addDefault($parentId = null) {
 		if ($this->request->is('post')) {
 			if ($this->Product->saveAll($this->request->data)) {
-				$this->Session->setFlash(__('Product saved.'));
+				$this->Session->setFlash(__('Product saved.'), 'flash_success');
 				$this->redirect(array(
 					'action' => 'edit',
 					$this->Product->id
@@ -150,7 +150,7 @@ class AppProductsController extends ProductsAppController {
 	protected function _addArb($parentId = null) {
 		if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
-				$this->Session->setFlash(__('Product saved.'));
+				$this->Session->setFlash(__('Product saved.'), 'flash_success');
 				$this->redirect(array(
 					'action' => 'edit',
 					$this->Product->id
@@ -180,7 +180,7 @@ class AppProductsController extends ProductsAppController {
 	protected function _addMembership($parentId = null) {
 		if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
-				$this->Session->setFlash(__('Membership saved.'));
+				$this->Session->setFlash(__('Membership saved.'), 'flash_success');
 				$this->redirect(array(
 					'action' => 'edit',
 					$this->Product->id
@@ -214,7 +214,7 @@ class AppProductsController extends ProductsAppController {
 		// order is important
 		if (!empty($this->request->data)) {
 			if ($this->Product->saveAll($this->request->data)) {
-				$this->Session->setFlash(__('Product saved.'));
+				$this->Session->setFlash(__('Product saved.'), 'flash_success');
 				if (isset($this->request->data['SaveAndContinue'])) {
 					$this->redirect(array(
 						'action' => 'edit',
@@ -335,12 +335,12 @@ class AppProductsController extends ProductsAppController {
 		}
 		if (!empty($optionId)) {
 			if ($this->Product->deleteChildByOptionType($id, $optionId)) {
-				$this->Session->setFlash(__('Option deleted'));
+				$this->Session->setFlash(__('Option deleted'), 'flash_success');
 			}
 			$this->redirect($this->referer());
 		} else {
 			if ($this->Product->delete($id)) {
-				$this->Session->setFlash(__('Item deleted'));
+				$this->Session->setFlash(__('Item deleted'), 'flash_success');
 			}
 			$this->redirect(array('action' => 'index'));
 		}
@@ -380,12 +380,12 @@ class AppProductsController extends ProductsAppController {
 	public function categories($parentId = null) {
 		if (!empty($this->request->data['Option'])) {
 			if ($this->Product->Option->save($this->request->data)) {
-				$this->Session->setFlash(__('Option saved'));
+				$this->Session->setFlash(__('Option saved'), 'flash_success');
 			}
 		}
 		if (!empty($this->request->data['Category'])) {
 			if ($this->Product->Category->save($this->request->data)) {
-				$this->Session->setFlash(__('Category saved'));
+				$this->Session->setFlash(__('Category saved'), 'flash_success');
 			}
 		}
 		$conditions = !empty($parentId) ? array(
