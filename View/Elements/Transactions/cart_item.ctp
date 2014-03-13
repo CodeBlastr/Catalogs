@@ -19,7 +19,7 @@ echo $this->Form->input("TransactionItem.{$i}.quantity", array(
     'value' => $transactionItem['quantity'],
     'min' => $minQty, 'max' => $maxQty,
     'size' => 1,
-    'after' => __(' %s', $this->Form->postLink('<i class="icon-trash"></i>', array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'delete', $transactionItem['id']), array('title' => 'Remove from cart', 'escape' => false)))
+    'after' => __(' %s', $this->Html->link('<i class="icon-trash"></i>', array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'delete', $transactionItem['id']), array('title' => 'Remove from cart', 'escape' => false)))
     ));
 
 $transactionItemCartPrice = $transactionItem['price'] * $transactionItem['quantity']; ?>

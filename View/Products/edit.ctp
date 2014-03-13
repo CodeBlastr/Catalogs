@@ -45,6 +45,7 @@
 	        <legend class="sectionTitle"><?php echo __d('products', 'Product Information'); ?></legend>
 	    	<?php
 			echo $this->Form->input('Product.id');
+			echo $this->Form->input('Product.model', array('type' => 'hidden')); // added for beef to edit a credit product, seems like we can have this field here, because it should have a value 3/9/2014 RK
 			echo $this->Form->input('Product.name', array('label' => 'Display Name'));
 	        echo $this->Form->input('Product.price', array('label' => 'Retail Price <small><em>(ex. 0000.00)</em></small>', 'step' => '0.01', 'min' => '0', 'max' => '99999999999'));
 			echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'What is the sales copy for this item?')); ?>

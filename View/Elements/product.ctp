@@ -1,11 +1,10 @@
 
-<div class="product view media row-fluid" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
-
-    <div class="itemGallery productGallery pull-left media-object"> 
+<div class="product view media row" id="<?php echo __('product%s', $product['Product']['id']); ?>" itemscope itemtype="http://schema.org/Product">
+    <div class="itemGallery productGallery col-md-3 pull-left"> 
         <?php echo $this->Media->display($product['Media'][0], array('alt' => $product['Product']['name'])); ?>
     </div>
 
-    <div class="itemDescription productDescription span5 pull-left media-body">
+    <div class="itemDescription productDescription span5 col-md-5 media-body">
         <div class="itemSummary productSummary">
             <h2 class="media-heading" itemprop="name"><?php echo $product['Product']['name']; echo !empty($product['ProductBrand']['name']) ? ' by ' . $this->Html->link($product['ProductBrand']['name'], array('controller' => 'product_brands', 'action' => 'view', $product['ProductBrand']['id'])) : ''; ?></h2>
             <span itemprop="description"><?php echo $product['Product']['summary']; ?></span>
@@ -20,7 +19,7 @@
         </div>
     </div>
 
-    <div class="well well-large last span4">
+    <div class="well well-large last span4 col-md-3">
         <?php echo $this->Element('cart_add', array('product' => $product), array('plugin' => 'products')); ?>
     </div>
 </div>

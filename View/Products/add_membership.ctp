@@ -21,8 +21,8 @@
 
 <div class="productAdd form">
     <?php echo $this->Form->create('Product', array('type' => 'file')); ?>
-    <div class="row-fluid">
-    	<div class="span4 pull-left">
+    <div class="row">
+    	<div class="span4 col-md-4">
 	    	<?php echo $this->Form->input('Product.is_public', array('value' => 1, 'type' => 'hidden')); ?>
 			<?php echo $this->Form->input('Product.cart_max', array('type' => 'hidden', 'value' => 1)); ?>
 			<?php echo $this->Form->input('Product.model', array('type' => 'hidden', 'value' => 'UserRole')); ?>
@@ -112,7 +112,7 @@
 		    </fieldset>
 			<?php endif; ?>
 		</div>
-		<div class="span8 pull-right">
+		<div class="span8 col-md-8">
 			<?php echo $this->Form->input('Product.foreign_key', array('label' => 'Upgrade to...', 'after' => ' ' . $this->Html->link('edit roles', array('plugin' => 'users', 'controller' => 'user_roles', 'action' => 'index'), array('class' => 'btn btn-inverse')))); ?>
 			<?php echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo Text <small>(short lead in blurb)</small>')); ?>
 			<?php echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'Sales copy')); ?>
