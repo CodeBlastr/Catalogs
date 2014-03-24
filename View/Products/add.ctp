@@ -73,28 +73,16 @@
 			<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'label' => 'Which categories? ('.$this->Html->link('add', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' / '.$this->Html->link('edit', array('plugin' => 'categories', 'controller' => 'categories', 'action' => 'tree')).' categoies)')); ?>
 	</fieldset>
 	
-	<?php if(!empty($paymentOptions)) { ?>
+	<?php if(!empty($paymentOptions)) : ?>
     <fieldset>
         <legend class="toggleClick"><?php echo __('Select Payment Types For The Item.');?></legend>
         <?php
             echo $this->Form->input('Product.payment_type', array('options' => $paymentOptions, 'multiple' => 'checkbox'));
         ?>
     </fieldset>
-	<?php }
-
-    echo $this->Form->end('Submit');
-
-// set the contextual menu items
-$this->set('context_menu', array('menus' => array(
-	array(
-		'heading' => 'Products',
-		'items' => array(
-			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard')),
-			$this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
-			)
-		),
-	)));
-?>
+	<?php endif; ?>
+	<?php echo $this->Form->end('Submit'); ?>
+</div>
 
 <script type="text/javascript">
 
@@ -135,4 +123,14 @@ $('input.shipping_type').click(function(e){
 </script>
 
 
-</div>
+<?php
+// set the contextual menu items
+$this->set('context_menu', array('menus' => array(
+	array(
+		'heading' => 'Products',
+		'items' => array(
+			$this->Html->link(__('Dashboard'), array('controller' => 'products', 'action' => 'dashboard')),
+			$this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
+			)
+		),
+	)));
