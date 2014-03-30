@@ -1,47 +1,24 @@
-<div class="products" id="elementProducts">  
-    <div class="indexContainer">
-    <?php
-    if (!empty($products)) {
-        $i = 0;
-        foreach ($products as $product) { ?>
-            <div class="indexRow">
-                <div class="indexCell galleryThumb imageCell" id="galleryThumb<?php echo $product['Product']['id']; ?>"> 
-                    <?php echo $this->Media->display($product['Media'][0], array('alt' => $product['Product']['name'])); ?>
-                </div>
-                <div class="indexCell itemDescription productDescription metaCell" id="productDescription<?php echo $product["Product"]["id"]; ?>"> 
-                    <ul class="metaData">
-                        <li><?php echo strip_tags($product['Product']['summary']); ?></li>
-                        <?php if (!empty($product['ProductBrand'])) { ?>
-                        <li class="itemBrand productBrand" id="productBrand<?php echo $product["Product"]["id"]; ?>"> <?php echo $this->Html->link($product['ProductBrand']['name'] , array('controller' => 'product_brands' , 'action'=>'view' , $product["ProductBrand"]["id"])); ?> </li>
-                    <?php } ?>
-                    </ul>
-                </div>
-                <div class="indexCell indexData">
-                    <div class="indexCell itemName productName titleCell" id="productName<?php echo $product["Product"]["id"]; ?>">
-                        <div class="recorddat">
-                            <h3><?php echo $this->Html->link($product['Product']['name'] , array('controller' => 'products' , 'action'=>'view' , $product["Product"]["id"])); ?></h3>
-                        </div>
-                    </div>
-                    
-                    <div class="indexCell itemPrice productPrice descriptionCell" id="productPrice<?php echo $product['Product']['id']; ?>"> 
-                        <div class="recorddat">
-                            <div class="truncate"><?php echo __('$'); ?><?php echo (!empty($product['ProductPrice'][0]['price']) ? $product['ProductPrice'][0]['price'] : $product['Product']['price']); ?></div>
-                        </div>
-                        <?php if (empty($product['Option']) && $product['Product']['is_buyable'] !== false) { ?>
-                        <div class="indexCell itemAction productAction" id="productAction<?php echo $product['Product']['id']; ?>"> 
-                            <?php echo $this->Element('cart_add', array('product' => $product), array('plugin' => 'products')); ?> 
-                        </div>
-                        <?php } ?>
-                    </div>
-                    
-                    
-                </div>
-            </div>
-        <?php
-        }
-    } else {
-        echo __('<p>No products found. %s</p>', $this->Html->link('Add the first', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')));
-    } ?>
+<?php if (!empty($products)) : ?>
+	<?php for ($i=0; $i < count($products); $i++) : ?>
+	<div class="products list-group" id="product<?php echo $products[$i]['Product']['id']; ?>">
+		<div class="list-group-item clearfix">
+	    	<div class="col-md-4"> 
+	    		<?php echo $this->Media->display($products[$i]['Media'][0], array('alt' => $products[$i]['Product']['name'])); ?>
+	        </div>
+	        <div class="col-md-8"> 
+	        	<h3><?php echo $this->Html->link($products[$i]['Product']['name'] , array('controller' => 'products' , 'action'=>'view' , $products[$i]["Product"]["id"])); ?></h3>
+	            <p><?php echo strip_tags($products[$i]['Product']['summary']); ?></p>
+	            <p><?php echo !empty($products[$i]['ProductBrand']) ? $this->Html->link($products[$i]['ProductBrand']['name'] , array('controller' => 'product_brands' , 'action'=>'view' , $products[$i]["ProductBrand"]["id"])) : null; ?></p>
+	           	<?php echo $this->element('Products.cart_add', array('product' => $product)); ?>
+	           	<span class="badge"><?php echo ZuhaInflector::pricify($products[$i]['Product']['price'], array('currency' => 'USD')); ?></span>
+			</div>
+		</div>	        
     </div>
-    <?php echo $this->Element('paging');?>
+	<?php endfor; ?>
+	<div class="col-md-12">
+   		<?php echo $this->element('paging');?>
+   	</div>
+<?php else : ?>
+	<p>No products found. <?php echo $this->Html->link('Add one now?', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></p>
+<?php endif; ?>
 </div>
