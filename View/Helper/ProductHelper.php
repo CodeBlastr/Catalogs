@@ -65,5 +65,13 @@ class ProductHelper extends AppHelper {
 		return $data;
  	}
 
+/**
+ * Find method
+ */
+ 	public function find($type = 'first', $params = array()) {
+		$Product = ClassRegistry::init('Products.Product');
+ 		return $Product->find($type, $params);
+ 	}
+
 
 }
