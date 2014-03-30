@@ -39,12 +39,6 @@ class Product extends ProductsAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
-        // This was a conflict, that we are not sure if it should be here or not.  12/5/2012 RK
-		//'TransactionItem' => array(
-		//	'className' => 'Transactions.TransactionItem',
-		//	'foreignKey' => 'foreign_key',
-		//	'dependent' => false,
-        //   ),
 		'ProductPrice' => array(
 			'className' => 'Products.ProductPrice',
 			'foreignKey' => 'product_id',
@@ -57,7 +51,7 @@ class Product extends ProductsAppModel {
 			'dependent' => true,
             ),
         );
-        
+
     public $hasAndBelongsToMany = array(
         'Option' => array(
             'className' => 'Products.Option',
@@ -68,7 +62,6 @@ class Product extends ProductsAppModel {
 	        )
        );
 
-	//products association.
 	public $belongsTo = array(
 		'Parent'=>array(
 			'className' => 'Products.Product',
@@ -343,22 +336,20 @@ class Product extends ProductsAppModel {
 		}
 		
 		if($price){
-			$product['Product']['price'] = $price;	
+			$product['Product']['price'] = $price;
 		}
-		
 		return $product;
 	}
 	
-	/**
-	 * _getPriceFromMatrix method
-	 * 
-	 * Retrieves the price form a price matrix
-	 * returns false when no price found or price
-	 *
-	 * @param array $arr - Price Matrix form ProductPrice
-	 * @return boolean || float
-	 */
-	
+/**
+ * _getPriceFromMatrix method
+ * 
+ * Retrieves the price form a price matrix
+ * returns false when no price found or price
+ *
+ * @param array $arr - Price Matrix form ProductPrice
+ * @return boolean || float
+ */
 	protected function _getPriceFromMatrix($arr) {
 		$userroleid = 8;
 		$arr = isset($arr['ProductPrice']) ? $arr['ProductPrice'] : $arr;
