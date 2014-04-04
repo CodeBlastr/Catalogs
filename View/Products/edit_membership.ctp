@@ -21,14 +21,15 @@
 
 <div class="productAdd form">
     <?php echo $this->Form->create('Product', array('type' => 'file')); ?>
-    <div class="row-fluid">
-    	<div class="span4 pull-left">
+    <div class="row">
+    	<div class="col-md-4">
 	    	<?php echo $this->Form->input('Product.id'); ?>
+			<?php echo $this->Form->input('Product.is_buyable', array('value' => 1, 'type' => 'hidden')); ?>
 			<?php echo $this->Form->input('Product.is_public', array('value' => 1, 'type' => 'hidden')); ?>
 			<?php echo $this->Form->input('Product.cart_max', array('type' => 'hidden', 'value' => 1)); ?>
 			<?php echo $this->Form->input('Product.model', array('type' => 'hidden', 'value' => 'UserRole')); ?>
 			<?php echo $this->Form->input('Product.name', array('label' => 'Display Name')); ?>
-	        <?php echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null; ?>
+	        <?php echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('media' => $this->request->data['Media'], 'multiple' => true)) : null; ?>
 			<?php //echo $this->Form->input('Product.price', array('label' => 'Price <small>(Use 0 for a free trial peroids.)</small>', 'type' => 'number', 'step' => '.01', 'min' => '0', 'max' => '99999999999', 'data-mask' => 'X.00')); ?>
 	    	<?php 		
 			$arbSettingsValues = array(
@@ -51,13 +52,15 @@
 					'name' => 'ExecutionFrequencyParameter',
 					'class' => 'date-execution',
 					'label' => false,
-					'options' => array('--Select--') + range(0,31),
+					'empty' => '--Select--',
+					'options' => range(0,31),
 				),
 				array(
 					'name' => 'ExecutionFrequencyParameter',
 					'class' => 'weekly-execution',
 					'label' => false,
-					'options' => array('empty' => '--Select--', 'Sunday' => 'Sunday', 'Monday' => 'Monday', 'Tuesday' => 'Tuesday', 'Wednesday' => 'Wednesday', 'Thursday' => 'Thursday', 'Friday' => 'Friday', 'Saturday' => 'Saturday'),
+					'empty' => '--Select--',
+					'options' => array('Sunday' => 'Sunday', 'Monday' => 'Monday', 'Tuesday' => 'Tuesday', 'Wednesday' => 'Wednesday', 'Thursday' => 'Thursday', 'Friday' => 'Friday', 'Saturday' => 'Saturday'),
 				),
 				array(
 					'name' => 'HasTrialPeriod',
@@ -113,7 +116,7 @@
 		    </fieldset>
 			<?php endif; ?>
 		</div>
-		<div class="span8 pull-right">
+		<div class="col-md-8">
 			<?php echo $this->Form->input('Product.foreign_key', array('label' => 'Upgrade to...', 'after' => ' ' . $this->Html->link('edit roles', array('plugin' => 'users', 'controller' => 'user_roles', 'action' => 'index'), array('class' => 'btn btn-inverse')))); ?>
 			<?php echo $this->Form->input('Product.summary', array('type' => 'text', 'label' => 'Promo Text <small>(short lead in blurb)</small>')); ?>
 			<?php echo $this->Form->input('Product.description', array('type' => 'richtext', 'label' => 'Sales copy')); ?>
