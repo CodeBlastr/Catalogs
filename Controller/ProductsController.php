@@ -56,6 +56,7 @@ class AppProductsController extends ProductsAppController {
 		$this->paginate['contain'][] = 'Owner';
 		$this->paginate['contain'][] = 'Creator';
 		$this->paginate['conditions']['Product.parent_id'] = null;
+		$this->paginate['order'] = array('Product.price' => 'ASC', 'Product.name' => 'ASC');
 		$products = $this->paginate('Product');
 		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
@@ -212,7 +213,7 @@ class AppProductsController extends ProductsAppController {
  */
 	public function edit($id = null, $child = false) {
 		// order is important
-		if (!empty($this->request->data)) {
+		if ($this->request->is('put')) {
 			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'), 'flash_success');
 				if (isset($this->request->data['SaveAndContinue'])) {
