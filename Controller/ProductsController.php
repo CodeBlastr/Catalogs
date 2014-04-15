@@ -61,8 +61,47 @@ class AppProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('products', $products);
-		$this->set('displayName', 'name');
-		$this->set('displayDescription', 'summary');
+		return $products;
+	}
+
+/**
+ * My method.
+ *
+ * @param void
+ * @return void
+ */
+	public function my() {
+		$this->paginate['contain'][] = 'Option';
+		$this->paginate['contain'][] = 'Owner';
+		$this->paginate['contain'][] = 'Creator';
+		$this->paginate['conditions']['Product.parent_id'] = null;
+		$this->paginate['conditions']['Product.owner_id'] = $this->Session->read('Auth.User.id');
+		$this->paginate['order'] = array('Product.price' => 'ASC', 'Product.name' => 'ASC');
+		$products = $this->paginate('Product');
+		$this->set('title_for_layout', __('My Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('page_title_for_layout', __('My Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('products', $products);
+		return $products;
+	}
+
+/**
+ * User method.
+ *
+ * @param void
+ * @return void
+ */
+	public function user($userId = null) {
+		$this->paginate['contain'][] = 'Option';
+		$this->paginate['contain'][] = 'Owner';
+		$this->paginate['contain'][] = 'Creator';
+		$this->paginate['conditions']['Product.parent_id'] = null;
+		$this->paginate['conditions']['Product.owner_id'] = $userId;
+		$this->paginate['order'] = array('Product.price' => 'ASC', 'Product.name' => 'ASC');
+		$products = $this->paginate('Product');
+		$this->set('title_for_layout', __('My Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('page_title_for_layout', __('My Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('products', $products);
+		$this->set('user', $user = $this->Product->User->find('first', array('conditions' => array('User.id' => $userId))));
 		return $products;
 	}
 
@@ -116,7 +155,7 @@ class AppProductsController extends ProductsAppController {
 
 /**
  * Add method
- * *
+ *
  * @param string $type [empty = default, arb, virtual, virtual_arb, membership]
  * @param string $parentId
  */
@@ -131,6 +170,45 @@ class AppProductsController extends ProductsAppController {
 		return $this->$function($parentId);
 	}
 
+/**
+ * Post method
+ * Same as add, used so one can be public (no admin redirect)
+ * 
+ * @param string $type [empty = default, arb, virtual, virtual_arb, membership]
+ * @param string $parentId
+ */
+	public function post($type = 'default', $parentId = null) {
+		$function = '_post' . ucfirst($type);
+		$this->set('productBrands', $this->Product->ProductBrand->find('list'));
+		if (CakePlugin::loaded('Categories')) {
+			$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
+		}
+		//$this->set('paymentOptions', $this->Product->paymentOptions());
+		return $this->$function($parentId);
+	}
+
+/**
+ * Post default
+ */
+	protected function _postDefault($parentId = null) {
+		if ($this->request->is('post')) {
+			if ($this->Product->saveAll($this->request->data)) {
+				$this->Session->setFlash(__('Product saved.'), 'flash_success');
+				$this->redirect(array(
+					'action' => 'edit',
+					$this->Product->id
+				));
+			}
+		}
+		$this->set('page_title_for_layout', __('Create a Product'));
+		$this->set('title_for_layout', __('Post Product Form'));
+		$this->view = 'post_default';
+		return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
+	}
+
+/**
+ * Add default
+ */
 	protected function _addDefault($parentId = null) {
 		if ($this->request->is('post')) {
 			if ($this->Product->saveAll($this->request->data)) {
@@ -143,7 +221,6 @@ class AppProductsController extends ProductsAppController {
 		}
 		$this->set('page_title_for_layout', __('Create a Product'));
 		$this->set('title_for_layout', __('Add Product Form'));
-		$this->layout = 'default';
 		$this->view = 'add_default';
 		return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
 	}
@@ -160,7 +237,6 @@ class AppProductsController extends ProductsAppController {
 		}
 		$this->set('page_title_for_layout', __('Create an ARB Product'));
 		$this->set('title_for_layout', __('Add Product Form'));
-		$this->layout = 'default';
 		$this->view = 'add_arb';
 		return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
 	}
@@ -190,7 +266,6 @@ class AppProductsController extends ProductsAppController {
 		}
 		$this->set('page_title_for_layout', __('Create a Membership Product'));
 		$this->set('title_for_layout', __('Create a Membership Product'));
-		$this->layout = 'default';
 		$this->view = 'add_membership';
 		$userRoles = array_diff($this->Product->Owner->UserRole->find('list'), array(
 			'admin',
@@ -276,8 +351,6 @@ class AppProductsController extends ProductsAppController {
 		//$this->set('paymentOptions', $this->Product->paymentOptions());
 		$this->set('page_title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
 		$this->set('title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
-		//debug($this->layout);exit;
-		$this->layout = 'default';
 	}
 
 	public function editArb($id = null, $child = null) {
