@@ -146,7 +146,6 @@ class Product extends ProductsAppModel {
         if(isset($this->data['Product']['data']) && !empty($this->data['Product']['data'])) {
         	$this->data['Product']['data'] = serialize($this->data['Product']['data']);
         }
-        
         return parent::beforeSave($options);
     }
     
