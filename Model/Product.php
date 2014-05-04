@@ -19,16 +19,34 @@ App::uses('ProductsAppModel', 'Products.Model');
  * @since         Zuha(tm) v 0.0.1
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
-class Product extends ProductsAppModel {
+class AppProduct extends ProductsAppModel {
 
 	public $name = 'Product';
     
     public $filterPrice = true;
 
 	public $validate = array(
-		'name' => array('notempty'),
-		'price' => array('notempty'),
-        );
+		'name' => array(
+			'name' => array(
+				'rule' => array('notempty'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'price' => array(
+			'price' => array(
+				'rule' => array('notempty'),
+				'message' => 'Pricing required',
+				//'allowEmpty' => false,
+				'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		)
+	);
 
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
@@ -39,12 +57,6 @@ class Product extends ProductsAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $hasMany = array(
-        // This was a conflict, that we are not sure if it should be here or not.  12/5/2012 RK
-		//'TransactionItem' => array(
-		//	'className' => 'Transactions.TransactionItem',
-		//	'foreignKey' => 'foreign_key',
-		//	'dependent' => false,
-        //   ),
 		'ProductPrice' => array(
 			'className' => 'Products.ProductPrice',
 			'foreignKey' => 'product_id',
@@ -57,7 +69,7 @@ class Product extends ProductsAppModel {
 			'dependent' => true,
             ),
         );
-        
+
     public $hasAndBelongsToMany = array(
         'Option' => array(
             'className' => 'Products.Option',
@@ -68,7 +80,6 @@ class Product extends ProductsAppModel {
 	        )
        );
 
-	//products association.
 	public $belongsTo = array(
 		'Parent'=>array(
 			'className' => 'Products.Product',
@@ -88,6 +99,13 @@ class Product extends ProductsAppModel {
 			'order' => ''
             ),
 		'Owner' => array(
+			'className' => 'Users.User',
+			'foreignKey' => 'owner_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+            ),
+		'User' => array( // an alias of owner for use when there is no user conflict, so that the data[User] array key can keep the name
 			'className' => 'Users.User',
 			'foreignKey' => 'owner_id',
 			'conditions' => '',
@@ -119,9 +137,9 @@ class Product extends ProductsAppModel {
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
 		if (CakePlugin::loaded('Maps')) {
-			// address field is in use in canopy, make sure it works there if changing the field name
+			// address field is in use in mojango, make sure it works there if changing the field name
 			/** @see MapableBehavior::beforeSave() **/
-			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => '!location');
+			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => 'data');
 		}
 		if(CakePlugin::loaded('Transactions')) {
 			$this->actsAs[] = 'Transactions.Buyable';
@@ -342,22 +360,20 @@ class Product extends ProductsAppModel {
 		}
 		
 		if($price){
-			$product['Product']['price'] = $price;	
+			$product['Product']['price'] = $price;
 		}
-		
 		return $product;
 	}
 	
-	/**
-	 * _getPriceFromMatrix method
-	 * 
-	 * Retrieves the price form a price matrix
-	 * returns false when no price found or price
-	 *
-	 * @param array $arr - Price Matrix form ProductPrice
-	 * @return boolean || float
-	 */
-	
+/**
+ * _getPriceFromMatrix method
+ * 
+ * Retrieves the price form a price matrix
+ * returns false when no price found or price
+ *
+ * @param array $arr - Price Matrix form ProductPrice
+ * @return boolean || float
+ */
 	protected function _getPriceFromMatrix($arr) {
 		$userroleid = 8;
 		$arr = isset($arr['ProductPrice']) ? $arr['ProductPrice'] : $arr;
@@ -524,4 +540,10 @@ class Product extends ProductsAppModel {
         return $products;
     }
 	
+}
+
+if (!isset($refuseInit)) {
+	class Product extends AppProduct {
+	}
+
 }

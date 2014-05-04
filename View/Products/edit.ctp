@@ -65,7 +65,7 @@
 	    </fieldset>
 	    <fieldset id="productImages">
 	        <legend class="toggleClick"><?php echo __d('products', 'Product images'); ?></legend>
-	        <?php echo CakePlugin::loaded('Media') ? $this->Element('Media.selector', array('multiple' => true)) : null; ?>
+	        <?php echo CakePlugin::loaded('Media') ? $this->element('Media.selector', array('media' => $this->request->data['Media'], 'multiple' => true)) : null; ?>
 	    </fieldset>    
 	    <fieldset id="productVariants">
 	        <legend class="toggleClick"><?php echo __d('products', 'Production Variations'); ?></legend>
