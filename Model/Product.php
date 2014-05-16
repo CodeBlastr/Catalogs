@@ -19,16 +19,34 @@ App::uses('ProductsAppModel', 'Products.Model');
  * @since         Zuha(tm) v 0.0.1
  * @license       GPL v3 License (http://www.gnu.org/licenses/gpl.html) and Future Versions
  */
-class Product extends ProductsAppModel {
+class AppProduct extends ProductsAppModel {
 
 	public $name = 'Product';
     
     public $filterPrice = true;
 
 	public $validate = array(
-		'name' => array('notempty'),
-		'price' => array('notempty'),
-        );
+		'name' => array(
+			'name' => array(
+				'rule' => array('notempty'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'price' => array(
+			'price' => array(
+				'rule' => array('notempty'),
+				'message' => 'Pricing required',
+				//'allowEmpty' => false,
+				'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		)
+	);
 
 	public $actsAs = array(
 		'Tree' => array('parent' => 'parent_id'),
@@ -87,6 +105,13 @@ class Product extends ProductsAppModel {
 			'fields' => '',
 			'order' => ''
             ),
+		'User' => array( // an alias of owner for use when there is no user conflict, so that the data[User] array key can keep the name
+			'className' => 'Users.User',
+			'foreignKey' => 'owner_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+            ),
 		'Creator' => array(
 			'className' => 'Users.User',
 			'foreignKey' => 'creator_id',
@@ -112,9 +137,9 @@ class Product extends ProductsAppModel {
 			$this->actsAs['Categories.Categorizable'] = array('modelAlias' => 'Product');
 		}
 		if (CakePlugin::loaded('Maps')) {
-			// address field is in use in canopy, make sure it works there if changing the field name
+			// address field is in use in mojango, make sure it works there if changing the field name
 			/** @see MapableBehavior::beforeSave() **/
-			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => '!location');
+			$this->actsAs['Maps.Mapable'] = array('modelAlias' => 'Product', 'addressField' => 'data');
 		}
 		if(CakePlugin::loaded('Transactions')) {
 			$this->actsAs[] = 'Transactions.Buyable';
@@ -139,7 +164,6 @@ class Product extends ProductsAppModel {
         if(isset($this->data['Product']['data']) && !empty($this->data['Product']['data'])) {
         	$this->data['Product']['data'] = serialize($this->data['Product']['data']);
         }
-        
         return parent::beforeSave($options);
     }
     
@@ -516,4 +540,10 @@ class Product extends ProductsAppModel {
         return $products;
     }
 	
+}
+
+if (!isset($refuseInit)) {
+	class Product extends AppProduct {
+	}
+
 }

@@ -24,6 +24,7 @@
     <div class="row">
     	<div class="span4 col-md-4">
 	    	<?php echo $this->Form->input('Product.is_public', array('value' => 1, 'type' => 'hidden')); ?>
+			<?php echo $this->Form->input('Product.is_buyable', array('value' => 1, 'type' => 'hidden')); ?>
 			<?php echo $this->Form->input('Product.cart_max', array('type' => 'hidden', 'value' => 1)); ?>
 			<?php echo $this->Form->input('Product.model', array('type' => 'hidden', 'value' => 'UserRole')); ?>
 			<?php echo $this->Form->input('Product.name', array('label' => 'Display Name')); ?>
@@ -50,13 +51,15 @@
 					'name' => 'ExecutionFrequencyParameter',
 					'class' => 'date-execution',
 					'label' => false,
-					'options' => array('--Select--') + range(0,31),
+					'empty' => '--Select--',
+					'options' => range(0,31),
 				),
 				array(
 					'name' => 'ExecutionFrequencyParameter',
 					'class' => 'weekly-execution',
 					'label' => false,
-					'options' => array('empty' => '--Select--', 'Sunday' => 'Sunday', 'Monday' => 'Monday', 'Tuesday' => 'Tuesday', 'Wednesday' => 'Wednesday', 'Thursday' => 'Thursday', 'Friday' => 'Friday', 'Saturday' => 'Saturday'),
+					'empty' => '--Select--', 
+					'options' => array('Sunday' => 'Sunday', 'Monday' => 'Monday', 'Tuesday' => 'Tuesday', 'Wednesday' => 'Wednesday', 'Thursday' => 'Thursday', 'Friday' => 'Friday', 'Saturday' => 'Saturday'),
 				),
 				array(
 					'name' => 'HasTrialPeriod',

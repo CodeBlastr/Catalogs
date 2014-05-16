@@ -7,7 +7,6 @@
     <div class="itemDescription productDescription span5 col-md-8 media-body">
 		<div class="itemSummary productSummary">
             <h2 class="media-heading" itemprop="name"><?php echo $product['Product']['name']; echo !empty($product['ProductBrand']['name']) ? ' by ' . $this->Html->link($product['ProductBrand']['name'], array('controller' => 'product_brands', 'action' => 'view', $product['ProductBrand']['id'])) : ''; ?></h2>
-            <span itemprop="description"><?php echo $product['Product']['summary']; ?></span>
         </div>
         <?php echo $product['Product']['description']; ?>
         <?php if($product['Product']['hours_expire'] !== NULL) : ?>
