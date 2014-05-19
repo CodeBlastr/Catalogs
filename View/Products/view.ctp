@@ -1,14 +1,12 @@
-<?php
-if (!empty($product['Children'])) {
-    echo __('<div class="children">');
-    foreach ($product['Children'] as $child) {
-        echo $this->Element('Products.product', array('product' => array('Product' => $child)));
-    }
-    echo __('</div>');
-} else {
-    echo $this->Element('product', array('product' => $product), array('plugin' => 'products'));
-}
-?>
+<?php if (!empty($product['Children'])) : ?>
+    <div class="children">
+    <?php foreach ($product['Children'] as $child) : ?>
+        <?php echo $this->element('Products.product', array('product' => array('Product' => $child))); ?>
+    <?php endforeach; ?>
+    </div>
+<?php else : ?>
+    <?php echo $this->element('Products.product', array('product' => $product)); ?>
+<?php endif; ?>
 
 <script type="text/javascript">
     $(function() {
@@ -23,6 +21,12 @@ if (!empty($product['Children'])) {
     });
 </script>
 <?php
+// set the contextual breadcrumb items
+$this->set('context_crumbs', array('crumbs' => array(
+	$this->Html->link(__('All Products'), '/products'),
+	$product['Product']['name']
+)));
+
 // set contextual search options
 $this->set('forms_search', array(
     'url' => '/products/products/index/', 
@@ -37,6 +41,7 @@ $this->set('forms_search', array(
 			),
 		)
 	));
+
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
     array(
@@ -54,4 +59,4 @@ $this->set('context_menu', array('menus' => array(
 			$this->Html->link(__d('products', 'Delete'), array('action' => 'delete', $product['Product']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $product['Product']['id'])),
 			),
 		),
-	))); ?>
+	)));
