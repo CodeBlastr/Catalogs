@@ -21,4 +21,3 @@
 <?php else : ?>
 	<p>No products found. <?php echo $this->Html->link('Add one now?', array('plugin' => 'products', 'controller' => 'products', 'action' => 'add')); ?></p>
 <?php endif; ?>
-</div>

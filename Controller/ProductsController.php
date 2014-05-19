@@ -311,7 +311,7 @@ class AppProductsController extends ProductsAppController {
 		}
 		// order is important (categories for all products)
 		if (CakePlugin::loaded('Categories')) {
-			$this->set('categories', $this->Product->Category->generateTreeList());
+			$this->set('categories', $this->Product->Category->generateTreeList(array('model' => 'Product')));
 			$selectedCategories = $this->Product->Category->Categorized->find('all', array(
 				'conditions' => array(
 					'Categorized.model' => $this->Product->alias,
