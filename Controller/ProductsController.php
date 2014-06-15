@@ -38,11 +38,17 @@ class AppProductsController extends ProductsAppController {
 	public $uses = 'Products.Product';
 
 /**
- * Ecommerce dashboard.
+ * Products dashboard.
  *
  */
 	public function dashboard() {
-		$this->redirect(array('prefix' => 'admin', 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'dashboard'));
+		$this->paginate['conditions']['Product.parent_id'] = null;
+		$this->paginate['order'] = array('Product.lft' => 'ASC', 'Product.price' => 'ASC', 'Product.name' => 'ASC');
+		$products = $this->paginate('Product');
+		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('page_title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
+		$this->set('products', $products);
+		return $products;
 	}
 
 /**
@@ -56,7 +62,7 @@ class AppProductsController extends ProductsAppController {
 		$this->paginate['contain'][] = 'Owner';
 		$this->paginate['contain'][] = 'Creator';
 		$this->paginate['conditions']['Product.parent_id'] = null;
-		$this->paginate['order'] = array('Product.price' => 'ASC', 'Product.name' => 'ASC');
+		$this->paginate['order'] = array('Product.lft' => 'ASC', 'Product.price' => 'ASC', 'Product.name' => 'ASC');
 		$products = $this->paginate('Product');
 		$this->set('title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Store') . ' | ' . __SYSTEM_SITE_NAME);
@@ -418,6 +424,41 @@ class AppProductsController extends ProductsAppController {
 			}
 			$this->redirect(array('action' => 'index'));
 		}
+	}
+	
+/**
+ * Move up in the tree (lft = 4, rght = 5  ...  becomes lft = 2, rght = 3)
+ */
+	public function moveup($id = null, $delta = null) {
+	    $this->Product->id = $id;
+	    if (!$this->Product->exists()) {
+	       throw new NotFoundException(__('Invalid item'));
+	    }
+	
+	    if ($delta > 0) {
+	        $this->Product->moveUp($this->Product->id, abs($delta));
+	    } else {
+	        $this->Session->setFlash('Please provide the number of positions the field should be moved down.');
+	    }
+	    return $this->redirect($this->referer());
+	}
+	
+/**
+ * Move down in the tree (lft = 4, rght = 5  ...  becomes lft = 6, rght = 7)
+ */
+	public function movedown($id = null, $delta = null) {
+	    $this->Product->id = $id;
+	    if (!$this->Product->exists()) {
+	       throw new NotFoundException(__('Invalid item'));
+	    }
+	
+	    if ($delta > 0) {
+	        $this->Product->moveDown($this->Product->id, abs($delta));
+	    } else {
+	        $this->Session->setFlash('Please provide the number of positions the field should be moved down.');
+	    }
+	
+	    return $this->redirect($this->referer());
 	}
 
 /**
