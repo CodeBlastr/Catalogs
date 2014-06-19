@@ -42,6 +42,9 @@ class AppProductsController extends ProductsAppController {
  *
  */
 	public function dashboard() {
+		if (CakePlugin::loaded('Transactions')) {
+			$this->redirect(array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'dashboard'));
+		}
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		$this->paginate['order'] = array('Product.lft' => 'ASC', 'Product.price' => 'ASC', 'Product.name' => 'ASC');
 		$products = $this->paginate('Product');
