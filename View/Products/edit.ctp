@@ -30,10 +30,10 @@
 	        <li class="list-group-item"><a data-target="#optionForm">Add Variant Group</a>
 	        <?php
 	        $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '', 'placeholder' => 'Group Name (eg. Sizes)', 'class' => 'span2')) . $this->Form->end('Submit');
-	
+
 	        if (count($existingOptions) < 3 && empty($this->request->data['Product']['parent_id'])) {
 	            echo '<div id="optionForms">';
-	            echo !empty($options) ? __('<small class="pull-right">%s</small> %s', $this->Html->link('new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('class' => 'span2', 'label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Attribute to Product')) . __('<small class="pull-right">%s</small> %s', $this->Html->link('cancel', '', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
+	            echo !empty($options) ? __('<small class="pull-right">%s</small> %s', $this->Html->link('new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('class' => 'span2', 'label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Attribute to Product')) . __('<small class="pull-right">%s</small> %s', $this->Html->link('cancel', '', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm);
 	            echo '</div>';
 	        }?>
 	        </li>
@@ -66,26 +66,29 @@
 	    <fieldset id="productImages">
 	        <legend class="toggleClick"><?php echo __d('products', 'Product images'); ?></legend>
 	        <?php echo CakePlugin::loaded('Media') ? $this->element('Media.selector', array('media' => $this->request->data['Media'], 'multiple' => true)) : null; ?>
-	    </fieldset>    
+	    </fieldset>
 	    <fieldset id="productVariants">
 	        <legend class="toggleClick"><?php echo __d('products', 'Production Variations'); ?></legend>
-	        <div class="modal hide fade" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	            <div class="modal-header">
-	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	                <h3 id="myModalLabel">Add Variant of <?php echo $this->request->data['Product']['name']; ?></h3>
-	            </div>
-	            <div class="modal-body"></div>
-	        </div>
 	        <?php
 	        // list of variants (think about moving to the controller, or an element for reuse)
-	        echo !empty($existingOptions) ? __('<hr class="clear" /><h5>Variants %s</h5>', $this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']), array('class' => 'btn btn-mini', 'data-toggle' => 'modal', 'data-target' => '#variantModal'))) : null;
+//	        echo !empty($existingOptions) ? __('<hr class="clear" /><h5>Variants %s</h5>', $this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']), array('class' => 'btn btn-mini', 'data-toggle' => 'modal', 'data-target' => '#variantModal'))) : null;
+			if (!empty($existingOptions)) {
+				echo '<hr class="clear" />' .
+						'<h5>Variants ' .
+						$this->Html->link(__('Add Variant'), array(
+							'controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']
+							//), array('class' => 'btn btn-mini', 'data-toggle' => 'modal', 'data-target' => '#variantModal')
+							), array('class' => 'btn btn-mini')
+						) .
+						'</h5>';
+			}
 	        if (!empty($this->request->data['Children'])) {
 	            foreach ($this->request->data['Children'] as $child) {
 	                if (!empty($child['Option'])) {
 	                    foreach ($child['Option'] as $variant) {
-	                        $variants[$child['id']][] = $variant['name'];  
+	                        $variants[$child['id']][] = $variant['name'];
 	                        unset($variant);
-	                    } 
+	                    }
 	                    echo __('<p>%s %s %s</p>', $this->Html->link(__('edit'), array('action' => 'edit', key($variants), '1'), array('class' => 'btn btn-primary btn-mini')), $this->Html->link(__('delete'), array('action' => 'delete', key($variants)), array('class' => 'btn btn-danger btn-mini'),  'Are you sure?'), $this->Html->link(implode(', ', $variants[key($variants)]), array('action' => 'edit', key($variants), '1')));
 	                    unset($variants);
 	                }
@@ -118,14 +121,14 @@
 			echo $this->Form->input('Product.shipping_type', array('legend' => false, 'options' => $radioOptions, 'class' => 'shipping_type' , 'default' => ''));
 		 	echo $this->Form->input('Product.shipping_charge'); ?>
 	    </fieldset>
-	    
-	    <?php if (empty($this->request->data['Product']['parent_id']) && in_array('Categories', CakePlugin::loaded())) { ?>
+
+	    <?php if (empty($this->request->data['Product']['parent_id']) && CakePlugin::loaded('Categories')) { ?>
 		<fieldset id="productCategorization">
 	 		<legend class="toggleClick"><?php echo __d('products', 'Does this product belong to a category?');?></legend>
 			<?php echo $this->Form->input('Category', array('multiple' => 'checkbox', 'selected' => $selectedCategories, 'label' => __('Choose categories (%s)', $this->Html->link('edit', array('action' => 'categories'))))); ?>
 		</fieldset>
 	    <?php } ?>
-		
+
 		<?php if(!empty($paymentOptions)) { ?>
 	    <fieldset>
 	        <legend class="toggleClick"><?php echo __d('products', 'Select Payment Types For The Item.');?></legend>
@@ -133,17 +136,31 @@
 	            echo $this->Form->input('Product.payment_type', array('options' => $paymentOptions, 'multiple' => 'checkbox'));
 	        ?>
 	    </fieldset>
-		<?php } 
+		<?php }
 	    echo $this->Form->submit('Save & Continue', array('name' => 'SaveAndContinue', 'class' => 'btn pull-right'));
-		
+
 	    echo $this->Form->end('Save'); ?>
 	</div>
 </div>
 
+
+<div class="modal fade" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="myVariantModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myVariantModalLabel">Add Variant of <?php echo $this->request->data['Product']['name']; ?></h3>
+			</div>
+			<div class="modal-body"></div>
+		</div>
+	</div>
+</div>
+
+
 <script type="text/javascript">
 $(function() {
     $(document).ready( function(){
-        // animation 
+        // animation
         var offset = $('#productNav').offset().top;
         $('#productNav a.tab-trigger').click(function(e) {
             e.preventDefault();
@@ -165,8 +182,8 @@ $(function() {
         // side nav clean up
         $('#productNav a[data-target="#productDetails"]').parent().addClass('active');
         $('body').css('padding-bottom', '800px');
-        
-        
+
+
         if($('input.shipping_type:checked').val() == 'FIXEDSHIPPING') {
             $('#ShippingPrice').show();
         } else {
@@ -223,7 +240,7 @@ $this->set('context_menu', array('menus' => array(
 
 
 <?php /*
- * 
+ *
 
 <div class="hero-unit pull-left first span3">
     <div class="modal hide fade" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -235,16 +252,16 @@ $this->set('context_menu', array('menus' => array(
     </div>
     <?php
     echo $this->Element('gallery', array('model' => 'Product', 'foreignKey' => $this->request->data['Product']['id']), array('plugin' => 'galleries'));
-    echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id'])); 
+    echo $this->Html->link('Edit Gallery', array('plugin' => 'galleries', 'controller' => 'galleries', 'action' => 'edit', 'Product', $this->request->data['Product']['id']));
     // list of variants (think about moving to the controller, or an element for reuse)
     echo !empty($existingOptions) ? __('<hr class="clear" /><h5>Variants %s</h5>', $this->Html->link(__('Add Variant'), array('controller' => 'products', 'action' => 'add', 'default', $this->request->data['Product']['id']), array('class' => 'btn btn-mini', 'data-toggle' => 'modal', 'data-target' => '#variantModal'))) : null;
     if (!empty($this->request->data['Children'])) {
         foreach ($this->request->data['Children'] as $child) {
             if (!empty($child['Option'])) {
                 foreach ($child['Option'] as $variant) {
-                    $variants[$child['id']][] = $variant['name'];  
+                    $variants[$child['id']][] = $variant['name'];
                     unset($variant);
-                } 
+                }
                 echo __('<p>%s %s %s</p>', $this->Html->link(__('edit'), array('action' => 'edit', key($variants), '1'), array('class' => 'btn btn-primary btn-mini')), $this->Html->link(__('delete'), array('action' => 'delete', key($variants)), array('class' => 'btn btn-danger btn-mini'),  'Are you sure?'), $this->Html->link(implode(', ', $variants[key($variants)]), array('action' => 'edit', key($variants), '1')));
                 unset($variants);
             }
@@ -257,9 +274,9 @@ $this->set('context_menu', array('menus' => array(
         }
     }
     $addVariantForm = $this->Form->create('Product') . $this->Form->input('Product.id') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Option.0.name', array('label' => false, 'value' => '')) . $this->Form->end('Submit');
-    
+
     if (count($existingOptions) < 3 && empty($this->request->data['Product']['parent_id'])) {
-        echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm); 
+        echo !empty($options) ? __('<hr /><h5>Add Variant Type <small>%s</small></h5>%s', $this->Html->link('add new', '#', array('class' => 'newOptionType', 'data-target' => '#Option0Name')), $this->Form->create('Product') . $this->Form->input('Override.redirect', array('type' => 'hidden', 'value' => $this->request->here)) . $this->Form->input('Product.id') . $this->Form->input('Option.Option.0', array('label' => false, 'type' => 'select', 'options' => $options)) . $this->Form->end('Add Available Variant Type')) . __('<h5>Add Variant Type <small>%s</small></h5> %s', $this->Html->link('cancel', '#', array('class' => 'cancelOptionType', 'data-target' => '#OptionOption0')), $addVariantForm) : __('<h5>Add Variant Type</h5> %s', $addVariantForm);
     } ?>
 </div>
  */

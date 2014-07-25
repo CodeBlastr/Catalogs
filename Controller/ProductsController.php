@@ -219,7 +219,7 @@ class AppProductsController extends ProductsAppController {
  * Add default
  */
 	protected function _addDefault($parentId = null) {
-		if ($this->request->is('post')) {
+		if ($this->request->data) {
 			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'), 'flash_success');
 				$this->redirect(array(
@@ -258,7 +258,7 @@ class AppProductsController extends ProductsAppController {
 		unset($this->request->data['Product']['sku']);
 		$this->set('page_title_for_layout', __('Create a %s Variant', $this->request->data['Product']['name']));
 		$this->set('title_for_layout', __('Add Product Variant Form'));
-		$this->layout = false;
+		//$this->layout = false;
 		// required for modal to work (but causes the standard view page not to)
 		$this->view = 'add_default_child';
 	}
