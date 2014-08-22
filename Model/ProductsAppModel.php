@@ -29,7 +29,7 @@ class ProductsAppModel extends AppModel {
  */
  	public function menuInit($data = null) {
  		App::uses('Product', 'Products.Model');
-		$Product = new Product;
+		$Product = new Product();
 		$product = $Product->find('first');
 		if (!empty($product)) {
 	 		// link to properties index and first property
