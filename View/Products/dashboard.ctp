@@ -54,6 +54,12 @@ $this->set('forms_search', array(
 			)
 		), )
 ));
+// set the contextual breadcrumb items
+$this->set('context_crumbs', array('crumbs' => array(
+	$this->Html->link(__('Admin Dashboard'), '/admin'),
+	$this->Html->link(__('Ecommerce Dashboard'), array('plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'dashboard')),
+	'Products Dashboard',
+)));
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array( array(
 			'heading' => 'Products',

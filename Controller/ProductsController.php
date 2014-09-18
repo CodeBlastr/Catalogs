@@ -42,9 +42,6 @@ class AppProductsController extends ProductsAppController {
  *
  */
 	public function dashboard() {
-		if (CakePlugin::loaded('Transactions')) {
-			$this->redirect(array('admin' => true, 'plugin' => 'transactions', 'controller' => 'transactions', 'action' => 'dashboard'));
-		}
 		$this->paginate['conditions']['Product.parent_id'] = null;
 		$this->paginate['order'] = array('Product.lft' => 'ASC', 'Product.price' => 'ASC', 'Product.name' => 'ASC');
 		$products = $this->paginate('Product');
@@ -61,6 +58,38 @@ class AppProductsController extends ProductsAppController {
  * @return void
  */
 	public function index() {
+		// Categories support
+		if (CakePlugin::loaded('Categories')) {	
+			if(isset($this->request->query['categories'])) {
+				// example url = /products/products/index/?categories=Auburn;California (will only return products that are in BOTH categories)
+				$categoryNames = explode(';', rawurldecode($this->request->query['categories']));
+				$this->set('categories', $categories = $this->Product->Category->find('all', array(
+					'conditions' => array(
+						'Category.name' => $categoryNames
+						),
+					'order' => array(
+						'Category.lft' => 'DESC'
+						)
+					))); // children first so that the 0 element is the youngest child (for use on the products index, when you choose Alabma > Auburn for example)
+				$categoryIds = Set::extract('/Category/id', $categories);
+				for ($i = 0; $i < count($categoryIds); $i++) {
+					$joins[] = array(
+						'table' => 'categorized',
+						'alias' => 'Categorized' . $i,
+						'type' => 'INNER',
+						'conditions' => array(
+							"Categorized{$i}.foreign_key = Product.id",
+							"Categorized{$i}.model = 'Product'",
+							'Categorized' . $i . '.category_id' => $categoryIds[$i]
+						)
+					);
+				}
+				$this->paginate['joins'] = $joins;
+				$this->paginate['contain'][] = 'Category';
+			}
+		}
+
+
 		$this->paginate['contain'][] = 'Option';
 		$this->paginate['contain'][] = 'Owner';
 		$this->paginate['contain'][] = 'Creator';
