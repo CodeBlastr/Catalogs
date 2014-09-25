@@ -200,12 +200,60 @@ class AppProductsController extends ProductsAppController {
 	public function add($type = 'default', $parentId = null) {
 		$this->redirect('admin');
 		$function = '_add' . ucfirst($type);
+		return $this->$function($parentId);
+	}
+
+	protected function _addCredit() {
+		if (!CakePlugin::loaded('Credits')) {
+			debug('Credits must be installed.');
+			exit;
+		}
+		if ($this->request->is('post')) {
+			// required data for this type
+			$this->request->data['Product']['type'] = 'credit';
+			$this->request->data['Product']['is_public'] = 1;
+			$this->request->data['Product']['is_buyable'] = 1;
+			$this->request->data['Product']['model'] = 'Credit';
+			$this->Product->bindModel(array(
+				'hasOne' => array(
+	                'Credit' => array(
+	                    'className' => 'Credits.Credit',
+	                    'foreignKey' => 'foreign_key'
+		                )
+		            )
+		        ));
+			if ($this->Product->saveAll($this->request->data)) {
+				$this->Session->setFlash(__('Credit product saved.'), 'flash_success');
+				$this->redirect(array('admin' => false, 'action' => 'view', $this->Product->id));
+			}
+		}
+		$this->set('page_title_for_layout', __('Add Credit Purchase Product'));
+		$this->set('title_for_layout', __('Add Credit Purchase Product'));
+		$this->view = 'add_credit';
+	}
+
+/**
+ * Add virtual product (eg. access to a webpage)
+ */
+	protected function _addVirtual() {
+		
+		if (!empty($this->request->data)) {
+			$this->request->data['Product']['is_virtual'] = 1;
+			$this->request->data['Product']['model'] = 'Webpage';
+			if ($this->Product->saveAll($this->request->data)) {
+				$this->Session->setFlash(__('Credit saved.'), 'flash_success');
+				$this->redirect(array('action' => 'view', $this->Product->id));
+			}
+		}
+		
 		$this->set('productBrands', $this->Product->ProductBrand->find('list'));
 		if (CakePlugin::loaded('Categories')) {
 			$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
 		}
-		//$this->set('paymentOptions', $this->Product->paymentOptions());
-		return $this->$function($parentId);
+		$this->set('page_title_for_layout', __('Create an ARB Product'));
+		$this->set('title_for_layout', __('Add Product Form'));
+		$this->view = 'add_virtual';
+		return !empty($parentId) ? $this->_addDefaultChild($parentId) : true;
 	}
 
 /**
@@ -257,6 +305,10 @@ class AppProductsController extends ProductsAppController {
 				));
 			}
 		}
+		$this->set('productBrands', $this->Product->ProductBrand->find('list'));
+		if (CakePlugin::loaded('Categories')) {
+			$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
+		}
 		$this->set('page_title_for_layout', __('Create a Product'));
 		$this->set('title_for_layout', __('Add Product Form'));
 		$this->view = 'add_default';
@@ -273,6 +325,10 @@ class AppProductsController extends ProductsAppController {
 				));
 			}
 		}
+		$this->set('productBrands', $this->Product->ProductBrand->find('list'));
+		if (CakePlugin::loaded('Categories')) {
+			$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
+		}
 		$this->set('page_title_for_layout', __('Create an ARB Product'));
 		$this->set('title_for_layout', __('Add Product Form'));
 		$this->view = 'add_arb';
@@ -284,6 +340,10 @@ class AppProductsController extends ProductsAppController {
 			'conditions' => array('Product.id' => $parentId),
 			'contain' => array('Option' => 'Children')
 		));
+		$this->set('productBrands', $this->Product->ProductBrand->find('list'));
+		if (CakePlugin::loaded('Categories')) {
+			$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
+		}
 		unset($this->request->data['Product']['sku']);
 		$this->set('page_title_for_layout', __('Create a %s Variant', $this->request->data['Product']['name']));
 		$this->set('title_for_layout', __('Add Product Variant Form'));
@@ -301,6 +361,10 @@ class AppProductsController extends ProductsAppController {
 					$this->Product->id
 				));
 			}
+		}
+		$this->set('productBrands', $this->Product->ProductBrand->find('list'));
+		if (CakePlugin::loaded('Categories')) {
+			$this->set('categories', $this->Product->Category->generateTreeList(array('Category.model' => 'Product')));
 		}
 		$this->set('page_title_for_layout', __('Create a Membership Product'));
 		$this->set('title_for_layout', __('Create a Membership Product'));
@@ -325,20 +389,64 @@ class AppProductsController extends ProductsAppController {
  * @throws NotFoundException
  */
 	public function edit($id = null, $child = false) {
+		$this->Product->id = $id;
+		$type = $this->Product->field('type');
+		$function = !empty($type) ? '_edit' . ucfirst($type) : '_editDefault';
+		return $this->$function($id, $child);
+	}
+
+	protected function _editCredit($id = null) {
+		// check to see if we have a product before even worrying about anything else
+		$this->Product->id = $id;
+		if (!$this->Product->exists()) {
+			throw new NotFoundException(__('Invalid product'));
+		}
+		// order is important
+		if ($this->request->is('put')) {
+			App::uses('Credit', 'Credits.Model');
+			$Credit = new Credit();
+			if ($Credit->save($this->request->data)) {
+				$this->request->data['Product']['type'] = 'credit';
+				$this->request->data['Product']['model'] = 'Credit';
+				$this->request->data['Product']['foreign_key'] = $Credit->id;
+				if ($this->Product->saveAll($this->request->data)) {
+					$this->Session->setFlash(__('Product saved.'), 'flash_success');
+					if (isset($this->request->data['SaveAndContinue'])) {
+						$this->redirect(array('action' => 'edit', $this->Product->id));
+					} else {
+						$this->redirect(array('action' => 'view', $this->Product->id));
+					}
+				}
+			} else {
+				$this->Session->setFlash(__('Credit save failed'), 'flash_error');
+			}
+		}
+		$this->Product->bindModel(array(
+			'belongsTo' => array(
+                'Credit' => array(
+                    'className' => 'Credits.Credit',
+                    'foreignKey' => 'foreign_key'
+	                )
+	            )
+	        ));
+		$this->Product->contain(array('Credit'));
+		$this->set('product', $this->request->data = $this->Product->read());
+		$this->view = 'edit_credit';
+	}
+
+/**
+ * Edit Default
+ */
+	protected function _editDefault($id = null, $child = false) {
+		
 		// order is important
 		if ($this->request->is('put')) {
 			if ($this->Product->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('Product saved.'), 'flash_success');
 				if (isset($this->request->data['SaveAndContinue'])) {
-					$this->redirect(array(
-						'action' => 'edit',
-						$this->Product->id
-					));
+					$this->redirect(array('action' => 'edit', $this->Product->id));
 				} else {
-					$this->redirect(array(
-						'action' => 'view',
-						$this->Product->id
-					));
+					$this->redirect(array('action' => 'view', $this->Product->id));
 				}
 			}
 		}
@@ -391,7 +499,7 @@ class AppProductsController extends ProductsAppController {
 		$this->set('title_for_layout', __('Edit %s ', $this->request->data['Product']['name']));
 	}
 
-	public function editArb($id = null, $child = null) {
+	public function _editArb($id = null, $child = null) {
 		return $this->edit($id, $child);
 	}
 

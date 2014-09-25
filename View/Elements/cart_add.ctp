@@ -31,9 +31,12 @@ array('class' => 'button btn btn-primary')); ?>
 		<div class="action itemAddCart productAddCart">
 			<?php echo $this->Element('Options/select', array('product' => $product), array('plugin' => 'products')); ?>
 			<div class="row"> 
-				<div class="col-xs-12 add-to-cart"><div class="add-to-cart-box"> <p class="quantity">Quantity</p>
-								<?php echo (int)$maxQty === 1 ? $this->Form->hidden('TransactionItem.quantity' , array('label' => false, 'value' => 1, 'min' => $minQty, 'max' => $maxQty)) : $this->Form->input('TransactionItem.quantity' , array('div' => false, 'label' => false, 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty)); // if the max allowable quantity of this item is only one, hide the TransactionItem.quantity input ?>
-				</div></div>
+				<div class="col-xs-12 add-to-cart">
+					<div class="add-to-cart-box"> 
+						<p class="quantity">Quantity</p>
+						<?php echo (int)$maxQty === 1 ? $this->Form->hidden('TransactionItem.quantity' , array('label' => false, 'value' => 1, 'min' => $minQty, 'max' => $maxQty)) : $this->Form->input('TransactionItem.quantity' , array('div' => false, 'label' => false, 'value' => $minQty, 'min' => $minQty, 'max' => $maxQty)); // if the max allowable quantity of this item is only one, hide the TransactionItem.quantity input ?>
+					</div>
+				</div>
 				<div class="col-xs-12 add-to-cart-btn">
 					<?php echo $this->element('Products.payment_type'); ?>
 				</div>
