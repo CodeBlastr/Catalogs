@@ -7,16 +7,17 @@
 	        </div>
 	        <div class="col-md-11"> 
 	        	<h4>
-	        		<?php echo $products[$i]['Product']['name']; ?></h4>
-		            <?php echo $this->Html->link('View', array('admin' => false, 'controller' => 'products', 'action' => 'view', $products[$i]["Product"]["id"]), array('class' => 'btn btn-default btn-xs')); ?>
-					<?php echo $this->Html->link('Edit', array('action' => 'edit', $products[$i]["Product"]["id"]), array('class' => 'btn btn-default btn-xs')); ?>
-					<?php echo $this->Html->link('<i class="glyphicon glyphicon-circle-arrow-up"></i>', array('action' => 'moveup', $products[$i]["Product"]["id"], $this->Paginator->counter('{:count}')), array('title' => 'Move to Top', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
-					<?php echo $this->Html->link('<i class="glyphicon glyphicon-chevron-up"></i>', array('action' => 'moveup', $products[$i]["Product"]["id"], 1), array('title' => 'Move Up One Place', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
-					<?php echo $this->Html->link('<i class="glyphicon glyphicon-chevron-down"></i>', array('action' => 'movedown', $products[$i]["Product"]["id"], 1), array('title' => 'Move Down One Place', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
-					<?php echo $this->Html->link('<i class="glyphicon glyphicon-circle-arrow-down"></i>', array('action' => 'movedown', $products[$i]["Product"]["id"], $this->Paginator->counter('{:count}')), array('title' => 'Move to Bottom', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
+					<?php echo $products[$i]['Product']['name']; ?>
+					<small><?php echo $products[$i]['Product']['sku']; ?></small>
 				</h4>
+				<?php echo $this->Html->link('View', array('admin' => false, 'controller' => 'products', 'action' => 'view', $products[$i]["Product"]["id"]), array('class' => 'btn btn-default btn-xs')); ?>
+				<?php echo $this->Html->link('Edit', array('action' => 'edit', $products[$i]["Product"]["id"]), array('class' => 'btn btn-default btn-xs')); ?>
+				<?php echo $this->Html->link('<i class="glyphicon glyphicon-circle-arrow-up"></i>', array('action' => 'moveup', $products[$i]["Product"]["id"], $this->Paginator->counter('{:count}')), array('title' => 'Move to Top', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
+				<?php echo $this->Html->link('<i class="glyphicon glyphicon-chevron-up"></i>', array('action' => 'moveup', $products[$i]["Product"]["id"], 1), array('title' => 'Move Up One Place', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
+				<?php echo $this->Html->link('<i class="glyphicon glyphicon-chevron-down"></i>', array('action' => 'movedown', $products[$i]["Product"]["id"], 1), array('title' => 'Move Down One Place', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
+				<?php echo $this->Html->link('<i class="glyphicon glyphicon-circle-arrow-down"></i>', array('action' => 'movedown', $products[$i]["Product"]["id"], $this->Paginator->counter('{:count}')), array('title' => 'Move to Bottom', 'class' => 'btn btn-default btn-xs', 'escape' => false)); ?>
 				<p><?php echo $this->Text->truncate(strip_tags($products[$i]['Product']['summary'])); ?></p>
-	            <?php echo !empty($products[$i]['Product']['price']) ? __('<span class="badge"> %s </span>', ZuhaInflector::pricify($products[$i]['Product']['price']), array('currency' => 'USD')) : null; ?>
+	            <?php echo !empty($products[$i]['Product']['price']) ? __('<span class="badge"> $%s </span>', ZuhaInflector::pricify($products[$i]['Product']['price']), array('currency' => 'USD')) : null; ?>
 			</div>
 		</div>	        
     </div>
