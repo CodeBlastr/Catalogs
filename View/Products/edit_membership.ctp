@@ -96,6 +96,11 @@
 					// 'label' => 'End date',
 					// 'desc' => 'The number of days after purchase to end the Recurring Payment.  If empty, the schedule will run indefinitely.',
 				// ),
+				array(
+					'name' => 'BraintreePlan',
+					'label' => 'Brantree Plan ID',
+					'type' => 'text'
+				)
 			);
 			
 			foreach($arbSettingsValues as $arbSetting) :
