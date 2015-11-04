@@ -122,8 +122,11 @@ class AppProduct extends ProductsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
-		if(CakePlugin::loaded('Media')) {
+		if (CakePlugin::loaded('Media')) {
 			$this->actsAs[] = 'Media.MediaAttachable';
+		}
+		if (CakePlugin::loaded('FileStorage')) {
+			$this->actsAs[] = 'FileStorage.FileAttach';
 		}
 		if (CakePlugin::loaded('Categories')) {
 			$this->hasAndBelongsToMany['Category'] = array(
